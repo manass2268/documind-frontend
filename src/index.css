@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* --- Base Theme & Global Resets --- */
+@layer base {
+  :root {
+    --background: #05050A;
+    --foreground: #ffffff;
+  }
+  
+  html, body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* --- Premium Custom Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #05050A; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272A; 
+  border-radius: 8px;
+  border: 2px solid #05050A; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525B; 
+}
+
+/* --- Text Selection Color --- */
+::selection {
+  background-color: rgba(139, 92, 246, 0.4);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: rgba(139, 92, 246, 0.4);
+  color: #ffffff;
+}
+
+input:focus, textarea:focus, button:focus {
+  outline: none;
+}
