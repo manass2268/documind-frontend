@@ -3,20 +3,44 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Brain, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 
+// --- Firebase Imports ---
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // --- Normal Email Login ---
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       setIsLoading(false);
       navigate("/"); 
-    }, 1500);
+    } catch (err) {
+      setIsLoading(false);
+      setError("Invalid email or password. Please try again.");
+    }
+  };
+
+  // --- Real Google Login ---
+  const handleGoogleLogin = async () => {
+    setError("");
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate("/"); // Login successful, redirect to dashboard
+    } catch (err) {
+      setError("Google sign-in failed. Please try again.");
+    }
   };
 
   return (
@@ -33,13 +57,22 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center relative z-10 p-4 mt-12 md:mt-0">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0B0B14]/80 backdrop-blur-xl border border-white/10 p-6 md:p-10 rounded-3xl w-full max-w-md shadow-2xl">
           
-          <div className="flex justify-center mb-8">
-            <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20"><Brain className="text-purple-400" size={32} /></div>
+          <div className="flex justify-center mb-6">
+            <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20">
+              <Brain className="text-purple-400" size={32} />
+            </div>
           </div>
           <h2 className="text-2xl font-bold text-center mb-2">Welcome back</h2>
-          <p className="text-gray-400 text-center text-sm mb-8">Sign in to your DocuMind account</p>
+          <p className="text-gray-400 text-center text-sm mb-6">Sign in to your DocuMind account</p>
 
-          <button type="button" className="w-full flex items-center justify-center gap-3 bg-[#131314] hover:bg-white/5 border border-white/10 text-white font-medium py-3 rounded-xl transition-all mb-6">
+          {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl text-center">{error}</div>}
+
+          {/* --- GOOGLE LOGIN BUTTON IS BACK --- */}
+          <button 
+            type="button" 
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-3 bg-[#131314] hover:bg-white/5 border border-white/10 text-white font-medium py-3 rounded-xl transition-all mb-6 cursor-pointer"
+          >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -63,7 +96,6 @@ export default function Login() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-medium text-gray-400 block">Password</label>
-                {/* --- FORGOT PASSWORD LINK --- */}
                 <Link to="/forgot-password" className="text-[10px] md:text-xs text-purple-400 hover:text-purple-300 transition-colors">Forgot password?</Link>
               </div>
               <div className="relative">
@@ -80,7 +112,6 @@ export default function Login() {
 
           <div className="mt-6 flex items-center justify-center gap-2 text-xs md:text-sm">
             <span className="text-gray-500">Don't have an account?</span>
-            {/* --- SIGN UP LINK --- */}
             <Link to="/signup" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">Sign up for free</Link>
           </div>
         </motion.div>

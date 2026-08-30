@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+
+// --- Firebase Imports ---
+import { auth } from "./firebase"; 
+import { onAuthStateChanged } from "firebase/auth";
 
 // Components
 import ScrollToTop from "./components/ScrollToTop";
@@ -15,12 +19,26 @@ import Pricing from "./pages/Pricing";
 import HowItWorks from "./pages/HowItWorks";
 import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup"; // <-- Imported Signup
-import ForgotPassword from "./pages/ForgotPassword"; // <-- Imported Forgot Password
+import Signup from "./pages/Signup"; 
+import ForgotPassword from "./pages/ForgotPassword"; 
 import ContactSupport from "./pages/ContactSupport";
+
 function HomeFlow() {
   const [view, setView] = useState("landing"); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Real-time listener ki user logged in hai ya nahi
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <AnimatePresence mode="wait">
@@ -35,7 +53,13 @@ function HomeFlow() {
       {view === "dashboard" && (
         <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="flex h-screen w-full relative z-10 overflow-hidden">
           <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
-          <ChatInterface openSidebar={() => setIsSidebarOpen(true)} />
+          
+          {/* YAHAN REAL FIREBASE USERNAME PASS HO RAHA HAI */}
+          <ChatInterface 
+             openSidebar={() => setIsSidebarOpen(true)} 
+             userName={currentUser?.displayName || "MANAS"} 
+          />
+          
         </motion.div>
       )}
     </AnimatePresence>
@@ -54,8 +78,8 @@ export default function App() {
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} /> {/* <-- Added Signup Route */}
-          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* <-- Added Forgot Password Route */}
+          <Route path="/signup" element={<Signup />} /> 
+          <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="/support" element={<ContactSupport />} />
         </Routes>
       </div>
