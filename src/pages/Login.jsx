@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Brain, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 
 // --- Firebase Imports ---
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,6 +14,17 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // --- Auto-Redirect Logic ---
+  // Check if user is already logged in, redirect to dashboard directly
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        navigate("/dashboard");
+      }
+    });
+    return () => unsubscribe();
+  }, [navigate]);
 
   // --- Normal Email Login ---
   const handleLogin = async (e) => {
@@ -24,7 +35,7 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setIsLoading(false);
-      navigate("/"); 
+      navigate("/dashboard"); 
     } catch (err) {
       setIsLoading(false);
       setError("Invalid email or password. Please try again.");
@@ -37,7 +48,7 @@ export default function Login() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      navigate("/"); // Login successful, redirect to dashboard
+      navigate("/dashboard"); 
     } catch (err) {
       setError("Google sign-in failed. Please try again.");
     }
@@ -67,7 +78,7 @@ export default function Login() {
 
           {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl text-center">{error}</div>}
 
-          {/* --- GOOGLE LOGIN BUTTON IS BACK --- */}
+          {/* --- GOOGLE LOGIN BUTTON --- */}
           <button 
             type="button" 
             onClick={handleGoogleLogin}

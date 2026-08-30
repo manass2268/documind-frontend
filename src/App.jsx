@@ -10,8 +10,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import ScrollToTop from "./components/ScrollToTop";
 import LandingPage from "./components/LandingPage";
 import LoadingScreen from "./components/LoadingScreen";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar"; 
 import ChatInterface from "./components/ChatInterface";
+import DashboardLayout from "./components/DashboardLayout"; 
 
 // Pages
 import Features from "./pages/Features";
@@ -22,6 +23,12 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup"; 
 import ForgotPassword from "./pages/ForgotPassword"; 
 import ContactSupport from "./pages/ContactSupport";
+import Dashboard from './pages/Dashboard';
+
+// 🔴 NAYE DASHBOARD PAGES IMPORTS
+import Activity from "./pages/Activity";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
 
 function HomeFlow() {
   const [view, setView] = useState("landing"); 
@@ -54,10 +61,9 @@ function HomeFlow() {
         <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="flex h-screen w-full relative z-10 overflow-hidden">
           <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
           
-          {/* YAHAN REAL FIREBASE USERNAME PASS HO RAHA HAI */}
           <ChatInterface 
              openSidebar={() => setIsSidebarOpen(true)} 
-             userName={currentUser?.displayName || "MANAS"} 
+             userName={currentUser?.displayName || "MANAS Singh"} 
           />
           
         </motion.div>
@@ -72,6 +78,7 @@ export default function App() {
       <ScrollToTop /> 
       <div className="font-sans overflow-hidden bg-[#05050A] min-h-screen text-white">
         <Routes>
+          {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomeFlow />} />
           <Route path="/features" element={<Features />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -81,6 +88,16 @@ export default function App() {
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="/support" element={<ContactSupport />} />
+          
+          {/* --- 🔴 PRIVATE GATEWAY ROUTES --- */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<Dashboard />} /> 
+            
+            {/* NESTED ROUTES JO SIDEBAR SE CONNECTED HAIN */}
+            <Route path="activity" element={<Activity />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<Help />} />
+          </Route>
         </Routes>
       </div>
     </Router>
