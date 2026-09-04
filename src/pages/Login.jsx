@@ -102,7 +102,7 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-xs font-medium text-gray-400 mb-1 block">Email Address</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="manas@example.com" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-purple-500/50 text-sm transition-colors" required />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="yourmail@example.com" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-purple-500/50 text-sm transition-colors" required />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">
