@@ -1,129 +1,427 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Brain, Play, ShieldCheck, Wifi, Globe, Zap, Plus, GraduationCap, Languages, Bell, Camera, Menu, X } from "lucide-react";
+import { 
+  Brain, Play, ShieldCheck, Globe, Layers, RefreshCcw, FileCheck, Activity, 
+  Briefcase, Database, Target, Users, CheckCircle2, ChevronRight, FileText,
+  Lock, Search, ArrowRight, FileUp, AlertCircle, User, Landmark, CircleDashed, Book, Menu, X, BarChart 
+} from "lucide-react";
 import Footer from "./Footer";
+import ashokaLogo from "../assets/ashoka.png";
 
 export default function LandingPage({ onStart }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } } };
-  const fadeInUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 250, damping: 25 } } };
+  const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } } };
+  const fadeInUp = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 250, damping: 25 } } };
 
   return (
-    <div className="min-h-screen bg-[#05050A] text-white font-sans overflow-x-hidden relative">
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-700/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-700/15 rounded-full blur-[150px] pointer-events-none" />
+    <div className="min-h-screen bg-[#05050A] text-white font-sans overflow-x-hidden relative w-full selection:bg-purple-500/30">
+      
+      {/* Ambient Background Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-purple-700/15 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none" />
+      <div className="absolute top-[40%] right-[-10%] w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-cyan-700/10 rounded-full blur-[120px] sm:blur-[150px] pointer-events-none" />
 
-      {/* Navbar */}
-      <motion.nav initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="flex items-center justify-between px-6 md:px-8 py-6 max-w-[1600px] mx-auto relative z-50">
-        <div className="flex items-center gap-2">
-          <Brain className="text-purple-500" size={28} />
-          <span className="text-xl font-bold tracking-wide">DocuMind</span>
+      {/* 🟢 1. NAVBAR */}
+      <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 max-w-[1400px] mx-auto relative z-50">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Brain className="text-purple-500" size={26} strokeWidth={2} />
+          <div className="flex flex-col">
+            <span className="text-lg font-bold tracking-wide leading-none">DocuMind</span>
+            <span className="hidden sm:block text-[9px] text-gray-400 font-medium tracking-widest mt-1 uppercase">From Knowledge to Capability.</span>
+          </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-          <Link to="/features" className="hover:text-white transition-colors">Features</Link>
-          <Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link>
-          <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+        <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
+          <Link to="/" className="text-white transition-colors">Home</Link>
+          <span className="cursor-not-allowed hover:text-white transition-colors" title="Coming soon">How It Works</span>
+          <span className="cursor-not-allowed hover:text-white transition-colors" title="Coming soon">Impact</span>
+          <span className="cursor-not-allowed hover:text-white transition-colors" title="Coming soon">Resources</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <Link to="/login" className="text-sm font-medium hover:text-purple-400 transition-colors">Login</Link>
-          <button onClick={onStart} className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]">
-            Get Started Free
+        <div className="hidden lg:flex items-center gap-5">
+          <Search size={16} className="text-gray-400 hover:text-white cursor-not-allowed transition-colors" />
+          <div className="flex items-center gap-3 pr-4 border-r border-white/10">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 via-white to-green-500 p-[1px]">
+              <div className="w-full h-full bg-[#05050A] rounded-full flex items-center justify-center">
+                <Brain size={12} className="text-white"/>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[11px] font-bold text-white tracking-wider leading-none">SIH 2026</span>
+              <span className="text-[9px] text-gray-400 font-mono tracking-widest mt-0.5">SIH26101</span>
+            </div>
+          </div>
+          <Link to="/login" className="text-sm font-medium text-white hover:text-purple-300 transition-colors bg-white/10 px-4 py-1.5 rounded-lg">Login</Link>
+          <button onClick={onStart} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(147,51,234,0.3)]">
+            Get Started <ArrowRight size={14} />
           </button>
         </div>
 
-        <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        <button className="lg:hidden text-white p-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </motion.nav>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-[80px] left-0 w-full bg-[#05050A]/95 backdrop-blur-2xl border-b border-white/10 p-6 flex flex-col gap-6 z-40 shadow-2xl">
-          <Link to="/features" className="text-lg font-medium text-gray-300" onClick={() => setIsMenuOpen(false)}>Features</Link>
-          <Link to="/how-it-works" className="text-lg font-medium text-gray-300" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
-          <Link to="/pricing" className="text-lg font-medium text-gray-300" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
-          <div className="h-px w-full bg-white/10 my-2"></div>
-          <Link to="/login" className="text-lg font-medium text-purple-400" onClick={() => setIsMenuOpen(false)}>Login</Link>
-          <button onClick={() => { setIsMenuOpen(false); onStart(); }} className="bg-purple-600 text-white px-5 py-3 rounded-xl font-medium w-full text-center">
-            Get Started Free
+        <div className="lg:hidden absolute top-[65px] left-0 w-full bg-[#05050A]/95 backdrop-blur-3xl border-b border-white/10 p-5 flex flex-col gap-4 z-40 shadow-2xl">
+          <Link to="/login" className="text-sm font-medium text-white bg-white/10 px-4 py-2.5 rounded-xl text-center">Login</Link>
+          <button onClick={() => { setIsMenuOpen(false); onStart(); }} className="bg-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold w-full text-center flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(147,51,234,0.3)]">
+            Get Started <ArrowRight size={16} />
           </button>
         </div>
       )}
 
-      {/* Hero */}
-      <main className="max-w-[1600px] mx-auto px-6 md:px-8 pt-8 md:pt-12 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
-        <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col justify-center">
-          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium w-max mb-6">
-            <Zap size={16} /> AI-Powered Study Assistant
+      {/* 🟢 HERO SECTION COMPACT */}
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-6 sm:pt-10 md:pt-12 pb-10 md:pb-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative z-10 items-center">
+        <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col justify-center text-center lg:text-left items-center lg:items-start z-20">
+          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 text-gray-400 text-[10px] font-medium tracking-wide w-max mb-5 bg-white/5">
+            SIH26101 • Smart India Hackathon 2026
           </motion.div>
-          <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-6">
-            Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">AI Teacher.</span><br/>
-            Any Document.<br/>
-            Any <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">Language.</span>
+          <motion.h1 variants={fadeInUp} className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight mb-4">
+            Empowering<br className="hidden lg:block"/>
+            Government Capability<br className="hidden lg:block"/>
+            Through <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Knowledge.</span>
           </motion.h1>
-          <motion.p variants={fadeInUp} className="text-gray-400 text-base md:text-lg max-w-xl mb-10 leading-relaxed">
-            DocuMind turns PDFs and lectures into interactive lessons. Get step-by-step explanations, solve assignments, set reminders, and learn in your own language.
+          <motion.p variants={fadeInUp} className="text-gray-300 text-sm max-w-lg mb-8 leading-relaxed mx-auto lg:mx-0">
+            DocuMind transforms government documents and training content into measurable competencies, personalized learning paths and actionable insights.
           </motion.p>
-          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 mb-12">
-            <button onClick={onStart} className="bg-gradient-to-r from-purple-600 to-violet-600 hover:opacity-90 text-white px-8 py-4 rounded-xl font-medium transition-all shadow-[0_0_30px_rgba(147,51,234,0.4)] flex items-center justify-center gap-2">
-              Start Learning Now <Play size={18} fill="currentColor" />
+          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center gap-3 mb-8 w-full sm:w-auto">
+            <button onClick={onStart} className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.4)]">
+              Explore DocuMind <ArrowRight size={16} />
             </button>
-            <Link to="/how-it-works" className="px-8 py-4 rounded-xl font-medium border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-2">
-              <Play size={18} /> See How It Works
-            </Link>
+            <button disabled className="w-full sm:w-auto px-6 py-3 rounded-xl font-medium border border-white/10 text-white bg-transparent cursor-not-allowed flex items-center justify-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center"><Play size={10} fill="currentColor" className="text-purple-400" /></div> Watch Demo
+            </button>
           </motion.div>
-          <motion.div variants={fadeInUp} className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium text-gray-300">
-            <div className="flex flex-col gap-1"><span className="flex items-center gap-2 text-emerald-400"><ShieldCheck size={16}/> 100% Private</span></div>
-            <div className="flex flex-col gap-1"><span className="flex items-center gap-2 text-yellow-400"><Wifi size={16}/> Works Offline</span></div>
-            <div className="flex flex-col gap-1"><span className="flex items-center gap-2 text-blue-400"><Globe size={16}/> Multi-language</span></div>
+          
+          <motion.div variants={fadeInUp} className="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-3 text-[11px] font-medium text-gray-400">
+            <span className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-purple-400"/> Secure & Private</span>
+            <span className="flex items-center gap-1.5"><Brain size={14} className="text-purple-400"/> AI-Powered</span>
+            <span className="flex items-center gap-1.5"><Globe size={14} className="text-purple-400"/> Multi-Language</span>
+            <span className="flex items-center gap-1.5"><Layers size={14} className="text-cyan-400"/> Integration-Ready</span>
           </motion.div>
         </motion.div>
 
-        {/* Mockup */}
-        <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6, duration: 0.8 }} className="relative rounded-2xl bg-[#0B0B14] border border-white/10 shadow-[0_0_50px_rgba(147,51,234,0.15)] flex overflow-hidden lg:aspect-auto h-[500px] md:h-auto">
-          <div className="w-48 bg-[#07070B] border-r border-white/5 p-4 flex flex-col hidden md:flex">
-            <div className="flex items-center gap-2 mb-6"><Brain className="text-purple-500" size={20} /><span className="font-bold text-sm">DocuMind</span></div>
-            <button className="w-full bg-purple-600/20 text-purple-400 border border-purple-500/30 rounded-lg py-2 text-xs font-semibold flex items-center justify-center gap-1 mb-6"><Plus size={14} /> New Chat</button>
-            <div className="text-[10px] text-gray-500 uppercase font-bold mb-2">Today</div>
-            <div className="text-xs text-gray-300 bg-white/5 p-2 rounded mb-4">💬 Bhai budget kya hai?</div>
-          </div>
-          <div className="flex-1 flex flex-col bg-[#0A0A10] relative">
-            <div className="h-12 border-b border-white/5 flex items-center px-4"><span className="text-xs font-medium flex items-center gap-2 text-gray-300"><GraduationCap size={14} className="text-purple-400" /> Teacher Mode</span></div>
-            <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
-              <div className="self-end bg-purple-600 text-white text-xs px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%]">Bhai budget kya hai?</div>
-              <div className="self-start text-xs text-gray-300 max-w-[90%] leading-relaxed">Budget ek financial plan hota hai jo batata hai ki expected income aur expenses kya honge. Chalo ise asaan shabdon me samajhte hain. 👇</div>
-              <div className="bg-[#12121A] border border-emerald-500/20 rounded-xl p-4 w-full shadow-lg">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs mb-3 font-medium"><GraduationCap size={14} /> Blackboard Style Explanation</div>
-                <div className="font-mono text-gray-300 text-xs space-y-2 leading-loose">
-                  <div><span className="text-purple-400">Budget</span> = Income - Expenses</div>
-                  <div>• <span className="text-cyan-400">Income:</span> Jo paise aap kamate ho</div>
+        {/* Hero Right Image Mockup (Height Reduced) */}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, duration: 0.6 }} className="relative w-full h-[400px] lg:h-[500px] rounded-3xl overflow-hidden lg:ml-4 border border-white/10">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05050A] via-[#05050A]/60 to-[#05050A]/30 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-blue-900/20 backdrop-blur-[1px]" />
+          
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 lg:p-6 scale-90 sm:scale-100 origin-center">
+            
+            <div className="w-full max-w-[380px] bg-[#0A0A10]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl z-10 lg:ml-auto">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-red-500/20 p-2 rounded-lg text-red-400"><FileText size={20} /></div>
+                  <div>
+                    <h4 className="text-[13px] font-bold text-white tracking-wide">Data_Quality_Framework.pdf</h4>
+                    <p className="text-[10px] text-gray-500 font-medium">Government Document</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[9px] text-emerald-400 font-medium">Processing</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 bg-white/5 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-[78%] bg-blue-500 h-full rounded-full shadow-[0_0_10px_#3b82f6]"></div>
+                </div>
+                <span className="text-[11px] font-bold text-white">78%</span>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-2 text-[11px] text-gray-300"><CheckCircle2 size={14} className="text-emerald-400 shrink-0"/> Extracting Key Concepts</div>
+                <div className="flex items-center gap-2 text-[11px] text-gray-300"><CheckCircle2 size={14} className="text-emerald-400 shrink-0"/> Mapping Competencies</div>
+                <div className="flex items-center gap-2 text-[11px] text-gray-300"><CheckCircle2 size={14} className="text-emerald-400 shrink-0"/> Identifying Skill Gaps</div>
+                <div className="flex items-center gap-2 text-[11px] text-gray-500"><CircleDashed size={14} className="text-gray-500 animate-spin shrink-0"/> Generating Recommendations...</div>
+              </div>
+
+              <div className="border-t border-white/10 pt-3">
+                <span className="text-[10px] text-gray-400 font-medium mb-1.5 block">Recommended Learning</span>
+                <div className="bg-[#1A1A24] border border-white/5 rounded-xl p-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-purple-600/20 p-1.5 rounded-lg text-purple-400"><Book size={14}/></div>
+                    <span className="text-[11px] font-semibold text-white">Data Quality Fundamentals</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="p-4 border-t border-white/5">
-              <div className="bg-[#151520] rounded-xl flex items-center p-2 border border-white/10">
-                <input type="text" placeholder="Ask anything..." className="bg-transparent flex-1 outline-none text-xs px-2 text-white" />
-                <button className="bg-purple-600 p-1.5 rounded-lg"><Zap size={14} fill="currentColor" className="text-white" /></button>
-              </div>
+
+            <div className="absolute bottom-6 right-6 text-right hidden md:block">
+              <p className="font-serif italic text-white/80 text-base leading-tight">Better Data.<br/>Better Decisions.<br/>A Stronger India.</p>
+              <div className="w-full h-[2px] bg-gradient-to-r from-orange-500 via-white to-green-500 mt-1.5"></div>
             </div>
           </div>
         </motion.div>
       </main>
 
-      <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-[1600px] mx-auto px-6 md:px-8 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[ { title: "Teacher Mode", desc: "Step-by-step lessons.", icon: <GraduationCap size={24}/> }, { title: "Auto Language", desc: "Hinglish, Hindi or English.", icon: <Languages size={24}/> }, { title: "Auto Memory", desc: "Remembers context.", icon: <Brain size={24}/> }, { title: "Reminders", desc: "Set study goals.", icon: <Bell size={24}/> }, { title: "Voice & Camera", desc: "Ask via voice/photos.", icon: <Camera size={24}/> }, { title: "Works Offline", desc: "PWA + Offline mode.", icon: <Wifi size={24}/> } ].map((feature, i) => (
-            <div key={i} className="bg-[#0B0B14]/80 backdrop-blur-md border border-purple-500/20 rounded-2xl p-5 hover:bg-purple-900/10 hover:border-purple-500/50 transition-all cursor-pointer group">
-              <div className="text-purple-400 mb-3 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
-              <h3 className="font-semibold text-sm text-gray-200 mb-1">{feature.title}</h3>
-              <p className="text-xs text-gray-500">{feature.desc}</p>
+      {/* 🟢 3. TRUST STRIP COMPACT */}
+      <div className="border-y border-white/10 bg-[#0A0A0F] py-4 sm:py-6 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
+            
+            {/* 🔴 Updated Ashoka Stambh Section */}
+            <div className="col-span-2 md:col-span-1 flex items-center gap-3 md:border-r border-white/10 pb-3 md:pb-0 justify-center md:justify-start">
+              <div className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center shrink-0 bg-white/5">
+                <img src={ashokaLogo} alt="Emblem" className="h-5 object-contain opacity-90 drop-shadow-md" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-gray-500">Designed for India's</span>
+                <span className="text-[11px] font-bold text-white tracking-wide">Statistical Workforce</span>
+              </div>
             </div>
+
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <User size={18} className="text-purple-500 shrink-0"/>
+              <div className="flex flex-col text-[10px] font-medium text-gray-400"><span>Role-Based</span><span className="text-gray-300">Competency</span></div>
+            </div>
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <Lock size={18} className="text-purple-500 shrink-0"/>
+              <div className="flex flex-col text-[10px] font-medium text-gray-400"><span>Secure</span><span className="text-gray-300">Data Handling</span></div>
+            </div>
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <BarChart size={18} className="text-purple-500 shrink-0"/>
+              <div className="flex flex-col text-[10px] font-medium text-gray-400"><span>Continuous</span><span className="text-gray-300">Learning</span></div>
+            </div>
+            <div className="flex items-center gap-2 justify-center md:justify-start">
+              <Layers size={18} className="text-purple-500 shrink-0"/>
+              <div className="flex flex-col text-[10px] font-medium text-gray-400"><span>API-Ready</span><span className="text-gray-300">Integration</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 🟢 4. CORE CONCEPT LOOP COMPACT */}
+      <section className="py-12 sm:py-16 relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">From Documents to <span className="text-purple-400">Competencies</span></h2>
+          <p className="text-gray-400 text-xs sm:text-sm">One continuous intelligence loop for learning and workforce development.</p>
+        </div>
+        <div className="flex flex-row md:flex-wrap items-center justify-start md:justify-center gap-2 sm:gap-3 overflow-x-auto md:overflow-visible no-scrollbar pb-4 md:pb-0 snap-x w-full">
+          {[
+            { num: "01", label: "Understand" }, { num: "02", label: "Assess" }, { num: "03", label: "Find Gaps" },
+            { num: "04", label: "Recommend" }, { num: "05", label: "Learn" }, { num: "06", label: "Measure" }, { num: "07", label: "Improve" }
+          ].map((item, i, arr) => (
+            <React.Fragment key={i}>
+              <div className="flex flex-col items-center gap-1.5 min-w-[70px] sm:min-w-[80px] snap-center shrink-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#0B0B14] border border-white/10 flex items-center justify-center text-white font-mono font-bold text-xs shadow-lg relative group">
+                  {item.num}
+                </div>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 text-center">{item.label}</span>
+              </div>
+              {i < arr.length - 1 && <ArrowRight className="hidden md:block text-purple-500/30 shrink-0" size={16} />}
+            </React.Fragment>
           ))}
         </div>
-      </motion.section>
+      </section>
+
+      {/* 🟢 5. CORE FEATURES COMPACT */}
+      <section className="py-12 sm:py-16 bg-[#0A0A0F] border-y border-white/5 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+          <div className="mb-8 sm:mb-12 text-center md:text-left">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">AI-Powered <span className="text-cyan-400">Competency Intelligence</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-[#05050A] border border-white/10 p-5 rounded-2xl">
+              <FileText size={20} className="text-cyan-400 mb-3"/>
+              <h3 className="text-sm font-bold mb-2">Document Intelligence</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">Extract structured knowledge from government policies, operational manuals, and raw training material.</p>
+            </div>
+            <div className="bg-[#05050A] border border-white/10 p-5 rounded-2xl">
+              <Activity size={20} className="text-purple-400 mb-3"/>
+              <h3 className="text-sm font-bold mb-2">Skill-Gap Analysis</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">Identify precise gaps between current capability and the required competencies for specific official roles.</p>
+            </div>
+            <div className="bg-[#05050A] border border-white/10 p-5 rounded-2xl">
+              <Target size={20} className="text-emerald-400 mb-3"/>
+              <h3 className="text-sm font-bold mb-2">Personalized Learning</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">Recommend targeted learning paths based on role, competency gaps, and organizational priorities.</p>
+            </div>
+            <div className="bg-[#05050A] border border-white/10 p-5 rounded-2xl sm:col-span-2 lg:col-span-1">
+              <CheckCircle2 size={20} className="text-blue-400 mb-3"/>
+              <h3 className="text-sm font-bold mb-2">Intelligent Assessment</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">Generate competency-mapped assessments and adaptive quizzes directly from uploaded source material.</p>
+            </div>
+            <div className="bg-[#05050A] border border-white/10 p-5 rounded-2xl sm:col-span-2 lg:col-span-2 relative overflow-hidden">
+              <RefreshCcw size={20} className="text-yellow-400 mb-3 relative z-10"/>
+              <h3 className="text-sm font-bold mb-2 relative z-10">Continuous Competency Update</h3>
+              <p className="text-gray-400 text-xs leading-relaxed max-w-xl relative z-10">Use ongoing learning and assessment outcomes to continuously update and refine official competency profiles in real-time.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟢 6. REAL PRODUCT WORKFLOW COMPACT */}
+      <section className="py-12 sm:py-16 max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">From Document to <span className="text-purple-400">Learning</span></h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-lg mx-auto lg:mx-0">
+              Upload a government document and let DocuMind extract knowledge, map competencies, identify gaps, and recommend personalized learning.
+            </p>
+            <button disabled className="inline-flex items-center justify-center gap-2 text-gray-500 font-medium bg-white/5 border border-white/10 px-5 py-2.5 rounded-lg text-sm cursor-not-allowed">
+              Explore the Workflow <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="bg-[#0B0B14] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl font-mono text-xs relative">
+            <div className="mb-4 border-b border-white/10 pb-4">
+              <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-2">Input Document</div>
+              <div className="flex items-center gap-2 bg-[#13131A] p-2 rounded-lg border border-white/5">
+                <FileUp size={14} className="text-purple-400 shrink-0" />
+                <span className="text-white font-sans font-medium text-xs">Data Quality Framework.pdf</span>
+              </div>
+            </div>
+            <div className="mb-4 border-b border-white/10 pb-4">
+               <div className="flex justify-between items-center mb-2 text-[9px] text-gray-500 uppercase tracking-widest">
+                 <span>Processing Engine</span>
+                 <span className="text-emerald-400">Complete</span>
+               </div>
+               <div className="space-y-1.5 text-[10px] text-gray-400">
+                 <div className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-400"/> Extracting Key Concepts</div>
+                 <div className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-400"/> Mapping Competencies</div>
+                 <div className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-400"/> Identifying Skill Gaps</div>
+               </div>
+            </div>
+            <div>
+              <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5"><Brain size={12} className="text-cyan-400"/> AI Insights</div>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <div className="bg-[#13131A] p-2 rounded-lg border border-white/5">
+                  <div className="text-[8px] text-gray-500 mb-1">KEY CONCEPTS</div>
+                  <div className="text-[10px] text-gray-300 font-sans">• Data Quality<br/>• Validation</div>
+                </div>
+                <div className="bg-[#13131A] p-2 rounded-lg border border-white/5">
+                  <div className="text-[8px] text-gray-500 mb-1">MAPPED COMPETENCIES</div>
+                  <div className="text-[10px] text-purple-300 font-sans">• Frameworks<br/>• Standards</div>
+                </div>
+              </div>
+              <div className="bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-lg">
+                <div className="text-[9px] text-emerald-400 uppercase mb-0.5">Recommended Learning</div>
+                <div className="text-xs font-sans font-semibold text-white">Data Quality Fundamentals</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟢 7. PERSONALIZED INTELLIGENCE COMPACT */}
+      <section className="py-12 sm:py-16 bg-[#0A0A0F] border-y border-white/5 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Learning Should Change <span className="text-cyan-400">With the Learner.</span></h2>
+          </div>
+          <div className="max-w-2xl mx-auto bg-[#05050A] border border-white/10 p-5 sm:p-6 rounded-2xl shadow-xl">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+              <div>
+                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-0.5">Role</div>
+                <div className="text-sm font-bold text-white flex items-center gap-1.5"><Briefcase size={14} className="text-purple-400"/> Statistical Officer</div>
+              </div>
+              <div className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded text-[9px] font-bold text-red-400 flex items-center gap-1">
+                <AlertCircle size={10}/> GAP DETECTED
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 mb-5 text-center sm:text-left">
+              <div>
+                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Current</div>
+                <div className="text-xl font-bold text-white mb-0.5">55%</div>
+                <div className="text-[10px] text-gray-400">Data Quality</div>
+              </div>
+              <div>
+                <div className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Required</div>
+                <div className="text-xl font-bold text-gray-300 mb-0.5">80%</div>
+                <div className="text-[10px] text-gray-400">Target</div>
+              </div>
+              <div>
+                <div className="text-[9px] text-cyan-500 font-bold uppercase tracking-widest mb-1">Gap</div>
+                <div className="text-xl font-bold text-cyan-400 mb-0.5">25%</div>
+                <div className="text-[10px] text-gray-400">To Improve</div>
+              </div>
+            </div>
+            <div className="bg-[#0B0B14] border border-white/5 rounded-xl p-3 sm:p-4">
+              <div className="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5"><Brain size={12}/> AI Path</div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5">
+                  <div className="bg-white/10 w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold text-gray-300 shrink-0">1</div>
+                  <span className="text-xs font-medium text-white truncate">Data Quality Fundamentals</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5">
+                  <div className="bg-white/10 w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold text-gray-300 shrink-0">2</div>
+                  <span className="text-xs font-medium text-white truncate">Quality Frameworks Overview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟢 8. CONTINUOUS LEARNING COMPACT */}
+      <section className="py-10 sm:py-12 relative z-10 max-w-[800px] mx-auto px-4 sm:px-6 md:px-8 text-center border-b border-white/5">
+        <h2 className="text-lg sm:text-xl font-bold mb-2">Learning Doesn't End With a Course.</h2>
+        <div className="flex flex-wrap justify-center items-center gap-2 mt-6 font-mono text-[9px] font-bold text-gray-300 uppercase tracking-widest">
+          <span className="bg-white/5 px-2.5 py-1 rounded border border-white/10">Assess</span> <ArrowRight size={10} className="text-purple-500/50" />
+          <span className="bg-white/5 px-2.5 py-1 rounded border border-white/10">Learn</span> <ArrowRight size={10} className="text-purple-500/50" />
+          <span className="bg-white/5 px-2.5 py-1 rounded border border-white/10">Measure</span> <ArrowRight size={10} className="text-purple-500/50" />
+          <span className="bg-purple-500/20 text-purple-400 px-2.5 py-1 rounded border border-purple-500/30">Update</span>
+        </div>
+      </section>
+
+      {/* 🟢 9. IMPACT COMPACT */}
+      <section className="py-12 sm:py-16 max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">From Individual Learning to <span className="text-purple-400">Workforce Readiness</span></h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-[#0B0B14] border border-white/10 p-5 rounded-2xl">
+            <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><User className="text-purple-400" size={16}/> Individual</h4>
+            <ul className="text-xs text-gray-400 font-medium leading-relaxed"><li>• Personalized paths</li><li>• Skill-gap visibility</li></ul>
+          </div>
+          <div className="bg-[#0B0B14] border border-white/10 p-5 rounded-2xl">
+            <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><Users className="text-cyan-400" size={16}/> Team</h4>
+            <ul className="text-xs text-gray-400 font-medium leading-relaxed"><li>• Cohort insights</li><li>• Targeted training</li></ul>
+          </div>
+          <div className="bg-[#0B0B14] border border-white/10 p-5 rounded-2xl">
+            <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2"><Briefcase className="text-emerald-400" size={16}/> Organization</h4>
+            <ul className="text-xs text-gray-400 font-medium leading-relaxed"><li>• Macro skill gaps</li><li>• Competency analytics</li></ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟢 10. SIH / GOV CONTEXT WITH ASHOKA STAMBH */}
+      <section className="pt-6 pb-12 sm:pb-16 px-4 sm:px-6 relative z-10">
+        <div className="max-w-[700px] mx-auto bg-gradient-to-b from-[#0B0B14] to-[#05050A] border border-white/10 rounded-2xl p-6 sm:p-8 text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 via-white to-green-500 opacity-80"></div>
+          
+          <div className="flex justify-center mb-5">
+            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-14 sm:h-16 opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+          </div>
+
+          <h3 className="text-lg sm:text-xl font-bold mb-2">Built for a Skilled, Data-Ready Public Workforce</h3>
+          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 max-w-lg mx-auto">
+            DocuMind is designed around role-based competency development, continuous learning, and measurable workforce capability.
+          </p>
+          <div className="inline-flex flex-col items-center justify-center">
+            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1.5">Project Context</span>
+            <span className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 tracking-wider">
+              Smart India Hackathon 2026 • SIH26101
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 🟢 11. FINAL CTA */}
+      <section className="py-12 sm:py-16 relative z-10 border-t border-white/5 bg-[#0B0B14]">
+        <div className="max-w-[800px] mx-auto px-4 text-center relative">
+          <h2 className="text-2xl sm:text-4xl font-bold mb-3">From Knowledge to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Capability.</span></h2>
+          <button onClick={onStart} className="mt-4 bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+            Explore DocuMind →
+          </button>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

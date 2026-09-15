@@ -30,7 +30,7 @@ export default function Dashboard() {
   const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [successToast, setSuccessToast] = useState("");
-  const [isSending, setIsSending] = useState(false); // 🔴 Loading state for send button
+  const [isSending, setIsSending] = useState(false);
   
   const fileInputRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -94,7 +94,8 @@ export default function Dashboard() {
     setTimeout(() => setSuccessToast(""), 3500);
   };
 
-  // 🔴 SEND MESSAGE FUNCTION (Creates real database entry)
+  // 🔴 UPDATED: SEND MESSAGE FUNCTION
+  // Yeh function ab sirf document create karega aur user ko naye ChatRoom page par bhej dega.
   const handleSendMessage = async (textToSend = inputText) => {
     if (!textToSend.trim() && !attachedFile) return;
     if (!user) return;
@@ -102,33 +103,31 @@ export default function Dashboard() {
     setIsSending(true);
 
     try {
-      // Determine chat title and type based on input
       let chatTitle = attachedFile ? attachedFile : textToSend.substring(0, 30) + "...";
       let chatType = attachedFile ? (attachedFile.includes('.cpp') || attachedFile.includes('.py') ? 'code' : 'pdf') : 'text';
 
-      // Save to Firebase
-      await addDoc(collection(db, "chats"), {
+      // Save to Firebase and initialize with the first user message
+      const docRef = await addDoc(collection(db, "chats"), {
         userId: user.uid,
         title: chatTitle,
         type: chatType,
-        lastMessage: textToSend,
+        messages: [{ role: "user", content: textToSend }], // 🔴 Pehla prompt yahan save kiya
         createdAt: serverTimestamp()
       });
 
-      // Clear Inputs and Show Success
       setInputText("");
       setAttachedFile(null);
-      showToast("Session started successfully!");
+      
+      // 🔴 REDIRECT: Naya chat bante hi user ko us screen par bhej do
+      navigate(`/dashboard/chat/${docRef.id}`);
       
     } catch (error) {
       console.error("Error sending message:", error);
       showToast("Failed to start session.");
-    } finally {
-      setIsSending(false);
+      setIsSending(false); // Only set to false on error, otherwise let the new page load
     }
   };
 
-  // 🔴 Handle Enter Key Press
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -196,7 +195,7 @@ export default function Dashboard() {
                 variants={itemVariants}
                 whileHover={{ y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(147,51,234,0.3)" }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => handleSendMessage(item.actionQuery)} /* 🔴 Card click automatically sends query */
+                onClick={() => handleSendMessage(item.actionQuery)} 
                 className="bg-[#1A1A1E]/80 backdrop-blur-xl p-5 rounded-3xl cursor-pointer transition-colors border border-white/5 hover:border-purple-500/50 flex flex-col h-44 justify-between group"
               >
                 <div>
@@ -262,7 +261,7 @@ export default function Dashboard() {
                 rows="1"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={handleKeyDown} // 🔴 Enables sending with Enter key
+                onKeyDown={handleKeyDown} 
                 placeholder="Ask about your syllabus, notes, code, or homework..." 
                 className="flex-1 bg-transparent px-3 py-3.5 text-white outline-none placeholder-gray-500 text-[15px] resize-none max-h-32 min-h-[44px]"
                 style={{ overflowY: inputText.length > 50 ? 'auto' : 'hidden' }}

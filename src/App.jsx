@@ -24,6 +24,7 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword"; 
 import ContactSupport from "./pages/ContactSupport";
 import Dashboard from './pages/Dashboard';
+import ChatRoom from "./pages/ChatRoom";
 
 // 🔴 NAYE DASHBOARD PAGES IMPORTS
 import Activity from "./pages/Activity";
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="/support" element={<ContactSupport />} />
+          <Route path="chat/:chatId" element={<ChatRoom />} />
           
           {/* --- 🔴 PRIVATE GATEWAY ROUTES --- */}
           <Route path="/dashboard" element={<DashboardLayout />}>

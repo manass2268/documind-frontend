@@ -1,32 +1,47 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+// functions/index.js
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+// Apni API key ko Firebase Environment variables me set karna hoga
+// Command: firebase functions:secrets:set GEMINI_API_KEY
+const apiKey = process.env.GEMINI_API_KEY || "YOUR_FALLBACK_API_KEY"; // Hackathon ke liye fallback use kar sakte hain
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+exports.generateAIResponse = onCall({ cors: true }, async (request) => {
+  // 1. Security Check: Only logged-in users can call this API
+  if (!request.auth) {
+    throw new HttpsError(
+      "unauthenticated",
+      "User must be logged in to use DocuMind AI.",
+    );
+  }
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+  const { prompt, history } = request.data;
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    // Core Vision: Setup system instructions for the "AI Teacher" persona
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction:
+        "You are DocuMind, an expert AI Teacher. Explain concepts step-by-step, use simple language, and provide examples. Format with clear bullet points.",
+    });
+
+    // Format history for Gemini
+    const formattedHistory = (history || []).map((msg) => ({
+      role: msg.role === "ai" ? "model" : "user",
+      parts: [{ text: msg.content }],
+    }));
+
+    const chat = model.startChat({ history: formattedHistory });
+    const result = await chat.sendMessage(prompt);
+
+    return { text: result.response.text() };
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    throw new HttpsError(
+      "internal",
+      "DocuMind encountered an error processing your document.",
+    );
+  }
+});
