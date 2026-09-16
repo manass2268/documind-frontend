@@ -1,19 +1,55 @@
-# React + Vite
+# 🧠 DocuMind
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **From Knowledge to Capability.**  
+> An AI-Powered Competency & Learning Intelligence Platform designed for India's Official Statistical Workforce.
 
-Currently, two official plugins are available:
+![Smart India Hackathon 2026](https://img.shields.io/badge/Smart_India_Hackathon-2026-orange?style=for-the-badge)
+![Problem Statement](https://img.shields.io/badge/SIH26101-MoSPI-blue?style=for-the-badge)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🎯 Project Context
+This prototype is built for the **Smart India Hackathon 2026**. 
+- **Problem Statement ID:** SIH26101
+- **Organization:** Ministry of Statistics & Programme Implementation (MoSPI), Government of India.
+- **Goal:** AI-enabled Skill Intelligence and Learning Platform for India’s Official Statistical System.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 🚀 Overview
+**DocuMind** is not just a generic LMS or PDF reader. It is an intelligent ecosystem that transforms static government policies, training manuals, and framework documents into dynamic, measurable capabilities. It creates a continuous loop of learning, assessment, and workforce development.
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+### ⚙️ Core Workflow:
+`Upload Document` ➔ `Extract Knowledge` ➔ `Map Competencies` ➔ `Identify Skill Gaps` ➔ `Recommend Personalized Learning` ➔ `Assess & Update Capabilities`
 
-## Expanding the Oxlint configuration
+## ✨ Key Features
+*   📄 **Document Intelligence:** Extracts structured knowledge from government policies, operational manuals, and raw training materials.
+*   📊 **Skill-Gap Analysis:** Identifies precise gaps between an official's current capability and the required competencies for their role.
+*   🎯 **Personalized Learning:** Recommends targeted learning paths based on specific role requirements and organizational priorities.
+*   ✅ **Intelligent Assessment:** Automatically generates competency-mapped assessments and adaptive quizzes directly from uploaded source materials.
+*   🔄 **Continuous Competency Update:** Uses ongoing learning and assessment outcomes to continuously update and refine official competency profiles in real-time.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 💻 Tech Stack
+*   **Frontend Library:** React.js
+*   **Build Tool:** Vite
+*   **Styling:** Tailwind CSS (Dark Glassmorphic UI)
+*   **Animations:** Framer Motion
+*   **Icons:** Lucide React
+*   **Routing:** React Router DOM
+*   **Backend / Auth:** Firebase (Authentication, Cloud Functions)
+
+## 🛠️ Getting Started (Local Setup)
+
+To run this project locally, follow these steps:
+
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/manass2268/documind.git](https://github.com/manass2268/documind.git)
+   cd documind
