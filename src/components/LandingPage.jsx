@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   Search, ChevronDown, FileText, BarChart2, GraduationCap, 
-  BrainCircuit, ChevronRight, User, BookOpen, HelpCircle, Phone, 
-  Building2, ArrowRight, Volume2, Newspaper, ExternalLink, Eye, 
-  Database, Network, UploadCloud, Cpu, CheckCircle2, TrendingUp, ShieldCheck
+  BrainCircuit, ChevronRight, User, BookOpen, HelpCircle, 
+  Building2, ArrowRight, Volume2, Newspaper, ExternalLink, 
+  Database, Network, UploadCloud, Cpu, CheckCircle2, TrendingUp, ShieldCheck, PlayCircle
 } from "lucide-react";
 import Footer from "./Footer";
 
@@ -12,11 +12,13 @@ import Footer from "./Footer";
 import ashokaLogo from "../assets/ashoka.png";
 
 export default function LandingPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#333333] font-sans overflow-x-hidden flex flex-col selection:bg-[#003366] selection:text-white">
+    <div className="min-h-screen bg-[#F4F6F9] text-[#333333] font-sans overflow-x-hidden flex flex-col selection:bg-[#FF9933] selection:text-white">
       
       {/* 🟢 1. ACCESSIBILITY TOP BAR */}
-      <div className="bg-[#1E293B] border-b border-gray-700 py-1.5 px-4 sm:px-8 text-[11px] sm:text-xs font-medium text-gray-300 flex flex-wrap justify-between items-center z-50 relative">
+      <div className="bg-[#1A202C] border-b border-gray-700 py-1.5 px-4 sm:px-8 text-[11px] sm:text-xs font-medium text-gray-300 flex flex-wrap justify-between items-center z-50 relative shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded backdrop-blur-sm">
             <span className="text-[#FF9933] font-bold leading-none">■</span>
@@ -61,14 +63,12 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-4 bg-[#F0F4F8] px-4 py-2 rounded-xl border border-blue-100 shadow-inner">
+          <div className="hidden lg:flex items-center gap-4 bg-[#F8FAFC] px-4 py-2 rounded-xl border border-gray-100 shadow-inner">
             <div className="flex flex-col text-right">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Digital India Initiative</span>
-              <span className="text-sm font-extrabold bg-gradient-to-r from-[#003366] to-blue-600 bg-clip-text text-transparent">
-                Data Intelligence Unit
-              </span>
+              <span className="text-sm font-extrabold text-[#003366]">Data Intelligence Unit</span>
             </div>
-            <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-blue-100 flex items-center justify-center text-[#003366]">
+            <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-gray-200 flex items-center justify-center text-[#003366]">
               <Database size={24} />
             </div>
           </div>
@@ -77,7 +77,7 @@ export default function LandingPage() {
       </header>
 
       {/* 🟢 3. PRIMARY NAVIGATION BAR */}
-      <nav className="bg-gradient-to-r from-[#002244] via-[#003366] to-[#002244] text-white shadow-lg sticky top-0 z-50 border-b-4 border-[#FF9933]">
+      <nav className="bg-[#002244] text-white shadow-lg sticky top-0 z-50 border-b-4 border-[#FF9933]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 flex justify-between items-center h-14">
           
           <div className="hidden lg:flex items-center text-[13px] font-medium h-full">
@@ -90,12 +90,12 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-5 w-full lg:w-auto justify-between lg:justify-end h-full py-2">
-            <div className="hidden md:flex items-center bg-white/10 rounded-md overflow-hidden h-9 w-64 border border-white/20 focus-within:bg-white focus-within:border-white transition-all group">
-              <input type="text" placeholder="Search MoSPI..." className="w-full h-full px-3 text-sm text-gray-800 outline-none bg-transparent group-focus-within:bg-white placeholder-gray-300 group-focus-within:placeholder-gray-500" />
-              <button className="h-full px-4 text-white group-focus-within:text-[#003366] hover:bg-white/20 group-focus-within:hover:bg-gray-100 transition-colors"><Search size={16} /></button>
+            <div className="hidden md:flex items-center bg-[#001730] rounded-md overflow-hidden h-9 w-64 border border-[#003366] focus-within:border-gray-400 transition-all group">
+              <input type="text" placeholder="Search MoSPI..." className="w-full h-full px-3 text-sm text-white outline-none bg-transparent placeholder-gray-400" />
+              <button className="h-full px-4 text-gray-400 hover:text-white transition-colors"><Search size={16} /></button>
             </div>
             
-            <Link to="/login" className="flex items-center gap-2 bg-[#E53E3E] hover:bg-red-700 text-white px-6 py-2 rounded text-xs font-bold transition-all shadow-md shadow-red-900/50 hover:shadow-lg hover:-translate-y-0.5 uppercase tracking-wider">
+            <Link to="/login" className="flex items-center gap-2 bg-[#E53E3E] hover:bg-red-600 text-white px-6 py-2 rounded text-xs font-bold transition-all shadow-md shadow-red-900/50 hover:shadow-lg uppercase tracking-wider">
               <User size={16} /> Official Login
             </Link>
           </div>
@@ -116,57 +116,66 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 🟢 5. DYNAMIC HERO SECTION */}
-      <main id="main-content" className="relative bg-white border-b border-gray-200 overflow-hidden">
-        {/* Abstract Background Elements */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-100 via-white to-transparent opacity-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-orange-50 via-white to-transparent opacity-60 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3"></div>
-
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* 🟢 5. DYNAMIC REAL-IMAGE HERO SECTION */}
+      <main id="main-content" className="relative bg-[#FFFFFF] border-b border-gray-200 overflow-hidden">
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
-          <div className="flex flex-col z-20">
-            <div className="inline-flex items-center gap-2 bg-[#F0F7FF] text-[#003366] text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200 uppercase tracking-widest mb-6 w-max shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex flex-col z-20 pr-0 lg:pr-10">
+            <div className="inline-flex items-center gap-2 bg-[#EBF8FF] text-[#003366] text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200 uppercase tracking-widest mb-6 w-max shadow-sm">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#003366]"></span>
               </span>
-              Digital Capacity Building Initiative
+              Next-Gen Capacity Building
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-extrabold text-[#003366] mb-4 tracking-tight font-serif leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#003366] mb-4 tracking-tight font-serif leading-tight">
               Docu<span className="text-[#FF9933]">Mind</span> AI
             </h1>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-snug">
               Transforming Official Documents into <br/>
-              <span className="bg-gradient-to-r from-[#003366] to-blue-500 bg-clip-text text-transparent">Measurable Workforce Capabilities.</span>
+              <span className="text-[#138808]">Measurable Workforce Capabilities.</span>
             </h2>
             
-            <p className="text-gray-600 text-base leading-relaxed mb-10 max-w-lg text-justify font-medium">
+            <p className="text-gray-600 text-base leading-relaxed mb-8 max-w-lg font-medium">
               An AI-driven institutional platform designed to execute skill-gap analysis, map role-based competencies, and provide tailored learning recommendations for India's official statistical ecosystem.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link to="/login" className="w-full sm:w-auto bg-[#003366] hover:bg-[#001f3f] text-white px-8 py-3.5 rounded-lg text-sm shadow-lg shadow-blue-900/20 font-bold transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
-                Access AI Platform <ArrowRight size={18} />
+              <Link to="/login" className="w-full sm:w-auto bg-[#003366] hover:bg-[#001f3f] text-white px-8 py-3.5 rounded-lg text-sm shadow-xl shadow-blue-900/20 font-bold transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+                Launch AI Platform <ArrowRight size={18} />
               </Link>
-              <a href="#" className="w-full sm:w-auto px-8 py-3.5 rounded-lg text-sm font-bold border-2 border-gray-200 text-gray-700 hover:border-[#003366] hover:text-[#003366] hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
-                <BookOpen size={18} /> Platform Guidelines
-              </a>
+              <button className="w-full sm:w-auto px-8 py-3.5 rounded-lg text-sm font-bold border-2 border-gray-200 text-gray-700 hover:border-[#003366] hover:text-[#003366] transition-all flex items-center justify-center gap-2 group">
+                <PlayCircle size={18} className="group-hover:text-[#FF9933] transition-colors" /> Watch Demo
+              </button>
             </div>
           </div>
 
-          {/* Graphic Area with Floating Animation */}
-          <div className="relative w-full h-[350px] md:h-[450px] flex items-center justify-end rounded-2xl overflow-hidden border border-gray-100 shadow-2xl bg-gradient-to-tr from-[#F8FAFC] to-white group">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center grayscale opacity-10 mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"></div>
+          {/* REAL IMAGE VISUALIZATION */}
+          <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl group border-[6px] border-white">
+            {/* Real Unsplash Image (Office/Data center concept) */}
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop" alt="AI Data Dashboard" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             
-            {/* Floating Glassmorphism Card */}
-            <div className="relative z-10 p-8 flex flex-col items-end text-right w-full animate-[bounce_4s_infinite]">
-              <div className="bg-white/80 backdrop-blur-md border-l-4 border-[#FF9933] p-6 shadow-xl rounded-xl max-w-sm border-t border-r border-b border-white/50">
-                <div className="bg-[#EBF8FF] w-12 h-12 flex items-center justify-center rounded-full text-[#003366] mb-4 ml-auto">
-                  <BrainCircuit size={24} />
+            {/* Gradient Overlay to make text pop */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001730] via-[#003366]/40 to-transparent"></div>
+            
+            {/* Floating UI Elements (Makes it Zinda!) */}
+            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-2xl text-white max-w-[200px] animate-[bounce_4s_infinite]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-300">Live Analysis</span>
                 </div>
-                <h3 className="text-[#003366] font-extrabold text-xl mb-2">Empowering Digital India</h3>
-                <p className="text-sm text-gray-600 font-semibold leading-relaxed">Bridging the gap between static knowledge and actionable public service capabilities through Artificial Intelligence.</p>
+                <h3 className="text-xl font-bold">98.5%</h3>
+                <p className="text-xs text-gray-300">Data Extraction Accuracy</p>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-md border-l-4 border-[#FF9933] p-5 shadow-2xl rounded-xl max-w-[220px] hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                <div className="bg-[#EBF8FF] w-10 h-10 flex items-center justify-center rounded-full text-[#003366] mb-3">
+                  <BrainCircuit size={20} />
+                </div>
+                <h3 className="text-[#003366] font-extrabold text-sm mb-1">Knowledge Graph</h3>
+                <p className="text-[11px] text-gray-600 font-semibold leading-relaxed">Mapping roles to training modules instantly.</p>
               </div>
             </div>
           </div>
@@ -174,186 +183,151 @@ export default function LandingPage() {
         </div>
       </main>
 
-      {/* 🟢 6. NEW: IMPACT STATISTICS */}
-      <section className="py-12 bg-[#003366] text-white border-b-4 border-[#FF9933] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/20">
-            <div className="flex flex-col items-center justify-center hover:-translate-y-1 transition-transform">
-              <span className="text-4xl md:text-5xl font-black mb-2 text-[#FF9933]">10K+</span>
-              <span className="text-xs md:text-sm font-medium uppercase tracking-wider text-blue-200">Policies Parsed</span>
+      {/* 🟢 6. NEW: AI PLATFORM PREVIEW (Full Width Image Section) */}
+      <section className="py-16 bg-[#001730] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white font-serif mb-4">A Glimpse into the Future of Governance</h2>
+          <p className="text-blue-200 text-sm md:text-base max-w-2xl mx-auto mb-10">Experience a unified dashboard that converts heavy government PDFs into interactive learning pathways and competency scores.</p>
+          
+          {/* Mockup Container with Real Image */}
+          <div className="relative mx-auto max-w-5xl rounded-t-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-[8px] border-l-[8px] border-r-[8px] border-gray-800 bg-gray-900 group">
+            {/* Fake Browser Mac/Windows Header */}
+            <div className="bg-gray-800 px-4 py-3 flex items-center gap-2 border-b border-gray-700">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="ml-4 bg-gray-700 text-xs text-gray-400 px-4 py-1 rounded-md w-full max-w-sm flex items-center gap-2">
+                <ShieldCheck size={12}/> secure.mospi.gov.in/documind
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center hover:-translate-y-1 transition-transform">
-              <span className="text-4xl md:text-5xl font-black mb-2 text-white">50+</span>
-              <span className="text-xs md:text-sm font-medium uppercase tracking-wider text-blue-200">Ministries Covered</span>
-            </div>
-            <div className="flex flex-col items-center justify-center hover:-translate-y-1 transition-transform">
-              <span className="text-4xl md:text-5xl font-black mb-2 text-[#138808]">98%</span>
-              <span className="text-xs md:text-sm font-medium uppercase tracking-wider text-blue-200">AI Accuracy</span>
-            </div>
-            <div className="flex flex-col items-center justify-center hover:-translate-y-1 transition-transform">
-              <span className="text-4xl md:text-5xl font-black mb-2 text-white">1M+</span>
-              <span className="text-xs md:text-sm font-medium uppercase tracking-wider text-blue-200">Workforce Mapped</span>
-            </div>
+            {/* Real Dashboard Image */}
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop" alt="Dashboard Interface" className="w-full h-auto opacity-80 group-hover:opacity-100 transition-opacity duration-500 mix-blend-luminosity hover:mix-blend-normal" />
+            
+            {/* Gradient Fade out at bottom to blend with next section */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#001730] to-transparent"></div>
           </div>
         </div>
       </section>
 
-      {/* 🟢 7. NEW: HOW IT WORKS (Workflow) */}
-      <section className="py-16 bg-white border-b border-gray-100">
+      {/* 🟢 7. CORE AI FUNCTIONAL MODULES (With Image Cards) */}
+      <section className="py-20 bg-white border-t border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
           
-          <div className="text-center mb-12">
-            <h3 className="text-sm font-bold text-[#FF9933] uppercase tracking-widest mb-2">The Architecture</h3>
-            <h2 className="text-3xl font-extrabold text-[#003366] font-serif">Intelligent Workflow Engine</h2>
-            <div className="w-20 h-1.5 bg-gradient-to-r from-[#003366] to-[#FF9933] mx-auto mt-4 rounded-full"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Connecting Line for Desktop */}
-            <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-gray-200 via-blue-200 to-gray-200 -translate-y-1/2 z-0"></div>
-
-            {/* Step 1 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                <UploadCloud size={36} />
-              </div>
-              <h4 className="text-lg font-bold text-gray-800 mb-2">1. Data Ingestion</h4>
-              <p className="text-sm text-gray-500 px-4">Upload official PDF manuals, guidelines, and circulars securely into the MoSPI cloud.</p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center text-[#FF9933] mb-6 group-hover:bg-[#FF9933] group-hover:text-white transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                <Cpu size={36} />
-              </div>
-              <h4 className="text-lg font-bold text-gray-800 mb-2">2. AI Processing</h4>
-              <p className="text-sm text-gray-500 px-4">NLP engine automatically extracts competencies, roles, and generates Knowledge Graphs.</p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center text-[#138808] mb-6 group-hover:bg-[#138808] group-hover:text-white transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                <ShieldCheck size={36} />
-              </div>
-              <h4 className="text-lg font-bold text-gray-800 mb-2">3. Actionable Mapping</h4>
-              <p className="text-sm text-gray-500 px-4">Instant skill-gap reports and personalized learning recommendations are deployed.</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 🟢 8. CORE FUNCTIONAL MODULES (Upgraded Cards) */}
-      <section className="py-16 bg-[#F8FAFC]">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
-          
-          <div className="flex flex-col items-center mb-12">
-            <h3 className="text-3xl font-extrabold text-[#003366] font-serif">Core AI Functional Modules</h3>
-            <div className="w-20 h-1.5 bg-[#FF9933] mx-auto mt-4 rounded-full"></div>
+          <div className="flex flex-col items-center mb-12 text-center">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-[#003366] font-serif">Intelligent Processing Modules</h3>
+            <div className="w-24 h-1.5 bg-gradient-to-r from-[#003366] to-[#FF9933] mx-auto mt-5 rounded-full"></div>
+            <p className="text-gray-500 mt-4 max-w-xl text-sm">Powered by advanced NLP and Machine Learning to streamline government workflows.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {/* Card 1 */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-300 group relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#003366] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              <div className="bg-blue-50 w-14 h-14 flex items-center justify-center rounded-xl text-[#003366] mb-6 group-hover:scale-110 group-hover:bg-[#003366] group-hover:text-white transition-all duration-300">
-                <Network size={28} />
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:-translate-y-2 transition-transform duration-300 group">
+              <div className="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Extraction" />
+                <div className="absolute inset-0 bg-[#003366]/60"></div>
+                <Network size={32} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
               </div>
-              <h4 className="font-extrabold text-gray-900 text-lg mb-3">Policy Extraction</h4>
-              <p className="text-sm text-gray-500 leading-relaxed font-medium">Automated NLP parsing of PDF manuals, circulars, and frameworks into structured knowledge graphs.</p>
+              <div className="p-6">
+                <h4 className="font-extrabold text-gray-900 text-lg mb-2">Policy Extraction</h4>
+                <p className="text-sm text-gray-500 leading-relaxed font-medium">Automated parsing of heavy PDF manuals into structured knowledge graphs.</p>
+              </div>
             </div>
 
-            {/* Card 2 */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 hover:shadow-2xl hover:shadow-green-900/10 transition-all duration-300 group relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#138808] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              <div className="bg-green-50 w-14 h-14 flex items-center justify-center rounded-xl text-[#138808] mb-6 group-hover:scale-110 group-hover:bg-[#138808] group-hover:text-white transition-all duration-300">
-                <TrendingUp size={28} />
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:-translate-y-2 transition-transform duration-300 group">
+              <div className="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Analysis" />
+                <div className="absolute inset-0 bg-[#138808]/60"></div>
+                <TrendingUp size={32} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
               </div>
-              <h4 className="font-extrabold text-gray-900 text-lg mb-3">Skill Gap Analysis</h4>
-              <p className="text-sm text-gray-500 leading-relaxed font-medium">AI-driven evaluation comparing current employee skills against mandated role competencies.</p>
+              <div className="p-6">
+                <h4 className="font-extrabold text-gray-900 text-lg mb-2">Skill Gap Analysis</h4>
+                <p className="text-sm text-gray-500 leading-relaxed font-medium">AI-driven evaluation comparing employee skills against role competencies.</p>
+              </div>
             </div>
 
-            {/* Card 3 */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 hover:shadow-2xl hover:shadow-orange-900/10 transition-all duration-300 group relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#FF9933] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              <div className="bg-orange-50 w-14 h-14 flex items-center justify-center rounded-xl text-[#DD6B20] mb-6 group-hover:scale-110 group-hover:bg-[#FF9933] group-hover:text-white transition-all duration-300">
-                <GraduationCap size={28} />
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:-translate-y-2 transition-transform duration-300 group">
+              <div className="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Learning" />
+                <div className="absolute inset-0 bg-[#FF9933]/70"></div>
+                <GraduationCap size={32} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
               </div>
-              <h4 className="font-extrabold text-gray-900 text-lg mb-3">Adaptive Learning</h4>
-              <p className="text-sm text-gray-500 leading-relaxed font-medium">Generation of customized training pathways to bridge identified institutional skill gaps.</p>
+              <div className="p-6">
+                <h4 className="font-extrabold text-gray-900 text-lg mb-2">Adaptive Learning</h4>
+                <p className="text-sm text-gray-500 leading-relaxed font-medium">Customized training pathways automatically generated to bridge skill gaps.</p>
+              </div>
             </div>
 
-            {/* Card 4 */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 hover:shadow-2xl hover:shadow-gray-900/10 transition-all duration-300 group relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gray-800 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              <div className="bg-gray-100 w-14 h-14 flex items-center justify-center rounded-xl text-gray-700 mb-6 group-hover:scale-110 group-hover:bg-gray-800 group-hover:text-white transition-all duration-300">
-                <CheckCircle2 size={28} />
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:-translate-y-2 transition-transform duration-300 group">
+              <div className="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=500&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Assessment" />
+                <div className="absolute inset-0 bg-gray-800/60"></div>
+                <CheckCircle2 size={32} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
               </div>
-              <h4 className="font-extrabold text-gray-900 text-lg mb-3">Intelligent Assessment</h4>
-              <p className="text-sm text-gray-500 leading-relaxed font-medium">Real-time generation of MCQs and evaluation metrics directly from source documents.</p>
+              <div className="p-6">
+                <h4 className="font-extrabold text-gray-900 text-lg mb-2">Live Assessment</h4>
+                <p className="text-sm text-gray-500 leading-relaxed font-medium">Real-time generation of MCQs directly from uploaded source documents.</p>
+              </div>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* 🟢 9. ANNOUNCEMENTS & QUICK LINKS */}
-      <section className="py-12 bg-white border-t border-gray-200 flex-1">
+      {/* 🟢 8. REALISTIC NEWS & QUICK LINKS */}
+      <section className="py-12 bg-[#F8FAFC] border-t border-gray-200 flex-1">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             
-            {/* Circulars */}
-            <div className="lg:col-span-2 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            {/* Circulars (Now with Image Thumbnails) */}
+            <div className="lg:col-span-2 border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
               <div className="bg-[#003366] px-5 py-3.5 flex justify-between items-center">
-                <h3 className="font-bold text-white text-base">Official Announcements & Circulars</h3>
+                <h3 className="font-bold text-white text-base">Latest Circulars & Notifications</h3>
                 <a href="#" className="text-xs text-blue-200 hover:text-white uppercase font-bold tracking-wider transition-colors">View All</a>
               </div>
-              <div className="bg-white">
-                <ul className="divide-y divide-gray-100">
-                  <li className="p-5 hover:bg-blue-50 transition-colors flex gap-5 items-start group cursor-pointer">
-                    <div className="bg-blue-50 text-[#003366] text-center px-4 py-2 rounded-md border border-blue-100 shrink-0 group-hover:bg-[#003366] group-hover:text-white transition-colors">
-                      <span className="block text-xl font-black">18</span>
-                      <span className="block text-xs uppercase font-bold tracking-wider">Sep</span>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-bold text-gray-900 group-hover:text-[#003366] transition-colors mb-1">Notification regarding integration of DocuMind with existing HRMS portals.</h4>
-                      <p className="text-xs text-gray-500 flex items-center gap-2 font-medium"><FileText size={14}/> PDF (245 KB) <span className="bg-red-500 text-white px-1.5 py-0.5 text-[9px] rounded-sm animate-pulse">NEW</span></p>
-                    </div>
-                  </li>
-                  <li className="p-5 hover:bg-blue-50 transition-colors flex gap-5 items-start group cursor-pointer">
-                    <div className="bg-blue-50 text-[#003366] text-center px-4 py-2 rounded-md border border-blue-100 shrink-0 group-hover:bg-[#003366] group-hover:text-white transition-colors">
-                      <span className="block text-xl font-black">05</span>
-                      <span className="block text-xs uppercase font-bold tracking-wider">Sep</span>
-                    </div>
-                    <div>
-                      <h4 className="text-base font-bold text-gray-900 group-hover:text-[#003366] transition-colors mb-1">Guidelines for uploading division-wise training manuals to the AI engine.</h4>
-                      <p className="text-xs text-gray-500 flex items-center gap-2 font-medium"><FileText size={14}/> PDF (1.2 MB)</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+              <ul className="divide-y divide-gray-100">
+                <li className="p-5 hover:bg-blue-50 transition-colors flex gap-5 items-start group cursor-pointer">
+                  {/* Real Document Thumbnail Image */}
+                  <div className="w-20 h-20 shrink-0 rounded-md overflow-hidden border border-gray-200 shadow-sm relative">
+                    <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=150&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="News" />
+                    <div className="absolute bottom-0 left-0 right-0 bg-[#003366]/90 text-white text-[10px] font-bold text-center py-0.5">18 SEP</div>
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-gray-900 group-hover:text-[#003366] transition-colors mb-1.5 leading-snug">Notification regarding integration of DocuMind with existing HRMS portals across divisions.</h4>
+                    <p className="text-xs text-gray-500 flex items-center gap-2 font-medium"><FileText size={14} className="text-red-500"/> PDF Download (245 KB) <span className="bg-red-500 text-white px-1.5 py-0.5 text-[9px] rounded-sm animate-pulse">NEW</span></p>
+                  </div>
+                </li>
+                <li className="p-5 hover:bg-blue-50 transition-colors flex gap-5 items-start group cursor-pointer">
+                  <div className="w-20 h-20 shrink-0 rounded-md overflow-hidden border border-gray-200 shadow-sm relative">
+                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=150&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="News" />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gray-800/90 text-white text-[10px] font-bold text-center py-0.5">05 SEP</div>
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-gray-900 group-hover:text-[#003366] transition-colors mb-1.5 leading-snug">Guidelines for uploading and parsing division-wise training manuals to the AI engine.</h4>
+                    <p className="text-xs text-gray-500 flex items-center gap-2 font-medium"><FileText size={14} className="text-red-500"/> PDF Download (1.2 MB)</p>
+                  </div>
+                </li>
+              </ul>
             </div>
 
             {/* Quick Links */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-gray-50">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
               <div className="bg-[#003366] px-5 py-3.5">
                 <h3 className="font-bold text-white text-base">Important Links</h3>
               </div>
               <div className="p-3">
-                <Link to="/login" className="flex items-center gap-4 p-4 border-b border-gray-200 hover:bg-white rounded-t-md text-sm font-bold text-[#003366] transition-colors group shadow-sm hover:shadow-md">
+                <Link to="/login" className="flex items-center gap-4 p-4 border-b border-gray-100 hover:bg-blue-50 rounded-t-md text-sm font-bold text-[#003366] transition-colors group shadow-sm hover:shadow-md">
                   <div className="bg-orange-100 p-2 rounded text-[#FF9933]"><User size={18} /></div>
                   Official Login Portal 
                   <ChevronRight size={16} className="ml-auto transform group-hover:translate-x-1 transition-transform"/>
                 </Link>
-                <a href="#" className="flex items-center gap-4 p-4 border-b border-gray-200 hover:bg-white text-sm font-semibold text-gray-700 hover:text-[#003366] transition-colors group">
-                  <div className="bg-gray-100 p-2 rounded text-gray-500 group-hover:bg-blue-50 group-hover:text-[#003366] transition-colors"><ExternalLink size={18} /></div>
+                <a href="#" className="flex items-center gap-4 p-4 border-b border-gray-100 hover:bg-gray-50 text-sm font-semibold text-gray-700 hover:text-[#003366] transition-colors group">
+                  <div className="bg-gray-100 p-2 rounded text-gray-500 group-hover:bg-blue-100 group-hover:text-[#003366] transition-colors"><ExternalLink size={18} /></div>
                   MoSPI Official Website 
                   <ChevronRight size={16} className="ml-auto opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all"/>
                 </a>
-                <a href="#" className="flex items-center gap-4 p-4 border-b border-gray-200 hover:bg-white text-sm font-semibold text-gray-700 hover:text-[#003366] transition-colors group">
-                  <div className="bg-gray-100 p-2 rounded text-gray-500 group-hover:bg-blue-50 group-hover:text-[#003366] transition-colors"><HelpCircle size={18} /></div>
+                <a href="#" className="flex items-center gap-4 p-4 hover:bg-gray-50 text-sm font-semibold text-gray-700 hover:text-[#003366] transition-colors group">
+                  <div className="bg-gray-100 p-2 rounded text-gray-500 group-hover:bg-blue-100 group-hover:text-[#003366] transition-colors"><HelpCircle size={18} /></div>
                   Platform FAQs & Support 
                   <ChevronRight size={16} className="ml-auto opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all"/>
                 </a>
@@ -364,15 +338,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 🟢 10. ECOSYSTEM STRIP */}
-      <section className="bg-white border-t border-gray-200 py-8">
+      {/* 🟢 9. ECOSYSTEM STRIP (Aligned with user screenshot) */}
+      <section className="bg-white border-t-2 border-gray-200 py-8">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-            <div className="text-2xl font-black text-gray-800 tracking-tight">iGOT<span className="text-[#003366]">Karmayogi</span></div>
-            <div className="hidden md:block w-px h-8 bg-gray-300"></div>
-            <div className="flex items-center gap-2 font-extrabold text-gray-800 text-lg"><Building2 size={24} className="text-[#003366]"/> NSSTA</div>
-            <div className="hidden md:block w-px h-8 bg-gray-300"></div>
-            <div className="font-extrabold text-2xl text-gray-800">Digital <span className="font-light text-[#FF9933]">India</span></div>
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-24 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+            <div className="text-3xl font-black text-gray-600 tracking-tight">iGOT<span className="text-gray-400">Karmayogi</span></div>
+            <div className="hidden md:block w-px h-10 bg-gray-300"></div>
+            <div className="flex items-center gap-2 font-extrabold text-gray-500 text-xl"><Building2 size={28}/> NSSTA</div>
+            <div className="hidden md:block w-px h-10 bg-gray-300"></div>
+            <div className="font-extrabold text-3xl text-gray-500">Digital <span className="font-light text-gray-400">India</span></div>
           </div>
         </div>
       </section>
