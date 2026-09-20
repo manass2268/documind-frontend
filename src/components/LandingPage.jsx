@@ -10,7 +10,7 @@ import Footer from "./Footer";
 import ashokaLogo from "../assets/ashoka.png";
 import g20Logo from "../assets/g20 logo.png";
 import azadiLogo from "../assets/75yearsINDI Logo.png";
-
+import indiaLogo from "../assets/India Logo.png"
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-[#333333] font-sans flex flex-col overflow-x-hidden">
@@ -19,9 +19,7 @@ export default function LandingPage() {
       <div className="bg-[#F8F9FA] border-b border-gray-200 py-1 px-4 sm:px-8 text-[11px] font-medium text-gray-600 flex flex-wrap justify-between items-center relative z-50">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 px-1.5 py-0.5">
-            <span className="text-[#FF9933] font-bold leading-none">■</span>
-            <span className="text-gray-300 font-bold leading-none drop-shadow-sm">■</span>
-            <span className="text-[#138808] font-bold leading-none">■</span>
+            <img src={indiaLogo} alt="India Logo" className="h-10 object-contain" />
           </div>
           <span className="tracking-wide text-gray-700 font-bold">भारत सरकार <span className="font-normal text-gray-500 mx-1">|</span> Government of India</span>
         </div>
@@ -52,7 +50,7 @@ export default function LandingPage() {
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
           
           <div className="flex items-center gap-4">
-            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-16 object-contain" />
+            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-12 object-contain" />
             <div className="flex flex-col border-l-2 border-gray-300 pl-4">
               <span className="text-lg font-bold text-black tracking-tight font-serif leading-tight">
                 सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
@@ -67,11 +65,11 @@ export default function LandingPage() {
           {/* Right Side Gov Logos */}
           <div className="hidden lg:flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <img src={g20Logo} alt="G20 Logo" className="h-15 object-contain" />
+              <img src={g20Logo} alt="G20 Logo" className="h-12 object-contain" />
             </div>
             <div className="w-px h-10 bg-gray-200"></div>
             <div className="flex items-center gap-2">
-              <img src={azadiLogo} alt="Azadi Ka Amrit Mahotsav Logo" className="h-15 object-contain" />
+              <img src={azadiLogo} alt="Azadi Ka Amrit Mahotsav Logo" className="h-12 object-contain" />
             </div>
           </div>
 
