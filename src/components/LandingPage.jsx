@@ -78,7 +78,7 @@ export default function LandingPage() {
           
           <div className="hidden lg:flex items-center h-full text-[13px] font-medium">
             <a href="#" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white">Home</a>
-            <a href="#" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white">About Us</a>
+            <a href="/about" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white">About Us</a>
             <a href="#" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white gap-1.5">DocuMind <ChevronDown size={14}/></a>
             <a href="#" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white gap-1.5">Resources <ChevronDown size={14}/></a>
             <a href="#" className="h-full flex items-center px-6 hover:bg-[#002244] transition-colors border-b-2 border-transparent hover:border-white">Contact Us</a>

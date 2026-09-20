@@ -21,7 +21,7 @@ export default function Footer() {
 
         {/* Right: Policy Links */}
         <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 text-[12px] text-gray-300">
-          <a href="#" className="hover:text-white transition-colors">About Us</a>
+          <a href="/about" className="hover:text-white transition-colors">About Us</a>
           <span className="text-gray-600">|</span>
           <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           <span className="text-gray-600">|</span>
