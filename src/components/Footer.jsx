@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ashokaLogo from "../assets/ashoka.png";
 
 export default function Footer() {
@@ -9,10 +10,9 @@ export default function Footer() {
         
         {/* Left: Ministry Info */}
         <div className="flex items-center gap-4">
-          <div className="bg-white/10 p-1 rounded-sm">
-            {/* Using CSS invert to make the logo white for the dark footer */}
-            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-10 object-contain filter brightness-0 invert opacity-90" />
-          </div>
+          {/* White box hata diya gaya hai, ab sirf raw logo render hoga */}
+          <img src={ashokaLogo} alt="Satyameva Jayate" className="h-12 object-contain" />
+          
           <div className="flex flex-col">
             <span className="font-bold text-sm tracking-wide">Ministry of Statistics & Programme Implementation</span>
             <span className="text-[11px] text-gray-400">Government of India</span>
@@ -21,7 +21,7 @@ export default function Footer() {
 
         {/* Right: Policy Links */}
         <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 text-[12px] text-gray-300">
-          <a href="/about" className="hover:text-white transition-colors">About Us</a>
+          <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
           <span className="text-gray-600">|</span>
           <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           <span className="text-gray-600">|</span>
