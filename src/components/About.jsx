@@ -26,7 +26,7 @@ export default function About() {
       {/* 🟢 BREADCRUMB */}
       <div className="bg-[#F8FAFC] border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-2 text-[11px] font-semibold text-gray-500">
-          <Link to="/" className="hover:text-[#0A4275] transition-colors">Home</Link>
+          <Link to="/home" className="hover:text-[#0A4275] transition-colors">Home</Link>
           <span className="mx-2 text-gray-400">&gt;</span>
           <span className="text-[#0A4275]">About Us</span>
         </div>

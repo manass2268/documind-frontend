@@ -100,7 +100,7 @@ export default function Header() {
       <nav className="bg-gradient-to-r from-[#002244] via-[#003366] to-[#004080] text-white shadow-md relative z-50">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center h-12 px-4 sm:px-8">
           <div className="hidden lg:flex items-center h-full text-[13px] font-medium">
-            <Link to="/" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Home</Link>
+            <Link to="/home" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Home</Link>
             <Link to="/about" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/about') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>About Us</Link>
             <a href="#" className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white gap-1.5">DocuMind <ChevronDown size={14}/></a>
             <a href="#" className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white gap-1.5">Resources <ChevronDown size={14}/></a>

@@ -23,7 +23,7 @@ export default function ChatInterface({ openSidebar, userName = "Student" }) {
           <button className="text-gray-300 hover:text-white p-2 hover:bg-white/5 rounded-lg transition-colors cursor-pointer" onClick={openSidebar}>
             <Menu size={22} />
           </button>
-          <Link to="/" className="hidden md:flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+          <Link to="/home" className="hidden md:flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
             <ArrowLeft size={16} /> Home
           </Link>
           <ChevronRight size={14} className="hidden md:block text-gray-600" />

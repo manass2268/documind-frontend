@@ -30,7 +30,7 @@ export default function ContactSupport() {
           <Brain className="text-purple-500" size={28} />
           <span className="text-xl font-bold tracking-wide">DocuMind</span>
         </Link>
-        <Link to="/" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+        <Link to="/home" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
           <ArrowLeft size={16} /> <span className="hidden sm:inline">Back to Home</span>
         </Link>
       </nav>

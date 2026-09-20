@@ -10,7 +10,7 @@ export default function AboutUs() {
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-700/20 rounded-full blur-[120px] pointer-events-none" />
       <nav className="flex items-center justify-between px-6 md:px-8 py-6 max-w-[1600px] mx-auto w-full relative z-10 border-b border-white/5">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity"><Brain className="text-purple-500" size={28} /><span className="text-xl font-bold tracking-wide">DocuMind</span></Link>
-        <Link to="/" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><ArrowLeft size={16} /> <span className="hidden sm:inline">Back to Home</span></Link>
+        <Link to="/home" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><ArrowLeft size={16} /> <span className="hidden sm:inline">Back to Home</span></Link>
       </nav>
       <main className="flex-1 max-w-[1200px] mx-auto px-6 md:px-8 py-16 md:py-20 w-full relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
