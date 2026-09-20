@@ -85,10 +85,10 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4 h-full py-2">
-            <div className="hidden md:flex items-center bg-white rounded-sm overflow-hidden h-8 w-64">
-              <input type="text" placeholder="Search..." className="w-full h-full px-3 text-xs text-black outline-none" />
-              <button className="text-[#003366] px-3 hover:bg-gray-100 h-full"><Search size={14} /></button>
-            </div>
+            <div className="hidden md:flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-sm overflow-hidden h-8 w-64 transition-all focus-within:bg-white focus-within:border-transparent group">
+                          <input type="text" placeholder="Search..." className="w-full h-full px-3 text-xs text-white bg-transparent outline-none group-focus-within:text-black placeholder-white/70 group-focus-within:placeholder-gray-400 transition-colors" />
+                          <button className="text-white group-focus-within:text-[#003366] px-3 h-full"><Search size={14} /></button>
+                        </div>
             
             <Link to="/login" className="flex items-center gap-2 bg-[#0056D2] hover:bg-blue-700 text-white px-6 h-full text-xs font-bold transition-colors">
               Access DocuMind <ArrowRight size={14} />
