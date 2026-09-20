@@ -39,7 +39,7 @@ export default function Footer() {
       <div className="bg-[#051626] py-3 px-4 sm:px-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-500 gap-2">
         <div>© 2026 DocuMind. All rights reserved.</div>
         <div className="text-right">
-          Smart India Hackathon 2026 | SIH26101 | Conceptual Prototype — Not an official Government of India website
+          Smart India Hackathon 2026 | Conceptual Prototype — Not an official Government of India website
         </div>
       </div>
     </footer>
