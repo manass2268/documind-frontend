@@ -10,73 +10,69 @@ import Footer from "./Footer";
 import ashokaLogo from "../assets/ashoka.png";
 import g20Logo from "../assets/g20 logo.png";
 import azadiLogo from "../assets/75yearsINDI Logo.png";
-import indiaLogo from "../assets/India Logo.png"
+import indiaLogo from "../assets/India Logo.png";
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-[#333333] font-sans flex flex-col overflow-x-hidden">
       
-      {/* 🟢 1. ACCESSIBILITY TOP BAR */}
-      <div className="bg-[#F8F9FA] border-b border-gray-200 py-1 px-4 sm:px-8 text-[11px] font-medium text-gray-600 flex flex-wrap justify-between items-center relative z-50">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 px-1.5 py-0.5">
-            <img src={indiaLogo} alt="India Logo" className="h-10 object-contain" />
-          </div>
-          <span className="tracking-wide text-gray-700 font-bold">भारत सरकार <span className="font-normal text-gray-500 mx-1">|</span> Government of India</span>
+      {/* 🟢 1. ACCESSIBILITY TOP BAR (Compact & Seamless) */}
+      <div className="bg-white border-b border-gray-200 py-1.5 px-4 sm:px-8 text-xs font-medium text-gray-700 flex flex-wrap justify-between items-center relative z-50">
+        <div className="flex items-center gap-3">
+          {/* FIXED: Reduced h-10 to h-5 to eliminate the excessive whitespace */}
+          <img src={indiaLogo} alt="India Logo" className="h-5 object-contain" />
+          <span className="tracking-wide text-gray-900 font-bold text-[13px]">भारत सरकार <span className="font-normal text-gray-400 mx-1">|</span> Government of India</span>
         </div>
         
-        <div className="hidden md:flex items-center gap-4">
-          <a href="#main-content" className="hover:text-[#0A4275] transition-colors">Skip to main content</a>
+        <div className="hidden md:flex items-center gap-4 text-[12px]">
+          <a href="#main-content" className="hover:text-[#0A4275] transition-colors font-semibold">Skip to main content</a>
           <span className="text-gray-300">|</span>
-          <button className="hover:text-[#0A4275] transition-colors flex items-center gap-1">
+          <button className="hover:text-[#0A4275] transition-colors flex items-center gap-1 font-semibold">
             Screen Reader Access
           </button>
           <span className="text-gray-300">|</span>
           <div className="flex items-center gap-1.5 font-bold">
-            <button className="px-1.5 hover:text-[#0A4275]">A-</button>
-            <button className="px-1.5 text-black hover:text-[#0A4275]">A</button>
-            <button className="px-1.5 hover:text-[#0A4275]">A+</button>
+            <button className="px-1.5 hover:text-[#0A4275] text-sm">A-</button>
+            <button className="px-1.5 text-black hover:text-[#0A4275] text-sm">A</button>
+            <button className="px-1.5 hover:text-[#0A4275] text-sm">A+</button>
           </div>
           <span className="text-gray-300">|</span>
           <button className="flex items-center gap-1 text-black font-bold hover:text-[#0A4275]">
-            English <ChevronDown size={12}/>
+            English <ChevronDown size={14}/>
           </button>
           <span className="text-gray-300">|</span>
-          <button className="text-gray-600 hover:text-[#0A4275]">हिंदी</button>
+          <button className="text-gray-600 hover:text-[#0A4275] font-semibold">हिंदी</button>
         </div>
       </div>
 
-      {/* 🟢 2. OFFICIAL HEADER */}
-      <header className="bg-white py-3 px-4 sm:px-8 relative z-40 border-b border-gray-100">
+      {/* 🟢 2. OFFICIAL HEADER (Larger Text, Less Padding) */}
+      <header className="bg-white py-2 px-4 sm:px-8 relative z-40 border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
           
-          <div className="flex items-center gap-4">
-            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-12 object-contain" />
-            <div className="flex flex-col border-l-2 border-gray-300 pl-4">
-              <span className="text-lg font-bold text-black tracking-tight font-serif leading-tight">
+          <div className="flex items-center gap-5">
+            <img src={ashokaLogo} alt="Satyameva Jayate" className="h-16 object-contain" />
+            <div className="flex flex-col border-l-2 border-gray-300 pl-4 py-1">
+              <span className="text-[20px] font-extrabold text-black tracking-tight font-serif leading-tight">
                 सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
               </span>
-              <span className="text-sm font-bold text-[#0A4275] tracking-wide mt-0.5 leading-tight">
+              <span className="text-[15px] font-bold text-[#0A4275] tracking-wide mt-0.5 leading-tight">
                 Ministry of Statistics & Programme Implementation
               </span>
-              <span className="text-[11px] font-medium text-gray-500 mt-0.5">Government of India</span>
+              <span className="text-[11px] font-semibold text-gray-500 mt-1 uppercase tracking-wider">Government of India</span>
             </div>
           </div>
 
           {/* Right Side Gov Logos */}
-          <div className="hidden lg:flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <img src={g20Logo} alt="G20 Logo" className="h-12 object-contain" />
-            </div>
+          <div className="hidden lg:flex items-center gap-6">
+            <img src={g20Logo} alt="G20 Logo" className="h-12 object-contain" />
             <div className="w-px h-10 bg-gray-200"></div>
-            <div className="flex items-center gap-2">
-              <img src={azadiLogo} alt="Azadi Ka Amrit Mahotsav Logo" className="h-12 object-contain" />
-            </div>
+            <img src={azadiLogo} alt="Azadi Ka Amrit Mahotsav Logo" className="h-12 object-contain" />
           </div>
 
         </div>
       </header>
 
-      {/* 🟢 3. NAV BAR */}
+      {/* 🟢 3. NAV BAR (Tight spacing) */}
       <nav className="bg-[#003366] text-white shadow-md relative z-50">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center h-12 px-4 sm:px-8">
           
@@ -151,7 +147,7 @@ export default function LandingPage() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
           
           <div className="flex flex-col items-center justify-center mb-10 text-center">
-            <h3 className="text-xl font-bold text-[#0A4275] bg-white px-4 py-1 relative z-10">Explore DocuMind</h3>
+            <h3 className="text-xl font-bold text-[#0A4275] bg-[#F8FAFC] px-4 py-1 relative z-10">Explore DocuMind</h3>
             <div className="w-32 h-px bg-gray-300 -mt-3.5 z-0"></div>
           </div>
 
