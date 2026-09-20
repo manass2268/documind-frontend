@@ -13,12 +13,13 @@ import LoadingScreen from "./components/LoadingScreen";
 import Sidebar from "./components/Sidebar"; 
 import ChatInterface from "./components/ChatInterface";
 import DashboardLayout from "./components/DashboardLayout"; 
+import Footer from "./components/Footer";
+import About from "./components/About"; // 🟢 Fixed: Naya About page yahan import kiya
 
 // Pages
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import HowItWorks from "./pages/HowItWorks";
-import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup"; 
 import ForgotPassword from "./pages/ForgotPassword"; 
@@ -64,7 +65,7 @@ function HomeFlow() {
           
           <ChatInterface 
              openSidebar={() => setIsSidebarOpen(true)} 
-             userName={currentUser?.displayName || "MANAS Singh"} 
+             userName={currentUser?.displayName || "MANAS singh"} 
           />
           
         </motion.div>
@@ -77,14 +78,15 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop /> 
-      <div className="font-sans overflow-hidden bg-[#05050A] min-h-screen text-white">
+      {/* Container background color removed from here so it doesn't mess with Gov light theme */}
+      <div className="font-sans overflow-hidden min-h-screen">
         <Routes>
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomeFlow />} />
+          <Route path="/about" element={<About />} /> {/* 🟢 Fixed: Naya About route */}
           <Route path="/features" element={<Features />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
