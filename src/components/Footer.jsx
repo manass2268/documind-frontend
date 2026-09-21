@@ -8,11 +8,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#0A192F] text-gray-300 font-sans border-t-4 border-[#0056D2]">
       
-      {/* Top Footer Section (Links & Info) */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-10 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           
-          {/* Column 1: Ministry Info */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center justify-center">
@@ -42,7 +40,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
           <div>
             <h3 className="text-white font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-[#4DA8DA] rounded-full"></div> Quick Links
@@ -50,14 +47,13 @@ export default function Footer() {
             <ul className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
               <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Home</Link></li>
               <li><Link to="/about" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">About DocuMind</Link></li>
-              <li><Link to="/platformOverview" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Platform Features</Link></li>
-              <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Employee Login</Link></li>
-              <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Help & Support</Link></li>
+              <li><Link to="/platform" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Platform Features</Link></li>
+              <li><Link to="/login" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Employee Login</Link></li>
+              <li><Link to="/support" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Help & Support</Link></li>
               <li><a href="#" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Sitemap</a></li>
             </ul>
           </div>
 
-          {/* Column 3: Important External Links */}
           <div>
             <h3 className="text-white font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-[#4DA8DA] rounded-full"></div> External Portals
@@ -71,7 +67,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Policies & Certifications */}
           <div>
             <h3 className="text-white font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-[#4DA8DA] rounded-full"></div> Policies & Legal
@@ -92,7 +87,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Footer Section (Copyright) */}
       <div className="bg-[#060D1A] border-t border-gray-800">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-4 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           <p className="text-[11px] sm:text-xs text-gray-400">
