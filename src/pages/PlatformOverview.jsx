@@ -217,14 +217,14 @@ export default function PlatformOverview() {
           </div>
         </section>
 
-        {/* 🟢 5. BOTTOM CTA SECTION (Updated with Lighter Blue, Better Gradients & Monument Image) */}
-        <section className="relative py-20 lg:py-28 overflow-hidden bg-gradient-to-br from-[#061e38] via-[#0a2a4a] to-[#041424] border-b-[4px] border-[#0056D2]">
+        {/* 🟢 5. BOTTOM CTA SECTION (Updated Outline & Gradient) */}
+        <section className="relative py-20 lg:py-28 overflow-hidden bg-[#061e38] border-b-[4px] border-[#0056D2]">
           
-          {/* Background Monument Image (Made Brighter and More Visible) */}
-          <div className="absolute inset-0 bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDk_DNvoklccuACDlPaJczI8p06yV9BGNAiYDgoPa-9Q&s=10')] bg-cover bg-center mix-blend-luminosity opacity-500 brightness-125 contrast-125"></div>
+          {/* Background Monument Image (Natural colors, no mix-blend filters) */}
+          <div className="absolute inset-0 bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDk_DNvoklccuACDlPaJczI8p06yV9BGNAiYDgoPa-9Q&s=10')] bg-cover bg-right sm:bg-center"></div>
           
-          {/* Gradient Overlay for Text Readability (Lightened for more image exposure) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#061e38]/80 via-[#0a2a4a]/50 to-[#041424]/80"></div>
+          {/* Gradient Overlay: Solid blue on the left, fading to completely transparent on the right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#061e38] via-[#061e38]/90 to-transparent"></div>
           
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
             
@@ -248,7 +248,7 @@ export default function PlatformOverview() {
 
             {/* Right Side Quote */}
             <motion.div variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }} className="md:w-1/3 flex justify-start md:justify-end">
-              <motion.div whileHover={{ scale: 1.02 }} className="border-l-[3px] border-[#4b5563] pl-5 py-4 bg-[#0c243c]/60 backdrop-blur-md rounded-r-xl border-y border-r border-white/10 shadow-2xl max-w-sm">
+              <motion.div whileHover={{ scale: 1.02 }} className="border-l-[3px] border-[#4b5563] pl-5 py-4 bg-[#0c243c]/80 backdrop-blur-md rounded-r-xl border-y border-r border-white/10 shadow-2xl max-w-sm">
                 <p className="text-gray-100 font-serif italic text-lg sm:text-[22px] font-medium leading-[1.5]">
                   Better Skills.<br/>
                   Better Decisions.<br/>
