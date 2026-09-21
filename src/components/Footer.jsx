@@ -27,7 +27,7 @@ export default function Footer() {
             <div className="flex flex-col space-y-3 text-xs sm:text-sm">
               <div className="flex items-start gap-3">
                 <MapPin className="text-[#4DA8DA] shrink-0 mt-0.5" size={16} />
-                <span className="text-gray-400 hover:text-white transition-colors cursor-pointer">Sardar Patel Bhavan, Sansad Marg,<br/>New Delhi - 110001</span>
+                <span className="text-gray-400 hover:text-white transition-colors cursor-pointer">Kanpur <br/>Uttar Pradesh - 208012</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-[#4DA8DA] shrink-0" size={16} />
