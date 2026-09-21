@@ -1,293 +1,204 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Play, ShieldCheck, Cpu, BookOpen, Users, 
-  ArrowRight, User, BarChart2, Target, RefreshCw,
-  Building2, ArrowUpRight, Check, MonitorPlay, MapPin, Briefcase
-} from "lucide-react";
+import { Play, ShieldCheck, Cpu, BookOpen, Users, ArrowRight, User, BarChart2, RefreshCw, Building2, ArrowUpRight, Check, MonitorPlay, MapPin, Briefcase, Monitor } from "lucide-react";
 
 export default function KnowledgeCentre() {
-  // Animation Variants
-  const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
-  const fadeInLeft = { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } } };
-  const fadeInRight = { hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } } };
-  const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
-  const floatEffect = { y: [0, -10, 0], transition: { duration: 6, repeat: Infinity, ease: "easeInOut" } };
+  const spr = { type: "spring", stiffness: 80, damping: 16 };
+  const fadeInUp = { hidden: { opacity: 0, y: 35 }, visible: { opacity: 1, y: 0, transition: { ...spr, stiffness: 85, damping: 15 } } };
+  const fadeInLeft = { hidden: { opacity: 0, x: -45 }, visible: { opacity: 1, x: 0, transition: spr } };
+  const fadeInRight = { hidden: { opacity: 0, x: 45 }, visible: { opacity: 1, x: 0, transition: spr } };
+  const stagger = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.1 } } };
+
+  const steps = [
+    { no: "01", icon: User, color: "text-blue-600", bg: "bg-blue-50", badge: "bg-blue-600", title: "Employee Profile", desc: "Set up your profile,\nrole and interests." },
+    { no: "02", icon: Briefcase, color: "text-emerald-600", bg: "bg-emerald-50", badge: "bg-emerald-600", title: "Competency\nAssessment", desc: "Assess current skills\nagainst role requirements." },
+    { no: "03", icon: BarChart2, color: "text-amber-500", bg: "bg-amber-50", badge: "bg-amber-500", title: "Skill Gap\nAnalysis", desc: "Identify priority areas\nfor improvement." },
+    { no: "04", icon: BookOpen, color: "text-purple-600", bg: "bg-purple-50", badge: "bg-purple-600", title: "Personalized\nLearning", desc: "Get curated courses\nand resources." },
+    { no: "05", icon: Cpu, color: "text-rose-500", bg: "bg-rose-50", badge: "bg-rose-500", title: "AI\nAssessment", desc: "Evaluate learning\nthrough intelligent tests." },
+    { no: "06", icon: RefreshCw, color: "text-teal-600", bg: "bg-teal-50", badge: "bg-teal-600", title: "Continuous\nGrowth", desc: "Track progress and\nget new recommendations." }
+  ];
+
+  const stakeholders = [
+    { icon: Users, title: "For Employees", items: ["Assess your skills", "Get personalized learning paths", "Track your progress", "Build a future-ready career"], colors: { shadow: "rgba(0,86,210,0.12)", gradient: "from-[#F0F7FF] via-[#FAFCFF]", border: "border-blue-100/90", shape: "bg-blue-100/60", iconWrap: "bg-blue-100/70 text-[#0056D2]", checkWrap: "bg-blue-100 text-[#0056D2]", div: "border-blue-100/60", arrow: "bg-blue-50 group-hover:bg-[#0056D2] text-[#0056D2] group-hover:text-white" } },
+    { icon: Building2, title: "For Departments", items: ["Monitor workforce capabilities", "Identify training needs", "Track overall progress", "Make data-driven decisions"], colors: { shadow: "rgba(5,150,105,0.12)", gradient: "from-[#F0FDF4] via-[#F9FEFA]", border: "border-emerald-100/90", shape: "bg-emerald-100/60", iconWrap: "bg-emerald-100/70 text-emerald-600", checkWrap: "bg-emerald-100 text-emerald-600", div: "border-emerald-100/60", arrow: "bg-emerald-50 group-hover:bg-emerald-600 text-emerald-600 group-hover:text-white" } },
+    { icon: MonitorPlay, title: "For Trainers", items: ["Create and deliver learning content", "Assign role-based learning", "Track learner performance", "Get AI-powered insights"], colors: { shadow: "rgba(124,58,237,0.12)", gradient: "from-[#FAF5FF] via-[#FCFAFF]", border: "border-purple-100/90", shape: "bg-purple-100/60", iconWrap: "bg-purple-100/70 text-purple-600", checkWrap: "bg-purple-100 text-purple-600", div: "border-purple-100/60", arrow: "bg-purple-50 group-hover:bg-purple-600 text-purple-600 group-hover:text-white" } }
+  ];
 
   return (
-    <div className="flex flex-col bg-white text-[#333333] font-sans overflow-x-hidden relative">
-      
+    <div className="flex flex-col bg-white text-[#1E293B] font-sans overflow-x-hidden relative selection:bg-[#0056D2] selection:text-white">
       <main id="main-content" className="flex-1">
         
-        {/* 🟢 1. HERO SECTION */}
-        <section className="relative bg-gradient-to-br from-[#F4F8FB] to-white pt-12 pb-16 lg:pt-20 lg:pb-24 overflow-hidden border-b border-gray-100">
-          
+        {/* 🟢 HERO SECTION */}
+        <section className="relative bg-gradient-to-br from-[#F4F8FB] via-white to-[#EEF5FC] pt-12 pb-16 lg:pt-20 lg:pb-24 overflow-hidden border-b border-gray-100">
+          <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.55, 0.35] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-24 -left-20 w-96 h-96 bg-blue-300/40 rounded-full blur-3xl pointer-events-none" />
+          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.25, 0.45, 0.25] }} transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-0 right-[-10%] w-[500px] h-[500px] bg-sky-200/40 rounded-full blur-[130px] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(#0056D2_0.8px,transparent_0.8px)] [background-size:24px_24px] opacity-[0.035] pointer-events-none" />
+
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
-            
-            {/* Left Content */}
             <motion.div variants={fadeInLeft} initial="hidden" animate="visible" className="flex flex-col z-20">
-              <span className="text-[#F59E0B] font-bold text-[11px] uppercase tracking-[0.15em] mb-4 block">
-                TOGETHER FOR A DATA-DRIVEN INDIA
-              </span>
-
-              <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-extrabold text-[#0056D2] mb-2 tracking-tight leading-none drop-shadow-sm">
-                DocuMind
-              </h1>
+              <motion.div whileHover={{ scale: 1.02 }} className="inline-flex items-center gap-2 mb-4 w-max px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
+                <span className="text-[#B45309] font-extrabold text-[10px] sm:text-[11px] uppercase tracking-[0.16em]">Together for a Data-Driven India</span>
+              </motion.div>
+              <h1 className="text-5xl sm:text-6xl lg:text-[74px] font-black text-[#0056D2] mb-2 tracking-tight leading-none drop-shadow-sm">DocuMind</h1>
               
-              <div className="text-[16px] sm:text-[20px] font-bold text-[#1E293B] mb-6 flex items-center gap-3 flex-wrap">
-                <span>Learn</span> <span className="text-gray-300">|</span> 
-                <span>Assess</span> <span className="text-gray-300">|</span> 
-                <span>Grow</span>
+              <div className="text-[17px] sm:text-[21px] font-extrabold text-[#0F172A] mb-5 flex items-center gap-3">
+                <span className="hover:text-[#0056D2] transition-colors">Learn</span> <span className="text-gray-300 font-normal">|</span> 
+                <span className="hover:text-[#0056D2] transition-colors">Assess</span> <span className="text-gray-300 font-normal">|</span> 
+                <span className="text-[#0056D2]">Grow</span>
               </div>
-              
-              <p className="text-gray-600 text-[14px] sm:text-[16px] leading-relaxed mb-8 max-w-md font-medium">
-                An integrated, AI-enabled platform to enhance the competencies of India's statistical workforce.
-              </p>
+              <p className="text-gray-600 text-[14px] sm:text-[16px] leading-relaxed mb-8 max-w-md font-medium">An integrated, AI-enabled platform to enhance the competencies of India's statistical workforce.</p>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
-                  <Link to="/login" className="bg-[#0056D2] hover:bg-blue-700 text-white px-8 py-3.5 text-sm font-bold flex items-center justify-center gap-2 rounded shadow-[0_10px_20px_-10px_rgba(0,86,210,0.5)] w-full transition-all">
-                    Access DocuMind <ArrowRight size={16} />
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10">
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link to="/login" className="relative group overflow-hidden bg-gradient-to-r from-[#0056D2] to-[#0047B3] text-white px-8 py-3.5 text-sm font-bold flex items-center justify-center gap-2 rounded-md shadow-[0_10px_25px_-5px_rgba(0,86,210,0.42)] transition-all">
+                    <span className="relative z-10 flex items-center gap-2">Access DocuMind <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" /></span>
+                    <span className="absolute inset-0 bg-white/15 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                   </Link>
                 </motion.div>
-                <motion.button whileHover={{ scale: 1.05, backgroundColor: "#F8FAFC" }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto bg-white text-[#1E293B] border-2 border-gray-200 px-8 py-3 text-sm font-bold transition-all flex items-center justify-center gap-2 rounded hover:border-gray-300">
-                  <Play size={16} className="text-[#0056D2] fill-[#0056D2]" /> Watch Video
+                <motion.button whileHover={{ scale: 1.03, backgroundColor: "#F8FAFC" }} whileTap={{ scale: 0.97 }} className="bg-white/90 backdrop-blur-sm text-[#1E293B] border border-gray-300 hover:border-gray-400 px-8 py-3.5 text-sm font-bold transition-all flex items-center justify-center gap-2 rounded-md shadow-sm">
+                  <Play size={15} className="text-[#0056D2] fill-[#0056D2]" /> Watch Video
                 </motion.button>
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4 pt-6">
-                {[
-                  { icon: Building2, text: "Government\nReady" }, 
-                  { icon: Cpu, text: "AI-Powered\nLearning" },
-                  { icon: BookOpen, text: "Personalized\nGrowth" }, 
-                  { icon: BarChart2, text: "Data-Driven\nWorkforce" },
-                  { icon: ShieldCheck, text: "Secure &\nScalable" }
-                ].map((feature, idx) => (
-                  <motion.div key={idx} whileHover={{ y: -5 }} className="flex flex-col items-center text-center gap-2 group cursor-default">
-                    <div className="text-[#0056D2] group-hover:scale-110 transition-transform">
-                      <feature.icon size={28} strokeWidth={1.5} />
-                    </div>
-                    <span className="text-[10px] font-semibold text-gray-600 leading-tight whitespace-pre-line group-hover:text-[#0056D2] transition-colors">{feature.text}</span>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-6 border-t border-gray-200/70">
+                {[{ icon: Building2, text: "Government\nReady" }, { icon: Cpu, text: "AI-Powered\nLearning" }, { icon: BookOpen, text: "Personalized\nGrowth" }, { icon: BarChart2, text: "Data-Driven\nWorkforce" }, { icon: ShieldCheck, text: "Secure &\nScalable" }].map((feat, idx) => (
+                  <motion.div key={idx} whileHover={{ y: -4 }} className="flex flex-col items-center text-center gap-2 p-2 rounded-lg transition-colors hover:bg-white/80 cursor-default group">
+                    <div className="text-[#0056D2] p-2 rounded-lg bg-blue-50/60 group-hover:bg-[#0056D2] group-hover:text-white group-hover:shadow-md transition-all duration-300"><feat.icon size={22} strokeWidth={1.8} /></div>
+                    <span className="text-[10px] sm:text-[11px] font-bold text-gray-600 leading-tight whitespace-pre-line group-hover:text-[#0056D2] transition-colors">{feat.text}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* Right Image/Collage Content */}
-            <motion.div variants={fadeInRight} initial="hidden" animate="visible" className="relative w-full h-[400px] sm:h-[500px] flex items-center justify-center mt-10 lg:mt-0">
-              
-              <div className="absolute top-0 right-0 w-[90%] h-[80%] rounded-xl shadow-2xl z-10 border-4 border-white overflow-hidden">
-                 {/* Replace with actual Sardar Patel Bhawan image */}
-                 <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1000&auto=format&fit=crop" alt="Sardar Patel Bhawan" className="w-full h-full object-cover" />
-                 <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded text-white/90 text-[10px] font-bold tracking-wider">
-                   SARDAR PATEL BHAWAN
-                 </div>
-              </div>
-              
-              {/* Floating Card 1 */}
-              <motion.div animate={floatEffect} className="absolute top-10 left-[-10px] sm:left-[-20px] bg-white/95 backdrop-blur-md p-5 shadow-2xl rounded-lg z-30 border border-gray-100 max-w-[180px]">
-                <p className="font-bold text-[#0056D2] text-sm sm:text-base font-serif italic leading-snug">
-                  People.<br/>Data.<br/>Learning.<br/>
-                  <span className="text-[#F59E0B]">A Stronger India.</span>
-                </p>
+            <motion.div variants={fadeInRight} initial="hidden" animate="visible" className="relative w-full h-[420px] sm:h-[500px] flex items-center justify-center mt-6 lg:mt-0">
+              <motion.div whileHover={{ scale: 1.015 }} className="absolute top-2 right-0 w-[92%] h-[88%] rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,35,80,0.18)] z-10 border-[5px] border-white overflow-hidden group bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop" alt="Sardar Patel Bhawan" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-70 group-hover:opacity-60 transition-opacity" />
+                <div className="absolute bottom-4 right-4 bg-black/65 backdrop-blur-md px-3.5 py-1.5 rounded-md border border-white/20 text-white text-[10px] font-bold tracking-[0.12em] shadow-lg">SARDAR PATEL BHAWAN</div>
               </motion.div>
-
-              {/* Floating Card 2 */}
-              <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-10 right-[-10px] sm:right-[-20px] bg-white/95 backdrop-blur-md p-4 shadow-2xl rounded-lg z-30 border border-gray-100 max-w-[160px] border-l-4 border-[#0056D2]">
-                <p className="font-semibold text-[#1E293B] text-[11px] sm:text-xs leading-relaxed">
-                  Empowering People through Knowledge for a Data-Driven India.
-                </p>
+              <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-8 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md p-5 shadow-[0_15px_40px_rgba(0,0,0,0.12)] rounded-xl z-30 border border-gray-100/80 min-w-[170px] text-center">
+                <p className="font-semibold text-[#0056D2] text-[15px] sm:text-[17px] font-serif italic leading-tight">People.<br/>Data.<br/>Learning.<br/><span className="text-[#F59E0B] font-extrabold not-italic drop-shadow-sm">A Stronger India.</span></p>
+                <div className="flex justify-center gap-1 mt-2.5"><span className="w-3 h-0.5 bg-[#FF9933] rounded-full" /><span className="w-3 h-0.5 bg-gray-300 rounded-full" /><span className="w-3 h-0.5 bg-[#138808] rounded-full" /></div>
+              </motion.div>
+              <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-6 -right-2 sm:-right-6 bg-white/95 backdrop-blur-md p-4 shadow-[0_15px_40px_rgba(0,0,0,0.12)] rounded-xl z-30 border border-gray-100 max-w-[195px] border-l-4 border-[#0056D2]">
+                <p className="font-bold text-[#0F172A] text-[11px] sm:text-xs leading-relaxed">Empowering People through Knowledge for a Data-Driven India.</p>
               </motion.div>
             </motion.div>
           </div>
         </section>
 
-        {/* 🟢 2. HOW DOCUMIND WORKS (Journey) */}
-        <section className="py-16 lg:py-24 bg-white border-b border-gray-100">
+        {/* 🟢 HOW DOCUMIND WORKS */}
+        <section className="py-16 lg:py-24 bg-white border-b border-gray-100 relative">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
-              <span className="text-gray-500 font-bold text-[11px] uppercase tracking-widest mb-2 block">How DocuMind Works</span>
+            <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="text-center mb-16">
+              <span className="text-[#0056D2] font-bold text-[11px] uppercase tracking-[0.16em] mb-2 inline-block bg-blue-50 px-3 py-1 rounded-full border border-blue-100">HOW DOCUMIND WORKS</span>
               <h2 className="text-2xl sm:text-[32px] font-extrabold text-[#003366] mb-3">A Simple Path to a Stronger Workforce</h2>
-              <p className="text-gray-500 text-sm">From assessment to continuous learning — enabling growth at every step.</p>
+              <p className="text-gray-500 text-sm max-w-xl mx-auto">From assessment to continuous learning — enabling growth at every step of the statistical journey.</p>
             </motion.div>
 
-            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="flex flex-col lg:flex-row items-start justify-between gap-6 lg:gap-2 relative">
-              <div className="hidden lg:block absolute top-[45px] left-[5%] right-[5%] h-px bg-gray-200 border-t border-dashed border-gray-300 z-0"></div>
-              {[
-                { no: "01", icon: User, color: "text-blue-600", bg: "bg-blue-50", title: "Employee Profile", desc: "Set up your profile,\nrole and interests." },
-                { no: "02", icon: Briefcase, color: "text-green-600", bg: "bg-green-50", title: "Competency\nAssessment", desc: "Assess current skills\nagainst role requirements." },
-                { no: "03", icon: BarChart2, color: "text-orange-500", bg: "bg-orange-50", title: "Skill Gap\nAnalysis", desc: "Identify priority areas\nfor improvement." },
-                { no: "04", icon: BookOpen, color: "text-purple-600", bg: "bg-purple-50", title: "Personalized\nLearning", desc: "Get curated courses\nand resources." },
-                { no: "05", icon: Cpu, color: "text-red-500", bg: "bg-red-50", title: "AI\nAssessment", desc: "Evaluate learning\nthrough intelligent tests." },
-                { no: "06", icon: RefreshCw, color: "text-teal-500", bg: "bg-teal-50", title: "Continuous\nGrowth", desc: "Track progress and\nget new recommendations." }
-              ].map((step, idx) => (
-                <motion.div key={idx} variants={fadeInUp} className="flex flex-col items-center text-center w-full lg:w-[15%] relative z-10 group">
-                  <div className={`w-16 h-16 rounded-full ${step.bg} border-[3px] border-white shadow-md flex items-center justify-center ${step.color} mb-4 group-hover:scale-110 transition-transform`}>
-                    <step.icon size={24} strokeWidth={2} />
+            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="flex flex-col lg:flex-row items-start justify-between gap-8 lg:gap-3 relative">
+              <div className="hidden lg:block absolute top-[44px] left-[7%] right-[7%] h-0.5 bg-gradient-to-r from-blue-100 via-gray-200 to-teal-100 z-0" />
+              {steps.map((step, idx) => (
+                <motion.div key={idx} variants={fadeInUp} whileHover={{ y: -6 }} className="flex flex-col items-center text-center w-full lg:w-[15.5%] relative z-10 group transition-transform duration-300">
+                  <div className={`w-[84px] h-[84px] rounded-full ${step.bg} border-4 border-white shadow-md group-hover:shadow-xl flex items-center justify-center ${step.color} mb-4 group-hover:scale-110 transition-all duration-300 relative ring-2 ring-transparent group-hover:ring-offset-2`}>
+                    <step.icon size={30} strokeWidth={1.75} className="group-hover:rotate-6 transition-transform duration-300" />
+                    <span className={`absolute -top-1 -right-1 text-[11px] font-black text-white ${step.badge} w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white`}>{step.no}</span>
                   </div>
-                  <span className={`text-[12px] font-black text-white ${step.color.replace('text', 'bg')} w-6 h-6 rounded-full flex items-center justify-center mb-2 shadow-sm absolute top-[-5px] right-[25%]`}>{step.no}</span>
-                  <h4 className="text-[14px] font-bold text-[#1E293B] mb-2 leading-tight whitespace-pre-line">{step.title}</h4>
-                  <p className="text-[11px] text-gray-500 leading-snug px-2 whitespace-pre-line">{step.desc}</p>
-                  {idx !== 5 && <ArrowRight className="hidden lg:block absolute top-[40px] right-[-20px] text-gray-300" size={16}/>}
+                  <h4 className="text-[14px] font-extrabold text-[#0F172A] mb-1.5 leading-tight whitespace-pre-line group-hover:text-[#0056D2] transition-colors">{step.title}</h4>
+                  <p className="text-[11px] text-gray-500 font-medium leading-snug px-1 whitespace-pre-line">{step.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* 🟢 3. STATS BANNER (NEW) */}
-        <section className="py-12 bg-[#F4F8FB]">
+        {/* 🟢 STATS BANNER */}
+        <section className="py-12 bg-gradient-to-r from-[#F0F5FA] via-[#F6F9FD] to-[#EDF4FB] border-b border-gray-200/80">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-              
-              <div className="lg:w-1/4">
-                <h3 className="text-xl sm:text-2xl font-bold text-[#1E293B] leading-tight">
-                  Building<br/>A Data-Savvy India
-                </h3>
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+              <div className="lg:w-1/4 text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-300/80 pb-6 lg:pb-0 lg:pr-8">
+                <span className="text-[10px] font-extrabold text-[#0056D2] uppercase tracking-wider block mb-1">Impact & Scale</span>
+                <h3 className="text-xl sm:text-[23px] font-black text-[#0F172A] leading-tight">Building<br/>A Data-Savvy India</h3>
               </div>
-
               <div className="lg:w-3/4 grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
-                {[
-                  { icon: Users, count: "1M+", label: "Government Employees", sub: "(Target)", color: "text-blue-500" },
-                  { icon: BookOpen, count: "500+", label: "Learning Resources", sub: "", color: "text-blue-500" },
-                  { icon: MonitorPlay, count: "50+", label: "Training Programs", sub: "", color: "text-purple-500" },
-                  { icon: MapPin, count: "28", label: "States & UTs", sub: "", color: "text-blue-600" }
-                ].map((stat, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <stat.icon size={32} strokeWidth={1.5} className={`${stat.color} mt-1`} />
-                    <div>
-                      <h4 className={`text-2xl sm:text-3xl font-black ${stat.color} leading-none mb-1`}>{stat.count}</h4>
-                      <p className="text-[11px] sm:text-xs font-semibold text-gray-600 leading-tight">
-                        {stat.label} <br/> {stat.sub && <span className="text-gray-400 font-normal">{stat.sub}</span>}
-                      </p>
+                {[{ icon: Users, count: "1M+", label: "Government Employees", sub: "(Target)", c: "text-[#0056D2]", b: "bg-blue-50" }, { icon: BookOpen, count: "500+", label: "Learning Resources", sub: "", c: "text-[#0056D2]", b: "bg-blue-50" }, { icon: Monitor, count: "50+", label: "Training Programs", sub: "", c: "text-[#7C3AED]", b: "bg-purple-50" }, { icon: MapPin, count: "28", label: "States & UTs", sub: "", c: "text-[#0056D2]", b: "bg-blue-50" }].map((stat, idx) => (
+                  <motion.div key={idx} whileHover={{ y: -3 }} className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 sm:gap-4 p-3 rounded-xl transition-all hover:bg-white/90 hover:shadow-sm">
+                    <div className={`${stat.b} p-2.5 rounded-xl ${stat.c} shadow-sm shrink-0`}><stat.icon size={30} strokeWidth={1.75} /></div>
+                    <div className="flex flex-col text-center sm:text-left">
+                      <h4 className={`text-2xl sm:text-[29px] font-black ${stat.c} leading-none mb-1 tracking-tight`}>{stat.count}</h4>
+                      <p className="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">{stat.label} {stat.sub && <><br/><span className="text-gray-400 font-normal">{stat.sub}</span></>}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-
             </div>
           </div>
         </section>
 
-        {/* 🟢 4. DESIGNED FOR EVERY STAKEHOLDER (NEW) */}
+        {/* 🟢 DESIGNED FOR EVERY STAKEHOLDER */}
         <section className="py-16 lg:py-24 bg-white border-b border-gray-100">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
               <motion.div variants={fadeInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                <h2 className="text-2xl sm:text-[32px] font-extrabold text-[#003366] mb-2">Designed for Every Stakeholder</h2>
-                <p className="text-gray-500 text-sm">DocuMind supports individuals and institutions across the statistical ecosystem.</p>
+                <h2 className="text-2xl sm:text-[32px] font-black text-[#003366] mb-2 tracking-tight">Designed for Every Stakeholder</h2>
+                <p className="text-gray-500 text-sm font-medium">DocuMind supports individuals and institutions across the statistical ecosystem.</p>
               </motion.div>
               <motion.div variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-4 md:mt-0">
-                <Link to="/features" className="text-[#0056D2] font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all hover:underline">
-                  Explore All Features <ArrowRight size={14}/>
+                <Link to="/features" className="text-[#0056D2] font-bold text-sm flex items-center gap-1.5 hover:gap-2.5 transition-all group bg-blue-50/80 hover:bg-blue-100/70 px-4 py-2 rounded-full border border-blue-100">
+                  Explore All Features <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
             </div>
 
-            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Card 1: Employees */}
-              <motion.div variants={fadeInUp} className="bg-[#F8FAFC] border border-gray-200 p-6 sm:p-8 rounded-lg hover:shadow-md transition-shadow group flex flex-col h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="text-blue-600"><Users size={40} strokeWidth={1.5} /></div>
-                  <h3 className="text-xl font-bold text-[#1E293B]">For Employees</h3>
-                </div>
-                <ul className="space-y-3 mb-8 flex-grow">
-                  {[
-                    "Assess your skills", 
-                    "Get personalized learning paths", 
-                    "Track your progress", 
-                    "Build a future-ready career"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[13px] text-gray-600 font-medium">
-                      <Check size={16} className="text-blue-500 shrink-0 mt-0.5" /> {item}
-                    </li>
-                  ))}
-                </ul>
-                <ArrowRight size={20} className="text-blue-600 self-end group-hover:translate-x-2 transition-transform" />
-              </motion.div>
-
-              {/* Card 2: Departments */}
-              <motion.div variants={fadeInUp} className="bg-[#F0FDF4] border border-green-100 p-6 sm:p-8 rounded-lg hover:shadow-md transition-shadow group flex flex-col h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="text-green-600"><Building2 size={40} strokeWidth={1.5} /></div>
-                  <h3 className="text-xl font-bold text-[#1E293B]">For Departments</h3>
-                </div>
-                <ul className="space-y-3 mb-8 flex-grow">
-                  {[
-                    "Monitor workforce capabilities", 
-                    "Identify training needs", 
-                    "Track overall progress", 
-                    "Make data-driven decisions"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[13px] text-gray-600 font-medium">
-                      <Check size={16} className="text-green-500 shrink-0 mt-0.5" /> {item}
-                    </li>
-                  ))}
-                </ul>
-                <ArrowRight size={20} className="text-green-600 self-end group-hover:translate-x-2 transition-transform" />
-              </motion.div>
-
-              {/* Card 3: Trainers */}
-              <motion.div variants={fadeInUp} className="bg-[#FAF5FF] border border-purple-100 p-6 sm:p-8 rounded-lg hover:shadow-md transition-shadow group flex flex-col h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="text-purple-600"><MonitorPlay size={40} strokeWidth={1.5} /></div>
-                  <h3 className="text-xl font-bold text-[#1E293B]">For Trainers</h3>
-                </div>
-                <ul className="space-y-3 mb-8 flex-grow">
-                  {[
-                    "Create and deliver learning content", 
-                    "Assign role-based learning", 
-                    "Track learner performance", 
-                    "Get AI-powered insights"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-[13px] text-gray-600 font-medium">
-                      <Check size={16} className="text-purple-500 shrink-0 mt-0.5" /> {item}
-                    </li>
-                  ))}
-                </ul>
-                <ArrowRight size={20} className="text-purple-600 self-end group-hover:translate-x-2 transition-transform" />
-              </motion.div>
-
+            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+              {stakeholders.map((c, idx) => (
+                <motion.div key={idx} variants={fadeInUp} whileHover={{ y: -7, boxShadow: `0 22px 45px -10px ${c.colors.shadow}` }} className={`bg-gradient-to-b ${c.colors.gradient} to-white border ${c.colors.border} p-7 sm:p-8 rounded-2xl shadow-sm transition-all duration-300 group flex flex-col justify-between relative overflow-hidden`}>
+                  <div className={`absolute top-0 right-0 w-32 h-32 ${c.colors.shape} rounded-bl-full opacity-60 pointer-events-none group-hover:scale-110 transition-transform duration-500`} />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3.5 mb-6">
+                      <div className={`w-12 h-12 rounded-xl ${c.colors.iconWrap} flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform`}><c.icon size={26} strokeWidth={2} /></div>
+                      <h3 className="text-xl font-extrabold text-[#0F172A]">{c.title}</h3>
+                    </div>
+                    <ul className="space-y-3.5 mb-8">
+                      {c.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2.5 text-[13px] text-gray-700 font-medium group-hover:translate-x-0.5 transition-transform">
+                          <div className={`p-0.5 rounded-full mt-0.5 shrink-0 ${c.colors.checkWrap}`}><Check size={13} strokeWidth={3} /></div><span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className={`pt-4 border-t ${c.colors.div} flex justify-end relative z-10`}>
+                    <div className={`w-8 h-8 rounded-full ${c.colors.arrow} flex items-center justify-center transition-colors shadow-sm`}>
+                      <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </section>
 
-        {/* 🟢 5. BOTTOM CTA SECTION */}
-        <section className="relative py-16 lg:py-20 overflow-hidden bg-[#001f3f] border-b-[4px] border-[#0056D2]">
-          
-          {/* Background Silhouette (People & Flag) */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-full bg-[url('https://images.unsplash.com/photo-1524311583145-d5593bd25029?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-bottom mix-blend-luminosity opacity-30"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#001f3f] to-transparent opacity-80"></div>
-          
+        {/* 🟢 BOTTOM CTA */}
+        <section className="relative py-20 lg:py-24 overflow-hidden bg-[#001f3f] border-b-[4px] border-[#0056D2]">
+          <motion.div animate={{ scale: [1, 1.03, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "linear" }} className="absolute bottom-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1524311583145-d5593bd25029?q=80&w=1400&auto=format&fit=crop')] bg-cover bg-bottom mix-blend-luminosity opacity-25 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001f3f] via-[#001f3f]/75 to-[#001f3f]/90 pointer-events-none" />
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
-            
-            <motion.div variants={fadeInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} className="md:w-1/2 text-center md:text-left">
-              <h2 className="text-2xl sm:text-3xl lg:text-[38px] font-extrabold text-white leading-tight mb-4">
-                Be a Part of a Competent<br/>and Future-Ready Workforce
-              </h2>
-              <p className="text-blue-200 text-sm font-medium">
-                Access DocuMind today and contribute to a data-driven India.
-              </p>
+            <motion.div variants={fadeInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }} className="md:w-3/5 text-center md:text-left">
+              <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-white leading-[1.18] mb-4 drop-shadow-md">Be a Part of a Competent<br/>and Future-Ready Workforce</h2>
+              <p className="text-blue-100 text-[14px] sm:text-[15px] font-medium max-w-lg mx-auto md:mx-0">Access DocuMind today and contribute to a data-driven India.</p>
             </motion.div>
-
-            <motion.div variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }} className="md:w-1/2 flex flex-col sm:flex-row items-center justify-center md:justify-end gap-6 sm:gap-10">
-              <div className="text-left border-l-2 border-blue-400 pl-4">
-                <p className="text-gray-300 font-serif italic text-base sm:text-lg leading-snug">
-                  Better Skills.<br/>
-                  Better Decisions.<br/>
-                  <span className="font-bold text-white not-italic">A Stronger India.</span>
-                </p>
+            <motion.div variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }} className="md:w-2/5 flex flex-col sm:flex-row items-center justify-center md:justify-end gap-6 sm:gap-9">
+              <div className="text-left border-l-2 border-blue-400/80 pl-4 py-1.5 hidden sm:block">
+                <p className="text-slate-200 font-serif italic text-[15px] sm:text-base leading-snug">Better Skills.<br/>Better Decisions.<br/><span className="font-bold text-white not-italic text-base sm:text-lg">A Stronger India.</span></p>
               </div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/login" className="inline-flex items-center gap-2 bg-white text-[#003366] hover:bg-gray-100 px-8 py-3.5 rounded font-bold text-sm transition-colors shadow-lg">
-                  Get Started <ArrowUpRight size={16} />
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+                <Link to="/login" className="inline-flex items-center justify-center gap-2 bg-white text-[#003366] hover:bg-slate-50 px-8 py-3.5 rounded-md font-extrabold text-sm transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(255,255,255,0.2)] group w-full sm:w-auto">
+                  Get Started <ArrowUpRight size={18} className="text-[#0056D2] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </Link>
               </motion.div>
             </motion.div>
-
           </div>
         </section>
 
