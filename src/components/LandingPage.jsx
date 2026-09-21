@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User, BarChart2, BookOpen, FileText, ArrowRight, Settings, BookMarked, ChevronRight } from "lucide-react";
 import ashokaLogo from "../assets/ashoka.png";
-
+import igotKarmayogiLogo from "../assets/igot.png";
+import nssta from "../assets/NSSTA.png";
 export default function LandingPage() {
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -113,7 +114,8 @@ export default function LandingPage() {
           
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 lg:gap-16">
             <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-1.5 sm:gap-2 cursor-pointer">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-500"><Settings size={14} className="sm:w-[18px] sm:h-[18px]"/></div>
+              
+              <img src={igotKarmayogiLogo} alt="iGOT Karmayogi" className="h-12 sm:h-12 object-contain" />
               <span className="font-bold text-gray-800 text-[11px] sm:text-sm tracking-tight">iGOT <span className="font-normal text-gray-600 hidden sm:inline">Karmayogi</span></span>
             </motion.div>
             
@@ -127,7 +129,7 @@ export default function LandingPage() {
             <div className="hidden sm:block w-px h-6 sm:h-8 bg-gray-200"></div>
 
             <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-1.5 sm:gap-2 text-blue-700 cursor-pointer">
-              <BookMarked size={18} className="sm:w-6 sm:h-6"/>
+              <img src={nssta} alt="NSSTA" className="h-12 sm:h-12 object-contain" />
               <span className="font-bold text-[11px] sm:text-sm">NSSTA</span>
             </motion.div>
 
