@@ -124,7 +124,7 @@ export default function Header() {
             <div className="hidden lg:flex items-center h-full text-[13px] font-medium">
               <Link to="/" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Home</Link>
               <Link to="/about" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/about') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>About Us</Link>
-              <button className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white gap-1.5 focus:outline-none">DocuMind <ChevronDown size={14}/></button>
+              <Link to="/platform" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/platform') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>DocuMind</Link>
               <button className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white gap-1.5 focus:outline-none">Resources <ChevronDown size={14}/></button>
               <button className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white focus:outline-none">Contact Us</button>
             </div>
@@ -154,7 +154,7 @@ export default function Header() {
               <div className="flex flex-col py-2 px-4 space-y-1 text-sm font-medium">
                 <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>Home</Link>
                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/about') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>About Us</Link>
-                <button className="flex items-center justify-between w-full py-3 px-4 rounded-md hover:bg-white/10 transition-colors focus:outline-none">DocuMind <ChevronDown size={16}/></button>
+                <Link to="/platform" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/platform') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>DocuMind</Link>
                 <button className="flex items-center justify-between w-full py-3 px-4 rounded-md hover:bg-white/10 transition-colors focus:outline-none">Resources <ChevronDown size={16}/></button>
                 <button className="block w-full text-left py-3 px-4 rounded-md hover:bg-white/10 transition-colors focus:outline-none">Contact Us</button>
                 

@@ -27,7 +27,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ContactSupport from "./pages/ContactSupport";
 import Dashboard from './pages/Dashboard';
 import ChatRoom from "./pages/ChatRoom";
-
+import Platform from "./pages/PlatformOverview";
 // NAYE DASHBOARD PAGES IMPORTS
 import Activity from "./pages/Activity";
 import Settings from "./pages/Settings";

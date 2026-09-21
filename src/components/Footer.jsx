@@ -50,9 +50,9 @@ export default function Footer() {
             <ul className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
               <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Home</Link></li>
               <li><Link to="/about" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">About DocuMind</Link></li>
-              <li><Link to="/features" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Platform Features</Link></li>
-              <li><Link to="/login" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Employee Login</Link></li>
-              <li><Link to="/support" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Help & Support</Link></li>
+              <li><Link to="/platformOverview" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Platform Features</Link></li>
+              <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Employee Login</Link></li>
+              <li><Link to="/" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Help & Support</Link></li>
               <li><a href="#" className="hover:text-[#4DA8DA] hover:translate-x-1 inline-block transition-transform">Sitemap</a></li>
             </ul>
           </div>
