@@ -100,6 +100,7 @@ export default function App() {
           <Route element={<PublicLayout />}>
              <Route path="/" element={<HomeFlow />} />
              <Route path="/about" element={<About />} /> 
+             <Route path="/platform" element={<Platform />} />
              <Route path="/features" element={<Features />} />
              <Route path="/pricing" element={<Pricing />} />
              <Route path="/how-it-works" element={<HowItWorks />} />

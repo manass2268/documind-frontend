@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { 
   Play, ShieldCheck, Cpu, BookOpen, Users, 
   ArrowRight, User, BarChart2, Target, CheckCircle, RefreshCw,
-  Building2, GraduationCap, ArrowUpRight
+  Building2, GraduationCap, ArrowUpRight,Quote
 } from "lucide-react";
 
 export default function PlatformOverview() {
