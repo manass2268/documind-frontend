@@ -82,9 +82,9 @@ export default function KnowledgeCentre() {
 
             <motion.div variants={fadeInRight} initial="hidden" animate="visible" className="relative w-full h-[450px] sm:h-[550px] flex items-center justify-center mt-8 lg:mt-0">
               <motion.div whileHover={{ scale: 1.02, rotateY: -5, rotateX: 5 }} transition={{ type: "spring", stiffness: 100 }} style={{ perspective: 1000 }} className="absolute top-0 right-0 w-[90%] h-[90%] rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,40,90,0.3)] z-10 border-[8px] border-white/90 overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop" alt="Sardar Patel Bhawan" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1200&auto=format&fit=crop" alt="INDIA GATE" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#00172D]/90 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-5 right-5 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-lg border border-white/20 text-white text-[11px] font-black tracking-[0.15em] shadow-xl">INDIA GATE    </div>
+                <div className="absolute bottom-5 right-5 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-lg border border-white/20 text-white text-[11px] font-black tracking-[0.15em] shadow-xl">INDIA GATE</div>
               </motion.div>
               <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-10 -left-6 bg-white/90 backdrop-blur-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl z-30 border border-white min-w-[200px] text-center">
                 <p className="font-extrabold text-[#003366] text-[16px] sm:text-[18px] font-serif italic leading-[1.3]">People.<br/>Data.<br/>Learning.<br/><span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-600 not-italic drop-shadow-sm">A Stronger India.</span></p>
