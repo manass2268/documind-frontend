@@ -21,7 +21,7 @@ export default function PlatformOverview() {
       {/* 🟢 BREADCRUMB */}
       <div className="bg-white border-b border-gray-100 relative z-20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 text-[11px] font-semibold text-gray-500 whitespace-nowrap">
-          <Link to="/" className="hover:text-[#0056D2] transition-colors">Home</Link>
+          <Link className="hover:text-[#0056D2] transition-colors" to="/">Home</Link>
           <span className="mx-2 text-gray-300">&gt;</span>
           <span className="text-[#0056D2]">Platform Overview</span>
         </div>
@@ -56,12 +56,12 @@ export default function PlatformOverview() {
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
                 <motion.div whileHover={{ scale: 1.05, boxShadow: "0 15px 30px -5px rgba(0,86,210,0.4)" }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
-                  <Link to="/login" className="bg-gradient-to-r from-[#0056D2] to-[#0044A8] text-white px-7 py-3.5 text-sm font-semibold flex items-center justify-center gap-2 rounded-lg w-full group">
-                    Explore Platform <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  <Link className="bg-gradient-to-r from-[#0056D2] to-[#0044A8] text-white px-7 py-3.5 text-sm font-semibold flex items-center justify-center gap-2 rounded-lg w-full group" to="/login">
+                    Explore Platform <ArrowRight className="group-hover:translate-x-1 transition-transform" size={16}/>
                   </Link>
                 </motion.div>
                 <motion.button whileHover={{ scale: 1.05, backgroundColor: "#F8FAFC" }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto bg-white/80 backdrop-blur-md text-[#1E293B] border border-gray-200 px-7 py-3.5 text-sm font-semibold transition-all flex items-center justify-center gap-2 rounded-lg shadow-sm hover:border-gray-300">
-                  <Play size={16} className="text-[#0056D2] fill-[#0056D2]" /> Watch Video
+                  <Play className="text-[#0056D2] fill-[#0056D2]" size={16}/> Watch Video
                 </motion.button>
               </div>
 
@@ -86,14 +86,14 @@ export default function PlatformOverview() {
               </motion.div>
               
               <div className="absolute top-10 right-0 w-[85%] h-[65%] rounded-2xl shadow-2xl z-10 border-4 border-white overflow-hidden">
-                 <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1000&auto=format&fit=crop" alt="Government Building" className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                 <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1000&auto=format&fit=crop" alt="Government Building" className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 brightness-110" />
               </div>
               
               <motion.div animate={{ y: [-8, 8, -8] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-10 left-5 w-[85%] sm:w-[75%] h-auto bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.4)] z-20 border-b-[12px] border-gray-300 flex flex-col overflow-hidden ring-1 ring-black/5">
                 <div className="w-full h-3 bg-gray-100 border-b border-gray-200 flex items-center px-3 gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-red-400"></div><div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div><div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
                 </div>
-                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="Dashboard" className="w-full h-[180px] sm:h-[220px] object-cover" />
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="Dashboard" className="w-full h-[180px] sm:h-[220px] object-cover brightness-105" />
               </motion.div>
               
               <motion.div animate={{ y: [0, 15, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute top-1/2 right-[-10px] sm:right-[-20px] bg-white/90 backdrop-blur-md p-4 shadow-2xl rounded-lg z-30 border border-gray-100 max-w-[130px]">
@@ -131,7 +131,7 @@ export default function PlatformOverview() {
                   <span className={`text-[13px] font-black ${step.color} mb-2 bg-white px-2 py-0.5 rounded-md shadow-sm border ${step.border}`}>{step.no}</span>
                   <h4 className="text-[14px] font-bold text-[#1E293B] mb-2 leading-tight whitespace-pre-line group-hover:text-[#0056D2] transition-colors">{step.title}</h4>
                   <p className="text-[11px] text-gray-500 leading-snug px-2">{step.desc}</p>
-                  {idx !== 5 && <ArrowRight className="lg:hidden text-gray-300 mt-6" size={20} />}
+                  {idx !== 5 && <ArrowRight className="lg:hidden text-gray-300 mt-6" size={20}/>}
                 </motion.div>
               ))}
             </motion.div>
@@ -149,8 +149,8 @@ export default function PlatformOverview() {
                 <h2 className="text-2xl sm:text-[32px] font-extrabold text-[#003366]">Intelligent. Simple. Impactful.</h2>
               </motion.div>
               <motion.div variants={fadeInRight} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-4 md:mt-0">
-                <Link to="/features" className="text-[#0056D2] font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all hover:underline bg-blue-50 px-4 py-2 rounded-full">
-                  Explore All Features <ArrowRight size={14} />
+                <Link className="text-[#0056D2] font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all hover:underline bg-blue-50 px-4 py-2 rounded-full" to="/features">
+                  Explore All Features <ArrowRight size={14}/>
                 </Link>
               </motion.div>
             </div>
@@ -168,15 +168,15 @@ export default function PlatformOverview() {
                   </div>
                   <h4 className="font-bold text-[#1E293B] text-[15px] mb-3 group-hover:text-[#003366] transition-colors">{feat.title}</h4>
                   <p className="text-[12px] text-gray-500 leading-relaxed mb-6 flex-grow">{feat.desc}</p>
-                  <Link to="/features" className={`text-[12px] font-bold ${feat.color} flex items-center gap-1 group-hover:gap-2 transition-all mt-auto w-max`}>
-                    Learn More <ArrowRight size={12} />
+                  <Link className={`text-[12px] ${feat.color} flex font-bold gap-1 group-hover:gap-2 items-center mt-auto transition-all w-max`} to="/features">
+                    Learn More <ArrowRight size={12}/>
                   </Link>
                 </motion.div>
               ))}
 
               <motion.div variants={fadeInUp} whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-[#003366] to-[#0056D2] p-8 rounded-xl shadow-lg border border-blue-800 flex flex-col justify-center h-full relative overflow-hidden group">
                 <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-white opacity-5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                <Quote className="text-white/20 mb-4" size={40} />
+                <Quote className="text-white/20 mb-4" size={40}/>
                 <p className="text-white font-serif italic font-semibold text-lg leading-snug mb-6 relative z-10">"Empowered people build a stronger statistical system."</p>
                 <div className="w-8 h-0.5 bg-orange-400 mb-3"></div>
                 <span className="text-xs font-bold text-blue-100 tracking-wide">MoSPI</span>
@@ -209,7 +209,7 @@ export default function PlatformOverview() {
                     <p className="text-[12px] text-gray-500 leading-relaxed mb-4">{stake.desc}</p>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center self-end mt-auto group-hover:bg-blue-50 transition-colors">
-                    <ArrowRight size={14} className="text-gray-400 group-hover:text-[#0056D2]" />
+                    <ArrowRight className="text-gray-400 group-hover:text-[#0056D2]" size={14}/>
                   </div>
                 </motion.div>
               ))}
@@ -220,11 +220,11 @@ export default function PlatformOverview() {
         {/* 🟢 5. BOTTOM CTA SECTION (Updated with Lighter Blue, Better Gradients & Monument Image) */}
         <section className="relative py-20 lg:py-28 overflow-hidden bg-gradient-to-br from-[#061e38] via-[#0a2a4a] to-[#041424] border-b-[4px] border-[#0056D2]">
           
-          {/* Background Monument Image */}
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585938389612-a552a28d6914?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center mix-blend-luminosity opacity-[0.15]"></div>
+          {/* Background Monument Image (Made Brighter and More Visible) */}
+          <div className="absolute inset-0 bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDk_DNvoklccuACDlPaJczI8p06yV9BGNAiYDgoPa-9Q&s=10')] bg-cover bg-center mix-blend-luminosity opacity-500 brightness-125 contrast-125"></div>
           
-          {/* Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#061e38]/90 via-[#0a2a4a]/70 to-[#041424]/90"></div>
+          {/* Gradient Overlay for Text Readability (Lightened for more image exposure) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#061e38]/80 via-[#0a2a4a]/50 to-[#041424]/80"></div>
           
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
             
@@ -240,8 +240,8 @@ export default function PlatformOverview() {
                 Access DocuMind and be a part of India's growth story.
               </p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-max">
-                <Link to="/login" className="inline-flex items-center gap-2 bg-white text-[#003300] hover:bg-gray-100 px-6 py-3 rounded font-bold text-sm transition-colors shadow-lg">
-                  Access DocuMind <ArrowUpRight size={16} className="text-[#0056D2]" />
+                <Link className="inline-flex items-center gap-2 bg-white text-[#003300] hover:bg-gray-100 px-6 py-3 rounded font-bold text-sm transition-colors shadow-lg" to="/login">
+                  Access DocuMind <ArrowUpRight className="text-[#0056D2]" size={16}/>
                 </Link>
               </motion.div>
             </motion.div>
