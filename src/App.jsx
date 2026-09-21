@@ -28,6 +28,7 @@ import ContactSupport from "./pages/ContactSupport";
 import Dashboard from './pages/Dashboard';
 import ChatRoom from "./pages/ChatRoom";
 import Platform from "./pages/PlatformOverview";
+import KnowledgeCenter from "./pages/KnowledgeCentre";
 // NAYE DASHBOARD PAGES IMPORTS
 import Activity from "./pages/Activity";
 import Settings from "./pages/Settings";
@@ -105,6 +106,7 @@ export default function App() {
              <Route path="/pricing" element={<Pricing />} />
              <Route path="/how-it-works" element={<HowItWorks />} />
              <Route path="/support" element={<ContactSupport />} />
+             <Route path="/knowledge-center" element={<KnowledgeCenter />} />
           </Route>
 
           {/* 🟢 STANDALONE PUBLIC ROUTES (No Header/Footer needed here usually) */}

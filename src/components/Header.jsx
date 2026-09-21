@@ -100,7 +100,7 @@ export default function Header() {
               <Link to="/" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Home</Link>
               <Link to="/about" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/about') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>About Us</Link>
               <Link to="/platform" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/platform') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>DocuMind</Link>
-              <button className="h-full flex items-center px-6 hover:bg-white/10 transition-colors border-b-2 border-transparent hover:border-white gap-1.5 focus:outline-none">Knowledge Center <ChevronDown size={14}/></button>
+              <Link to="/knowledge-center" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/knowledge-center') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Knowledge Center</Link>
               <Link to="/support" className={`h-full flex items-center px-6 transition-colors border-b-2 ${isActive('/support') ? 'bg-[#0056D2] border-transparent shadow-inner' : 'hover:bg-white/10 border-transparent hover:border-white'}`}>Contact Us</Link>
             </div>
             
@@ -123,7 +123,7 @@ export default function Header() {
                 <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>Home</Link>
                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/about') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>About Us</Link>
                 <Link to="/platform" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/platform') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>DocuMind</Link>
-                <button className="flex items-center justify-between w-full py-3 px-4 rounded-md hover:bg-white/10 transition-colors focus:outline-none">Knowledge Center <ChevronDown size={16}/></button>
+                <Link to="/knowledge-center" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/knowledge-center') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>Knowledge Center</Link>
                 <Link to="/support" onClick={() => setIsMobileMenuOpen(false)} className={`block py-3 px-4 rounded-md transition-colors ${isActive('/support') ? 'bg-[#0056D2]' : 'hover:bg-white/10'}`}>Contact Us</Link>
                 <div className="sm:hidden mt-2 pt-2 border-t border-white/10">
                   <div className="flex items-center bg-white/10 border border-white/20 rounded-md overflow-hidden h-10 w-full focus-within:bg-white focus-within:border-transparent group">
