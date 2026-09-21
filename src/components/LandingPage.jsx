@@ -5,6 +5,11 @@ import { User, BarChart2, BookOpen, FileText, ArrowRight, Settings, BookMarked, 
 import ashokaLogo from "../assets/ashoka.png";
 import igotKarmayogiLogo from "../assets/igot.png";
 import nssta from "../assets/NSSTA.png";
+import diLogo from "../assets/digiIndia.png";
+
+
+
+
 export default function LandingPage() {
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -136,10 +141,10 @@ export default function LandingPage() {
             <div className="hidden sm:block w-px h-6 sm:h-8 bg-gray-200"></div>
 
             <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-1.5 sm:gap-2 cursor-pointer">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-100 border border-green-200 flex items-center justify-center font-bold text-green-700 text-[9px] sm:text-xs shadow-sm">DI</div>
-              <div className="hidden sm:flex flex-col text-[10px] font-bold text-gray-700 leading-none">
+              <img src={diLogo} alt="Digital India" className="h-12 sm:h-12 object-contain" />
+              {/*<div className="hidden sm:flex flex-col text-[10px] font-bold text-gray-700 leading-none">
                 <span className="text-[#0A4275] text-xs sm:text-sm">Digital India</span>
-              </div>
+              </div>*/}
             </motion.div>
           </div>
         </div>
