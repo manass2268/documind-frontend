@@ -109,11 +109,13 @@ export default function App() {
              <Route path="/knowledge-center" element={<KnowledgeCenter />} />
           </Route>
 
-          {/* 🟢 STANDALONE PUBLIC ROUTES (No Header/Footer needed here usually) */}
+          {/* 🟢 STANDALONE PUBLIC ROUTES (No Header/Footer needed here usually)
+          
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="chat/:chatId" element={<ChatRoom />} />
+           */}
           
           {/* --- 🔴 PRIVATE GATEWAY ROUTES --- */}
           <Route path="/dashboard" element={<DashboardLayout />}>
