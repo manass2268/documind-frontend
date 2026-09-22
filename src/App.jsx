@@ -117,14 +117,14 @@ export default function App() {
           <Route path="chat/:chatId" element={<ChatRoom />} />
            */}
           
-          {/* --- 🔴 PRIVATE GATEWAY ROUTES --- */}
+          {/* --- 🔴 PRIVATE GATEWAY ROUTES --- 
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Dashboard />} /> 
             <Route path="activity" element={<Activity />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>
-          
+          */}
         </Routes>
       </div>
     </Router>
