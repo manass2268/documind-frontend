@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
   const [activeSection, setActiveSection] = useState(1);
   const [currentDate, setCurrentDate] = useState("");
 
-  // 🟢 Scroll Progress Bar Animation
+  // Scroll Progress
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
@@ -32,30 +32,32 @@ export default function PrivacyPolicy() {
     { id: 9, num: "09", title: "Changes to This Policy", icon: RefreshCw, color: "pink", desc: "We may update this Privacy Policy from time to time. We will notify you of any significant changes through our website or via email." }
   ];
 
-  // 🟢 Exact Block Target Scroll Logic
+  // 🟢 100% WORKING EXACT SCROLL LOGIC
   const scrollToSection = (e, id) => {
     e.preventDefault();
     setActiveSection(id);
     
     const element = document.getElementById(`section-${id}`);
     if (element) {
-      // Calculates exact position minus 40px padding for top spacing
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 40;
-      
+      // Calculate exact position minus top spacing (offset)
+      const offset = 100; // Top padding space
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - offset;
+  
       window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
+        top: offsetPosition,
+        behavior: "smooth"
       });
       
-      // Add brief highlight effect to the block when clicked
-      element.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-50', 'scale-[1.02]');
+      // Card par highlight glow effect
+      element.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
       setTimeout(() => {
-        element.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-50', 'scale-[1.02]');
-      }, 500);
+        element.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
+      }, 700);
     }
   };
 
-  // 🟢 Scroll Spy (Automatically update active section on manual scroll)
+  // Auto Spy on Scroll (Updates left sidebar as you scroll down)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -66,7 +68,7 @@ export default function PrivacyPolicy() {
           }
         });
       },
-      { rootMargin: "-10% 0px -70% 0px" } 
+      { rootMargin: "-15% 0px -60% 0px" } 
     );
 
     policySections.forEach((section) => {
@@ -91,7 +93,8 @@ export default function PrivacyPolicy() {
   const getBulletColor = (color) => { const colors = { blue: "bg-blue-500", emerald: "bg-emerald-500", orange: "bg-orange-500", purple: "bg-purple-500", red: "bg-red-500", amber: "bg-amber-500", teal: "bg-teal-500", pink: "bg-pink-500" }; return colors[color] || "bg-gray-500"; };
 
   return (
-    <div className="flex flex-col bg-[#F8FAFC] text-[#1E293B] font-sans min-h-screen relative overflow-hidden">
+    // Fixed: overflow-hidden removed so window scrolling works perfectly
+    <div className="flex flex-col bg-[#F8FAFC] text-[#1E293B] font-sans min-h-screen relative overflow-x-hidden">
       
       {/* Scroll Progress Bar */}
       <motion.div style={{ scaleX, transformOrigin: "0% 50%" }} className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-400 via-[#0056D2] to-purple-500 z-50 rounded-r-full" />
@@ -99,10 +102,8 @@ export default function PrivacyPolicy() {
       {/* 🟢 HERO SECTION */}
       <section className="bg-gradient-to-br from-[#EBF4FF] via-white to-[#F0F7FF] pt-20 pb-24 relative overflow-hidden border-b border-gray-100">
         
-        {/* Background Particles */}
         <motion.div animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -left-10 w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] pointer-events-none" />
         <motion.div animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute top-10 right-[-10%] w-[400px] h-[400px] bg-indigo-300/30 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-multiply pointer-events-none" />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="z-20">
@@ -154,28 +155,24 @@ export default function PrivacyPolicy() {
           <div className="lg:col-span-3 space-y-8">
             <div className="sticky top-10 space-y-8">
               
-              {/* Anchor Navigation Menu */}
               <div className="bg-white border border-gray-200/80 p-3 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] space-y-1 relative">
                 {policySections.map((section) => (
-                  <a 
+                  <button 
                     key={section.id}
-                    href={`#section-${section.id}`}
                     onClick={(e) => scrollToSection(e, section.id)}
-                    className="w-full relative flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[13px] font-bold text-left group z-10 block"
+                    className="w-full relative flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-[13px] font-bold text-left group z-10"
                   >
                     {activeSection === section.id && (
                       <motion.div layoutId="activeSidebarBg" className="absolute inset-0 bg-blue-50/80 border border-blue-100 rounded-xl -z-10" transition={{ type: "spring", stiffness: 300, damping: 30 }} />
                     )}
-                    
                     <section.icon size={18} strokeWidth={2.2} className={`relative z-10 transition-transform duration-300 group-hover:scale-110 ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-400 group-hover:text-gray-700'}`} />
                     <span className={`relative z-10 transition-colors ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-500 group-hover:text-gray-900'}`}>
                       {section.title}
                     </span>
-                  </a>
+                  </button>
                 ))}
               </div>
 
-              {/* Action Box */}
               <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-[#0056D2] to-blue-700 rounded-2xl p-6 text-center shadow-lg relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                 <div className="w-12 h-12 bg-white/20 backdrop-blur-sm text-white rounded-xl flex items-center justify-center mx-auto mb-4 border border-white/20 shadow-inner group-hover:scale-110 transition-transform">
@@ -191,14 +188,14 @@ export default function PrivacyPolicy() {
           </div>
 
           {/* 🔴 RIGHT CONTENT CARDS */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="lg:col-span-9 space-y-6">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="lg:col-span-9 space-y-6 relative">
             {policySections.map((section) => (
               <motion.div 
                 id={`section-${section.id}`} 
                 key={section.id} 
                 variants={fadeInUp}
                 onMouseEnter={() => setActiveSection(section.id)} 
-                className={`bg-white border ${activeSection === section.id ? 'border-blue-400 ring-2 ring-blue-50/50 shadow-[0_15px_40px_-10px_rgba(0,86,210,0.15)]' : 'border-gray-200'} p-7 sm:p-9 rounded-[2rem] flex flex-col md:flex-row items-start gap-6 md:gap-8 transition-all duration-300 group cursor-default`}
+                className={`bg-white border ${activeSection === section.id ? 'border-blue-400 ring-1 ring-blue-100 shadow-[0_15px_40px_-10px_rgba(0,86,210,0.12)] -translate-y-1' : 'border-gray-200'} p-7 sm:p-9 rounded-[2rem] flex flex-col md:flex-row items-start gap-6 md:gap-8 transition-all duration-300 group cursor-default`}
               >
                 
                 <div className="flex items-center gap-4 md:w-[15%] shrink-0">
