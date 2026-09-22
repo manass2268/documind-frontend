@@ -72,7 +72,7 @@ export default function Footer() {
               <div className="w-1.5 h-1.5 bg-[#4DA8DA] rounded-full"></div> Policies & Legal
             </h3>
             <ul className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm mb-6">
-              <li><a href="#" className="flex items-center gap-2 hover:text-white transition-colors"><ShieldCheck size={14} className="text-gray-400"/> Privacy Policy</a></li>
+              <li><a href="/privacy-policy" className="flex items-center gap-2 hover:text-white transition-colors"><ShieldCheck size={14} className="text-gray-400"/> Privacy Policy</a></li>
               <li><a href="#" className="flex items-center gap-2 hover:text-white transition-colors"><Scale size={14} className="text-gray-400"/> Terms & Conditions</a></li>
               <li><a href="#" className="flex items-center gap-2 hover:text-white transition-colors"><Globe size={14} className="text-gray-400"/> Accessibility Statement</a></li>
             </ul>
