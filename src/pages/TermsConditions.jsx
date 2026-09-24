@@ -32,17 +32,17 @@ export default function TermsConditions() {
     { id: 9, title: "Limitation of Liability", icon: Scale, color: "purple", desc: "DocuMind is provided \"as is\" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from the use of our Services." },
     { id: 10, title: "Changes to Terms", icon: RefreshCw, color: "emerald", desc: "We may update these Terms from time to time. We will notify you of any significant changes through our website or via email." },
     { id: 11, title: "Governing Law", icon: Landmark, color: "blue", desc: "These Terms are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the courts in New Delhi, India." },
-    { id: 12, title: "Contact Us", icon: Mail, color: "pink", desc: "If you have any questions regarding these Terms and Conditions, you can contact us at support-documind@mospi.gov.in." }
+    { id: 12, title: "Contact Us", icon: Mail, color: "pink", desc: "If you have any questions regarding these Terms and Conditions, you can contact us at support.mstech4407@gmail.com." }
   ];
 
-  // 🟢 100% WORKING EXACT SCROLL LOGIC
+  // 🟢 EXACT SCROLL LOGIC
   const scrollToSection = (e, id) => {
     e.preventDefault();
     setActiveSection(id);
     
     const element = document.getElementById(`term-${id}`);
     if (element) {
-      const offset = 100; // Top spacing
+      const offset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - offset;
   
@@ -51,7 +51,6 @@ export default function TermsConditions() {
         behavior: "smooth"
       });
       
-      // Highlight glow effect on the clicked card
       element.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
       setTimeout(() => {
         element.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
@@ -59,7 +58,7 @@ export default function TermsConditions() {
     }
   };
 
-  // 🟢 Live Scroll Spy (Updates sidebar automatically)
+  // 🟢 Live Scroll Spy
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -81,7 +80,6 @@ export default function TermsConditions() {
     return () => observer.disconnect();
   }, []);
 
-  // 🟢 Framer Motion Animations
   const spr = { type: "spring", stiffness: 100, damping: 15 };
   const fadeInUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: spr } };
   const fadeInLeft = { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0, transition: spr } };
@@ -89,7 +87,6 @@ export default function TermsConditions() {
   const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } } };
   const breatheEffect = { y: [0, -12, 0], rotate: [0, 2, -2, 0], transition: { duration: 6, repeat: Infinity, ease: "easeInOut" } };
 
-  // 🟢 Dynamic Color Generators
   const getColorClasses = (color) => {
     const colors = { blue: "bg-blue-100 text-blue-600 border-blue-200", emerald: "bg-emerald-100 text-emerald-600 border-emerald-200", orange: "bg-orange-100 text-orange-500 border-orange-200", purple: "bg-purple-100 text-purple-600 border-purple-200", red: "bg-red-100 text-red-500 border-red-200", pink: "bg-pink-100 text-pink-500 border-pink-200" };
     return colors[color] || "bg-gray-100 text-gray-600 border-gray-200";
@@ -109,13 +106,11 @@ export default function TermsConditions() {
       {/* 🟢 Scroll Progress Bar */}
       <motion.div style={{ scaleX, transformOrigin: "0% 50%" }} className="fixed top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-blue-400 via-[#0056D2] to-teal-400 z-50 rounded-r-full" />
 
-      {/* 🟢 HERO SECTION WITH AMBIENT PARTICLES */}
+      {/* 🟢 HERO SECTION */}
       <section className="bg-gradient-to-br from-[#EBF4FF] via-white to-[#F0F7FF] pt-24 pb-20 relative overflow-hidden border-b border-gray-100">
         
-        {/* Animated Background Orbs */}
         <motion.div animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -left-10 w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] pointer-events-none" />
         <motion.div animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute top-10 right-[-10%] w-[400px] h-[400px] bg-teal-300/20 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-multiply pointer-events-none" />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
@@ -148,8 +143,13 @@ export default function TermsConditions() {
           <motion.div initial="hidden" animate="visible" variants={fadeInRight} className="relative h-[300px] lg:h-[450px] flex items-center justify-center">
             <div className="relative w-full h-full flex items-center justify-center z-10">
                
-               <motion.div animate={breatheEffect} whileHover={{ scale: 1.05, rotateY: -10, rotateX: 5 }} transition={{ type: "spring" }} style={{ perspective: 1000 }}>
-                 <img src="https://cdni.iconscout.com/illustration/premium/thumb/terms-and-condition-8260340-6644265.png" alt="Terms and Conditions Graphic" className="w-[280px] lg:w-[380px] object-contain drop-shadow-2xl" />
+               {/* 🟢 FIXED: Replaced broken IconScout image with a highly reliable Unsplash Image */}
+               <motion.div animate={breatheEffect} whileHover={{ scale: 1.08, rotateY: -10, rotateX: 5 }} transition={{ type: "spring" }} style={{ perspective: 1000 }}>
+                 <img 
+                    src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Terms and Conditions Graphic" 
+                    className="w-[200px] lg:w-[260px] h-[260px] lg:h-[340px] object-cover rounded-[2rem] drop-shadow-2xl border-4 border-white shadow-[0_30px_60px_rgba(0,30,80,0.3)]" 
+                 />
                </motion.div>
                
                <motion.div animate={{ y: [0, -15, 0], rotate: [-6, -10, -6] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-8 left-0 sm:left-4 bg-white/90 backdrop-blur-xl p-4 sm:p-5 shadow-2xl rounded-2xl z-30 border border-white/50 w-[180px] text-center border-l-4 border-[#0056D2] group hover:rotate-0 transition-transform">
@@ -174,11 +174,10 @@ export default function TermsConditions() {
       <section className="py-12 lg:py-24">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
-          {/* 🔴 LEFT SIDEBAR (Live Highlight) */}
+          {/* 🔴 LEFT SIDEBAR */}
           <div className="lg:col-span-3 space-y-6 lg:space-y-8">
             <div className="sticky top-12 space-y-6 lg:space-y-8">
               
-              {/* Animated Anchor Menu */}
               <div className="bg-white border border-gray-200/80 p-4 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
                 <h3 className="text-[16px] font-black text-[#0F172A] mb-3 px-2">On This Page</h3>
                 <div className="space-y-1 relative">
@@ -192,7 +191,6 @@ export default function TermsConditions() {
                       {activeSection === section.id && (
                         <motion.div layoutId="activeTermBg" className="absolute inset-0 bg-blue-50 border border-blue-100 rounded-xl -z-10" transition={{ type: "spring", stiffness: 300, damping: 30 }} />
                       )}
-                      
                       <section.icon size={16} strokeWidth={2.2} className={`relative z-10 shrink-0 transition-transform duration-300 group-hover:scale-110 ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-400 group-hover:text-gray-700'}`} />
                       <span className={`relative z-10 truncate transition-colors ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-500 group-hover:text-gray-900'}`}>
                         {section.id}. {section.title}
@@ -202,7 +200,6 @@ export default function TermsConditions() {
                 </div>
               </div>
 
-              {/* Action Box */}
               <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] border border-blue-100 rounded-[1.5rem] p-6 shadow-md text-center group relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-200/40 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                 <div className="w-12 h-12 bg-white text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-100 shadow-sm group-hover:scale-110 transition-transform">
@@ -215,7 +212,6 @@ export default function TermsConditions() {
                 </Link>
               </motion.div>
 
-              {/* Responsible Future Box */}
               <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-teal-50 to-emerald-100 rounded-[1.5rem] p-6 relative overflow-hidden border border-teal-200 shadow-md group">
                 <h4 className="font-black text-[#003366] text-[18px] leading-[1.2] relative z-10 mb-5 group-hover:translate-x-1 transition-transform">
                   Building a <br/> Responsible <br/> Learning Future
@@ -233,7 +229,7 @@ export default function TermsConditions() {
             </div>
           </div>
 
-          {/* 🔴 RIGHT CONTENT CARDS (Magnetic Hover) */}
+          {/* 🔴 RIGHT CONTENT CARDS */}
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="lg:col-span-9 space-y-4 lg:space-y-5 relative">
             {termsData.map((section) => (
               <motion.div 
@@ -245,7 +241,6 @@ export default function TermsConditions() {
                 className={`bg-white border ${activeSection === section.id ? 'border-blue-400 ring-1 ring-blue-100 shadow-[0_15px_40px_-10px_rgba(0,86,210,0.12)]' : 'border-gray-200'} p-6 sm:p-7 rounded-[1.5rem] flex items-start gap-4 sm:gap-6 transition-all duration-300 group cursor-default scroll-mt-24 ${getHoverGlow(section.color)}`}
               >
                 
-                {/* Visual Number & Icon Block */}
                 <div className="flex items-center gap-3 shrink-0 pt-1">
                   <div className={`w-8 h-8 rounded-full ${getSolidColor(section.color)} text-white flex items-center justify-center text-[13px] font-black shadow-md group-hover:scale-110 group-hover:rotate-12 transition-transform`}>
                     {section.id}
@@ -255,13 +250,11 @@ export default function TermsConditions() {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="flex-1">
                   <h3 className="text-[18px] font-black text-[#0F172A] mb-2 group-hover:text-[#0056D2] transition-colors">{section.title}</h3>
                   <p className="text-[14px] text-gray-600 leading-relaxed font-medium group-hover:text-gray-800 transition-colors">{section.desc}</p>
                 </div>
 
-                {/* Arrow */}
                 <div className="hidden sm:flex shrink-0 pt-2 text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1.5 transition-all">
                   <ChevronRight size={20} strokeWidth={2.5} />
                 </div>
