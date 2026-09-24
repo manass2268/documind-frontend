@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { 
   FileText, CheckCircle, User, Users, Copyright, 
   AlertTriangle, CreditCard, XCircle, Scale, RefreshCw, 
-  Landmark, Mail, ChevronRight, Calendar, Headphones, ArrowRight, ShieldCheck
+  Landmark, Mail, ChevronRight, Calendar, Headphones, 
+  ArrowRight, ShieldCheck, Link2, Check, ArrowUp, Clock, Scale as ScaleIcon
 } from "lucide-react";
 
 export default function TermsConditions() {
   const [activeSection, setActiveSection] = useState(1);
   const [currentDate, setCurrentDate] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
+  const [showTopBtn, setShowTopBtn] = useState(false);
 
   // 🟢 Live Scroll Progress Bar
   const { scrollYProgress } = useScroll();
@@ -18,6 +21,12 @@ export default function TermsConditions() {
   useEffect(() => {
     const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     setCurrentDate(date);
+
+    const handleScroll = () => {
+      setShowTopBtn(window.scrollY > 500);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const termsData = [
@@ -29,36 +38,41 @@ export default function TermsConditions() {
     { id: 6, title: "Acceptable Use Policy", icon: AlertTriangle, color: "blue", desc: "You agree not to misuse our Services, including but not limited to, attempting to hack, reverse engineer, distribute harmful content, or use the platform for illegal activities." },
     { id: 7, title: "Payments & Subscriptions", icon: CreditCard, color: "emerald", desc: "Certain features may require a paid subscription. All payments are processed securely through our trusted payment partners. Fees are non-refundable except as stated in our refund policy." },
     { id: 8, title: "Termination", icon: XCircle, color: "orange", desc: "We reserve the right to suspend or terminate your account if you violate these Terms or engage in harmful or illegal activities." },
-    { id: 9, title: "Limitation of Liability", icon: Scale, color: "purple", desc: "DocuMind is provided \"as is\" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from the use of our Services." },
+    { id: 9, title: "Limitation of Liability", icon: ScaleIcon, color: "purple", desc: "DocuMind is provided \"as is\" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from the use of our Services." },
     { id: 10, title: "Changes to Terms", icon: RefreshCw, color: "emerald", desc: "We may update these Terms from time to time. We will notify you of any significant changes through our website or via email." },
     { id: 11, title: "Governing Law", icon: Landmark, color: "blue", desc: "These Terms are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the courts in New Delhi, India." },
-    { id: 12, title: "Contact Us", icon: Mail, color: "pink", desc: "If you have any questions regarding these Terms and Conditions, you can contact us at support.mstech4407@gmail.com." }
+    { id: 12, title: "Contact Us", icon: Mail, color: "pink", desc: "If you have any questions regarding these Terms and Conditions, you can contact us at support-documind@mospi.gov.in." }
   ];
 
-  // 🟢 EXACT SCROLL LOGIC
+  // 🟢 Copy Link Logic
+  const handleCopy = (id) => {
+    const url = `${window.location.origin}${window.location.pathname}#term-${id}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const scrollToSection = (e, id) => {
     e.preventDefault();
     setActiveSection(id);
-    
     const element = document.getElementById(`term-${id}`);
     if (element) {
-      const offset = 100;
+      const offset = 120;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - offset;
-  
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
       
-      element.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
+      element.classList.add('ring-4', 'ring-[#0056D2]', 'ring-opacity-40', 'scale-[1.015]', 'shadow-2xl', 'z-10', 'border-[#0056D2]');
       setTimeout(() => {
-        element.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-60', 'scale-[1.02]', 'shadow-2xl', 'z-10');
+        element.classList.remove('ring-4', 'ring-[#0056D2]', 'ring-opacity-40', 'scale-[1.015]', 'shadow-2xl', 'z-10', 'border-[#0056D2]');
       }, 700);
     }
   };
 
-  // 🟢 Live Scroll Spy
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -69,195 +83,198 @@ export default function TermsConditions() {
           }
         });
       },
-      { rootMargin: "-15% 0px -60% 0px" } 
+      { rootMargin: "-20% 0px -60% 0px" } 
     );
-
     termsData.forEach((section) => {
       const el = document.getElementById(`term-${section.id}`);
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
   }, []);
 
-  const spr = { type: "spring", stiffness: 100, damping: 15 };
-  const fadeInUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: spr } };
-  const fadeInLeft = { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0, transition: spr } };
-  const fadeInRight = { hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0, transition: spr } };
-  const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } } };
-  const breatheEffect = { y: [0, -12, 0], rotate: [0, 2, -2, 0], transition: { duration: 6, repeat: Infinity, ease: "easeInOut" } };
+  // 🟢 Animations & Dynamic Colors
+  const spr = { type: "spring", stiffness: 90, damping: 15 };
+  const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: spr } };
+  const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } } };
+  const breatheEffect = { y: [0, -10, 0], rotate: [0, 2, -2, 0], transition: { duration: 6, repeat: Infinity, ease: "easeInOut" } };
 
-  const getColorClasses = (color) => {
-    const colors = { blue: "bg-blue-100 text-blue-600 border-blue-200", emerald: "bg-emerald-100 text-emerald-600 border-emerald-200", orange: "bg-orange-100 text-orange-500 border-orange-200", purple: "bg-purple-100 text-purple-600 border-purple-200", red: "bg-red-100 text-red-500 border-red-200", pink: "bg-pink-100 text-pink-500 border-pink-200" };
-    return colors[color] || "bg-gray-100 text-gray-600 border-gray-200";
+  const getBadgeColor = (color) => {
+    const colors = { blue: "bg-blue-100/80 text-blue-700", emerald: "bg-emerald-100/80 text-emerald-700", orange: "bg-orange-100/80 text-orange-600", purple: "bg-purple-100/80 text-purple-700", red: "bg-red-100/80 text-red-600", pink: "bg-pink-100/80 text-pink-600" };
+    return colors[color] || "bg-gray-100/80 text-gray-700";
   };
-  const getSolidColor = (color) => {
-    const colors = { blue: "bg-blue-500", emerald: "bg-emerald-500", orange: "bg-orange-500", purple: "bg-purple-500", red: "bg-red-500", pink: "bg-pink-500" };
-    return colors[color] || "bg-gray-500";
-  };
-  const getHoverGlow = (color) => { 
-    const colors = { blue: "hover:shadow-[0_20px_50px_-12px_rgba(37,99,235,0.25)]", emerald: "hover:shadow-[0_20px_50px_-12px_rgba(16,185,129,0.25)]", orange: "hover:shadow-[0_20px_50px_-12px_rgba(249,115,22,0.25)]", purple: "hover:shadow-[0_20px_50px_-12px_rgba(147,51,234,0.25)]", red: "hover:shadow-[0_20px_50px_-12px_rgba(239,68,68,0.25)]", pink: "hover:shadow-[0_20px_50px_-12px_rgba(236,72,153,0.25)]" }; 
-    return colors[color] || "hover:shadow-xl"; 
+  const getGlowColor = (color) => { 
+    const colors = { blue: "hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.25)] hover:border-blue-300", emerald: "hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.25)] hover:border-emerald-300", orange: "hover:shadow-[0_20px_40px_-15px_rgba(249,115,22,0.25)] hover:border-orange-300", purple: "hover:shadow-[0_20px_40px_-15px_rgba(147,51,234,0.25)] hover:border-purple-300", red: "hover:shadow-[0_20px_40px_-15px_rgba(239,68,68,0.25)] hover:border-red-300", pink: "hover:shadow-[0_20px_40px_-15px_rgba(236,72,153,0.25)] hover:border-pink-300" }; 
+    return colors[color] || "hover:shadow-xl hover:border-gray-300"; 
   };
 
   return (
-    <div className="flex flex-col bg-[#F8FAFC] text-[#1E293B] font-sans min-h-screen relative overflow-x-hidden">
+    <div className="flex flex-col bg-[#F4F7FA] text-[#1E293B] font-sans min-h-screen relative overflow-x-hidden selection:bg-[#0056D2] selection:text-white">
       
-      {/* 🟢 Scroll Progress Bar */}
-      <motion.div style={{ scaleX, transformOrigin: "0% 50%" }} className="fixed top-0 left-0 right-0 h-[5px] bg-gradient-to-r from-blue-400 via-[#0056D2] to-teal-400 z-50 rounded-r-full" />
+      {/* 🟢 TOP SCROLL PROGRESS */}
+      <motion.div style={{ scaleX, transformOrigin: "0% 50%" }} className="fixed top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-teal-400 via-[#0056D2] to-indigo-600 z-[100] rounded-r-full" />
 
-      {/* 🟢 HERO SECTION */}
-      <section className="bg-gradient-to-br from-[#EBF4FF] via-white to-[#F0F7FF] pt-24 pb-20 relative overflow-hidden border-b border-gray-100">
+      {/* 🟢 GLASSMORPHIC HERO SECTION */}
+      <section className="bg-gradient-to-br from-[#E2F0FF] via-[#F4F7FA] to-[#E9F3FC] pt-24 pb-20 relative overflow-hidden border-b border-gray-200/60">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         
-        <motion.div animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -left-10 w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] pointer-events-none" />
-        <motion.div animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute top-10 right-[-10%] w-[400px] h-[400px] bg-teal-300/20 rounded-full blur-[100px] pointer-events-none" />
+        {/* Dynamic Orbs */}
+        <motion.div animate={{ scale: [1, 1.2, 1], x: [0, 40, 0], opacity: [0.4, 0.7, 0.4] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-32 -left-20 w-[600px] h-[600px] bg-[#0056D2]/10 rounded-full blur-[140px] pointer-events-none" />
+        <motion.div animate={{ scale: [1, 1.3, 1], x: [0, -50, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-400/15 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
-          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="z-20">
-            <motion.div variants={fadeInLeft} className="flex items-center gap-2 mb-5">
-              <span className="w-5 h-0.5 bg-gray-400 rounded-full"></span>
-              <span className="text-[12px] font-black tracking-widest text-gray-500 uppercase">LEGAL</span>
-            </motion.div>
-            
-            <motion.h1 variants={fadeInLeft} className="text-4xl sm:text-5xl lg:text-[64px] font-black text-[#0F172A] mb-5 leading-[1.05] tracking-tight">
-              Terms & <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#003366] to-[#0056D2]">Conditions</span>
-            </motion.h1>
-            
-            <motion.p variants={fadeInLeft} className="text-gray-600 text-sm sm:text-lg leading-relaxed max-w-lg mb-8 font-medium">
-              Please read these Terms and Conditions carefully before using DocuMind. By accessing or using our platform, you agree to be bound by these terms.
-            </motion.p>
-            
-            <motion.div variants={fadeInLeft} className="flex flex-wrap items-center gap-3 sm:gap-4 text-[12px] font-bold text-gray-700">
-              <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 bg-white/80 backdrop-blur-sm shadow-md shadow-blue-500/10 px-4 py-2.5 rounded-xl border border-gray-200 cursor-default">
-                <Calendar size={16} className="text-[#0056D2]" />
-                Last updated: {currentDate}
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="z-20 relative">
+            {/* Glassmorphic Panel */}
+            <div className="bg-white/40 backdrop-blur-2xl border border-white/60 p-8 sm:p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl" />
+              
+              <motion.div variants={fadeInUp} className="flex items-center gap-2.5 mb-6">
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-[#0056D2]"></span>
+                </span>
+                <span className="text-[12px] font-black tracking-widest text-[#0056D2] uppercase bg-[#0056D2]/10 px-3 py-1 rounded-full">Legal Document</span>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2 bg-white/80 backdrop-blur-sm shadow-md shadow-blue-500/10 px-4 py-2.5 rounded-xl border border-gray-200 cursor-default">
-                <FileText size={16} className="text-[#0056D2]" />
-                Version: 2.1
+              
+              <motion.h1 variants={fadeInUp} className="text-5xl sm:text-6xl lg:text-[72px] font-black text-[#0F172A] mb-5 leading-[1.02] tracking-tight">
+                Terms & <br/><span className="bg-clip-text text-transparent bg-gradient-to-r from-[#003366] via-[#0056D2] to-blue-500">Conditions</span>
+              </motion.h1>
+              
+              <motion.p variants={fadeInUp} className="text-gray-600 text-[16px] sm:text-[18px] leading-relaxed max-w-lg mb-8 font-medium">
+                Please read these terms carefully. By accessing or using DocuMind, you agree to build a secure, ethical, and collaborative learning environment.
+              </motion.p>
+              
+              <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-3 sm:gap-4 text-[13px] font-bold text-[#1E293B]">
+                <div className="flex items-center gap-2 bg-white/70 shadow-sm px-4 py-2.5 rounded-xl border border-white/80">
+                  <Calendar size={16} className="text-[#0056D2]" /> {currentDate}
+                </div>
+                <div className="flex items-center gap-2 bg-white/70 shadow-sm px-4 py-2.5 rounded-xl border border-white/80">
+                  <Clock size={16} className="text-teal-600" /> 5 min read
+                </div>
               </motion.div>
-            </motion.div>
-          </motion.div>
-
-          <motion.div initial="hidden" animate="visible" variants={fadeInRight} className="relative h-[300px] lg:h-[450px] flex items-center justify-center">
-            <div className="relative w-full h-full flex items-center justify-center z-10">
-               
-               {/* 🟢 FIXED: Replaced broken IconScout image with a highly reliable Unsplash Image */}
-               <motion.div animate={breatheEffect} whileHover={{ scale: 1.08, rotateY: -10, rotateX: 5 }} transition={{ type: "spring" }} style={{ perspective: 1000 }}>
-                 <img 
-                    src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop" 
-                    alt="Terms and Conditions Graphic" 
-                    className="w-[200px] lg:w-[260px] h-[260px] lg:h-[340px] object-cover rounded-[2rem] drop-shadow-2xl border-4 border-white shadow-[0_30px_60px_rgba(0,30,80,0.3)]" 
-                 />
-               </motion.div>
-               
-               <motion.div animate={{ y: [0, -15, 0], rotate: [-6, -10, -6] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-8 left-0 sm:left-4 bg-white/90 backdrop-blur-xl p-4 sm:p-5 shadow-2xl rounded-2xl z-30 border border-white/50 w-[180px] text-center border-l-4 border-[#0056D2] group hover:rotate-0 transition-transform">
-                 <p className="font-bold text-[#0056D2] text-[15px] sm:text-[17px] font-serif italic leading-tight">
-                   Learn Responsibly<br/><span className="not-italic text-[#003366] font-black">Grow Together</span>
-                 </p>
-               </motion.div>
-
-               <motion.div animate={{ y: [0, 15, 0], rotate: [6, 10, 6] }} transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-16 right-[-20px] sm:right-4 bg-white/90 backdrop-blur-xl p-4 sm:p-5 shadow-2xl rounded-2xl z-30 border border-white/50 w-[180px] text-center border-r-4 border-teal-400 group hover:rotate-0 transition-transform">
-                 <ShieldCheck size={24} className="text-teal-500 mx-auto mb-2 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
-                 <p className="font-bold text-[#1E293B] text-[13px] leading-tight">
-                   "A fair and transparent learning space for everyone."
-                 </p>
-               </motion.div>
             </div>
           </motion.div>
 
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="relative h-[350px] lg:h-[500px] flex items-center justify-center">
+             <motion.div animate={breatheEffect} whileHover={{ scale: 1.05, rotateY: -10, rotateX: 5 }} transition={{ type: "spring" }} style={{ perspective: 1000 }} className="z-10">
+               <img 
+                  src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop" 
+                  alt="Terms and Conditions" 
+                  className="w-[240px] lg:w-[320px] h-[300px] lg:h-[400px] object-cover rounded-[2.5rem] drop-shadow-2xl border-[8px] border-white/90 shadow-[0_40px_80px_rgba(0,40,100,0.2)]" 
+               />
+             </motion.div>
+             
+             {/* Floating UI Elements */}
+             <motion.div animate={{ y: [0, -15, 0], rotate: [-6, -10, -6] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-12 left-0 sm:left-4 bg-white/95 backdrop-blur-2xl p-5 shadow-2xl rounded-2xl z-30 border border-white/60 w-[200px] border-l-4 border-[#0056D2]">
+               <p className="font-bold text-[#0056D2] text-[16px] sm:text-[18px] font-serif italic leading-tight">Learn Responsibly<br/><span className="not-italic text-[#003366] font-black">Grow Together</span></p>
+             </motion.div>
+
+             <motion.div animate={{ y: [0, 15, 0], rotate: [6, 10, 6] }} transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute bottom-16 right-[-10px] sm:right-0 bg-white/95 backdrop-blur-2xl p-5 shadow-2xl rounded-2xl z-30 border border-white/60 w-[200px] text-center border-r-4 border-teal-400">
+               <ShieldCheck size={26} className="text-teal-500 mx-auto mb-2 opacity-80" />
+               <p className="font-bold text-[#1E293B] text-[14px] leading-tight">"A fair and transparent learning space."</p>
+             </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* 🟢 MAIN CONTENT */}
-      <section className="py-12 lg:py-24">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <section className="py-16 lg:py-24 relative">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
           
-          {/* 🔴 LEFT SIDEBAR */}
-          <div className="lg:col-span-3 space-y-6 lg:space-y-8">
-            <div className="sticky top-12 space-y-6 lg:space-y-8">
+          {/* 🔴 LEFT SIDEBAR (TIMELINE / STEPPER NAV) */}
+          <div className="lg:col-span-3 space-y-8">
+            <div className="sticky top-12 space-y-8">
               
-              <div className="bg-white border border-gray-200/80 p-4 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
-                <h3 className="text-[16px] font-black text-[#0F172A] mb-3 px-2">On This Page</h3>
-                <div className="space-y-1 relative">
+              <div className="bg-white border border-gray-200/60 p-6 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.04)] relative overflow-hidden">
+                <h3 className="text-[17px] font-black text-[#0F172A] mb-6">On This Page</h3>
+                
+                {/* Vertical Timeline Line */}
+                <div className="absolute left-[38px] top-[70px] bottom-[30px] w-0.5 bg-gray-100 rounded-full" />
+
+                <div className="space-y-4 relative">
                   {termsData.map((section) => (
                     <a 
                       key={section.id}
                       href={`#term-${section.id}`}
                       onClick={(e) => scrollToSection(e, section.id)}
-                      className="w-full relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-[13px] font-bold text-left group z-10 block overflow-hidden"
+                      className="relative flex items-center gap-4 text-left group"
                     >
-                      {activeSection === section.id && (
-                        <motion.div layoutId="activeTermBg" className="absolute inset-0 bg-blue-50 border border-blue-100 rounded-xl -z-10" transition={{ type: "spring", stiffness: 300, damping: 30 }} />
-                      )}
-                      <section.icon size={16} strokeWidth={2.2} className={`relative z-10 shrink-0 transition-transform duration-300 group-hover:scale-110 ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-400 group-hover:text-gray-700'}`} />
-                      <span className={`relative z-10 truncate transition-colors ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-500 group-hover:text-gray-900'}`}>
-                        {section.id}. {section.title}
+                      {/* Stepper Dot */}
+                      <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 transition-all duration-300 ease-out shrink-0
+                        {activeSection === section.id ? 'border-[#0056D2] shadow-[0_0_15px_rgba(0,86,210,0.3)] scale-110' : 'border-gray-200 group-hover:border-gray-400'}"
+                        style={{ borderColor: activeSection === section.id ? '#0056D2' : '' }}
+                      >
+                        {activeSection === section.id ? (
+                           <motion.div layoutId="activeDot" className="w-2.5 h-2.5 bg-[#0056D2] rounded-full" />
+                        ) : (
+                           <div className="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-gray-400 transition-colors" />
+                        )}
+                      </div>
+
+                      <span className={`text-[14px] font-bold truncate transition-colors duration-300 ${activeSection === section.id ? 'text-[#0056D2]' : 'text-gray-500 group-hover:text-[#0F172A]'}`}>
+                        {section.title}
                       </span>
                     </a>
                   ))}
                 </div>
               </div>
 
-              <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] border border-blue-100 rounded-[1.5rem] p-6 shadow-md text-center group relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-200/40 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                <div className="w-12 h-12 bg-white text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-100 shadow-sm group-hover:scale-110 transition-transform">
-                  <Headphones size={22} />
+              {/* Action Cards */}
+              <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-[#003366] to-[#0056D2] rounded-[2rem] p-7 text-center shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                <div className="w-14 h-14 bg-white/10 backdrop-blur-md text-white rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/20 group-hover:scale-110 transition-transform">
+                  <Headphones size={24} />
                 </div>
-                <h4 className="font-black text-[#1E293B] text-sm mb-1 relative z-10">Have any questions?</h4>
-                <p className="text-[12px] text-gray-500 mb-5 leading-tight relative z-10">We're here to help you understand our terms.</p>
-                <Link to="/contact" className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-blue-200 text-[#0056D2] rounded-xl text-[13px] font-black shadow-sm hover:shadow-md hover:bg-blue-50 transition-all relative z-10 group-hover:gap-3">
-                  Contact Us <ArrowRight size={16} />
+                <h4 className="font-black text-white text-[16px] mb-1.5 relative z-10">Have any questions?</h4>
+                <p className="text-[13px] text-blue-100 mb-6 relative z-10">We're here to help you understand our terms.</p>
+                <Link to="/contact" className="inline-flex items-center justify-center gap-2 w-full py-3.5 bg-white text-[#0056D2] rounded-xl text-[14px] font-black shadow-md hover:shadow-xl hover:bg-gray-50 transition-all relative z-10">
+                  Contact Support <ArrowRight size={16} />
                 </Link>
-              </motion.div>
-
-              <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-teal-50 to-emerald-100 rounded-[1.5rem] p-6 relative overflow-hidden border border-teal-200 shadow-md group">
-                <h4 className="font-black text-[#003366] text-[18px] leading-[1.2] relative z-10 mb-5 group-hover:translate-x-1 transition-transform">
-                  Building a <br/> Responsible <br/> Learning Future
-                </h4>
-                <ul className="space-y-2 text-[12px] font-extrabold text-[#0F172A] relative z-10">
-                  <li className="flex items-center gap-2"><ShieldCheck size={16} className="text-teal-600"/> Fair policies.</li>
-                  <li className="flex items-center gap-2"><ShieldCheck size={16} className="text-teal-600"/> Inclusive access.</li>
-                  <li className="flex items-center gap-2"><ShieldCheck size={16} className="text-teal-600"/> A safer digital India.</li>
-                </ul>
-                <div className="absolute -bottom-6 -right-6 w-36 h-36 opacity-30 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-500">
-                  <img src="https://cdn-icons-png.flaticon.com/512/628/628283.png" alt="Leaves" className="w-full h-full object-contain filter drop-shadow-md" />
-                </div>
               </motion.div>
 
             </div>
           </div>
 
-          {/* 🔴 RIGHT CONTENT CARDS */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="lg:col-span-9 space-y-4 lg:space-y-5 relative">
+          {/* 🔴 RIGHT CONTENT CARDS (PREMIUM DOCUMENT STYLE) */}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="lg:col-span-9 space-y-6 lg:space-y-8 relative">
             {termsData.map((section) => (
               <motion.div 
                 id={`term-${section.id}`} 
                 key={section.id} 
                 variants={fadeInUp}
-                whileHover={{ y: -6, scale: 1.01 }}
+                whileHover={{ y: -4, scale: 1.005 }}
                 onMouseEnter={() => setActiveSection(section.id)} 
-                className={`bg-white border ${activeSection === section.id ? 'border-blue-400 ring-1 ring-blue-100 shadow-[0_15px_40px_-10px_rgba(0,86,210,0.12)]' : 'border-gray-200'} p-6 sm:p-7 rounded-[1.5rem] flex items-start gap-4 sm:gap-6 transition-all duration-300 group cursor-default scroll-mt-24 ${getHoverGlow(section.color)}`}
+                className={`bg-white border ${activeSection === section.id ? 'border-[#0056D2] ring-1 ring-[#0056D2]/20 shadow-[0_15px_40px_-10px_rgba(0,86,210,0.15)] -translate-y-1' : 'border-gray-200/80'} p-8 sm:p-10 rounded-[2rem] flex flex-col items-start transition-all duration-300 group cursor-default scroll-mt-28 ${getGlowColor(section.color)} relative overflow-hidden`}
               >
-                
-                <div className="flex items-center gap-3 shrink-0 pt-1">
-                  <div className={`w-8 h-8 rounded-full ${getSolidColor(section.color)} text-white flex items-center justify-center text-[13px] font-black shadow-md group-hover:scale-110 group-hover:rotate-12 transition-transform`}>
-                    {section.id}
+                {/* Subtle Background Pattern on Hover */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:12px_12px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full relative z-10 mb-5">
+                  <div className={`w-14 h-14 rounded-2xl ${getBadgeColor(section.color)} flex items-center justify-center shrink-0 border border-white shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500`}>
+                    <section.icon size={26} strokeWidth={2.2} />
                   </div>
-                  <div className={`w-11 h-11 rounded-xl ${getColorClasses(section.color)} flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
-                    <section.icon size={22} strokeWidth={2} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-[12px] font-black text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">SECTION {section.id < 10 ? `0${section.id}` : section.id}</span>
+                    </div>
+                    <h3 className="text-[22px] font-black text-[#0F172A] group-hover:text-[#0056D2] transition-colors">{section.title}</h3>
                   </div>
+                  
+                  {/* Premium Copy Link Button */}
+                  <button 
+                    onClick={() => handleCopy(section.id)}
+                    className="hidden sm:flex shrink-0 w-10 h-10 rounded-full bg-gray-50 border border-gray-200 items-center justify-center text-gray-500 hover:bg-[#0056D2] hover:border-[#0056D2] hover:text-white hover:scale-110 hover:shadow-lg hover:shadow-blue-500/30 transition-all"
+                    title="Copy link to section"
+                  >
+                    {copiedId === section.id ? <Check size={18} strokeWidth={2.5} /> : <Link2 size={18} strokeWidth={2} />}
+                  </button>
                 </div>
 
-                <div className="flex-1">
-                  <h3 className="text-[18px] font-black text-[#0F172A] mb-2 group-hover:text-[#0056D2] transition-colors">{section.title}</h3>
-                  <p className="text-[14px] text-gray-600 leading-relaxed font-medium group-hover:text-gray-800 transition-colors">{section.desc}</p>
-                </div>
+                <div className="w-full h-px bg-gray-100 mb-5 group-hover:bg-gray-200 transition-colors"></div>
 
-                <div className="hidden sm:flex shrink-0 pt-2 text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1.5 transition-all">
-                  <ChevronRight size={20} strokeWidth={2.5} />
-                </div>
+                <p className="text-[15px] text-gray-600 leading-relaxed font-medium relative z-10 group-hover:text-gray-800 transition-colors w-full">
+                  {section.desc}
+                </p>
 
               </motion.div>
             ))}
@@ -265,6 +282,24 @@ export default function TermsConditions() {
 
         </div>
       </section>
+
+      {/* 🟢 PREMIUM FLOATING BACK TO TOP BUTTON */}
+      <AnimatePresence>
+        {showTopBtn && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 30 }}
+            whileHover={{ scale: 1.15, y: -5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 w-14 h-14 bg-[#0F172A] text-white rounded-full flex items-center justify-center shadow-[0_15px_30px_rgba(15,23,42,0.4)] z-50 border-2 border-white/20 hover:bg-[#0056D2] transition-colors duration-300"
+            title="Scroll to top"
+          >
+            <ArrowUp size={26} strokeWidth={2.5} />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
     </div>
   );
