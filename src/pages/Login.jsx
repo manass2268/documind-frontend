@@ -46,12 +46,23 @@ export default function Login() {
         </svg>
       </div>
 
-      {/* 🟢 MONUMENT SKETCH BACKGROUND (Line Art) */}
+      {/* 🟢 LEFT SIDE MONUMENT SKETCH */}
       <div 
-        className="absolute bottom-0 left-0 right-0 h-[200px] md:h-[300px] bg-repeat-x bg-bottom pointer-events-none z-0 mix-blend-multiply opacity-[0.15] grayscale" 
+        className="absolute left-0 top-1/2 -translate-y-1/2 w-[400px] h-[350px] bg-no-repeat bg-left pointer-events-none z-0 mix-blend-multiply opacity-[0.12] grayscale hidden lg:block" 
         style={{ 
           backgroundImage: "url('https://png.pngtree.com/png-vector/20220815/ourmid/pngtree-indian-monuments-line-art-vector-png-image_6110826.png')",
-          backgroundSize: '800px auto' 
+          backgroundSize: '1000px auto',
+          backgroundPosition: 'left center'
+        }}>
+      </div>
+
+      {/* 🟢 RIGHT SIDE MONUMENT SKETCH */}
+      <div 
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-[400px] h-[350px] bg-no-repeat bg-right pointer-events-none z-0 mix-blend-multiply opacity-[0.12] grayscale hidden lg:block" 
+        style={{ 
+          backgroundImage: "url('https://png.pngtree.com/png-vector/20220815/ourmid/pngtree-indian-monuments-line-art-vector-png-image_6110826.png')",
+          backgroundSize: '1000px auto',
+          backgroundPosition: 'right center'
         }}>
       </div>
 
@@ -60,7 +71,7 @@ export default function Login() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="bg-white w-full max-w-[460px] rounded-[1.5rem] shadow-[0_0_40px_rgba(0,0,0,0.06)] border border-gray-100 p-8 sm:p-10 relative z-20"
+        className="bg-white/95 backdrop-blur-md w-full max-w-[460px] rounded-[1.5rem] shadow-[0_0_40px_rgba(0,0,0,0.06)] border border-gray-100 p-8 sm:p-10 relative z-20"
       >
         
         <div className="text-center mb-8">
@@ -161,7 +172,7 @@ export default function Login() {
             <button 
               type="button"
               onClick={() => setRememberMe(!rememberMe)}
-              className={`w-4 h-4 rounded flex items-center justify-center transition-all ${rememberMe ? 'bg-[#0056D2] border-transparent' : 'border border-gray-300 bg-white'}`}
+              className={`w-4 h-4 rounded flex items-center justify-center transition-all ${rememberMe ? 'bg-[#0056D2] border-transparent' : 'border border-gray-300 bg-white hover:border-[#0056D2]'}`}
             >
               {rememberMe && <Check size={12} className="text-white" strokeWidth={4}/>}
             </button>
