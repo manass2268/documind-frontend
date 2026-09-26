@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Mail, Lock, Eye, EyeOff, User, Building, 
-  MessageSquare, ArrowRight, Check
+  MessageSquare, ArrowRight, Check, ArrowLeft
 } from "lucide-react";
 
 export default function Login() {
@@ -32,6 +32,16 @@ export default function Login() {
   return (
     <main className="w-full flex-grow relative flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 min-h-[85vh] lg:min-h-[calc(100vh-140px)] overflow-hidden bg-[#F8F9FA] selection:bg-[#0056D2] selection:text-white">
       
+      {/* 🟢 FLOATING BACK TO HOME BUTTON */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-4 sm:left-8 z-30 flex items-center gap-2 bg-white/80 backdrop-blur-md px-3.5 py-2 rounded-full shadow-sm border border-gray-200 text-[13px] font-bold text-gray-600 hover:text-[#0056D2] hover:bg-white hover:shadow-md transition-all group"
+      >
+        <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+        <span className="hidden sm:block">Back to Home</span>
+        <span className="sm:hidden">Back</span>
+      </Link>
+
       {/* 🟢 TOP SAFFRON WAVE */}
       <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none z-0">
         <svg viewBox="0 0 1440 320" className="w-full h-auto opacity-[0.15]">
