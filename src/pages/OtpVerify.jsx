@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
-  ShieldCheck, Lock, ArrowRight, ArrowLeft, Loader2, EyeOff, Eye, CheckCircle 
+  ShieldCheck, ArrowRight, ArrowLeft, Loader2, CheckCircle 
 } from "lucide-react";
 
 export default function OtpVerify() {
@@ -11,9 +11,6 @@ export default function OtpVerify() {
   const email = location.state?.email || "your email";
   
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
@@ -40,14 +37,16 @@ export default function OtpVerify() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const otpValue = otp.join("");
-    if (otpValue.length < 6 || !newPassword || newPassword !== confirmPassword) return;
+    // Sirf 6 digit OTP check karega
+    if (otpValue.length < 6) return;
     
     setIsLoading(true);
-    // Simulate OTP Verification and Password Reset API call
+    // Simulate OTP Verification API call
     setTimeout(() => {
       setIsLoading(false);
       setIsSuccess(true);
-      setTimeout(() => navigate("/login"), 3000); // Redirect to login after 3 seconds
+      // Verify hone ke baad New Password page par redirect
+      setTimeout(() => navigate("/new-password"), 2000); 
     }, 1500);
   };
 
@@ -78,10 +77,10 @@ export default function OtpVerify() {
               <strong className="text-gray-800">{email}</strong>
             </p>
 
-            <form onSubmit={handleSubmit} className="w-full text-left">
+            <form onSubmit={handleSubmit} className="w-full text-left mb-4">
               
               {/* OTP Input Boxes */}
-              <div className="mb-6">
+              <div className="mb-8">
                 <label className="block text-[13px] font-bold text-[#1E293B] mb-2 text-center">
                   Enter Verification Code
                 </label>
@@ -106,67 +105,30 @@ export default function OtpVerify() {
                 </div>
               </div>
 
-              {/* Set New Password */}
-              <div className="space-y-4 mb-6 pt-4 border-t border-gray-100">
-                <div>
-                  <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">New Password <span className="text-red-500">*</span></label>
-                  <div className="relative group">
-                    <Lock size={18} className="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      value={newPassword} 
-                      onChange={(e) => setNewPassword(e.target.value)} 
-                      required 
-                      className="w-full pl-11 pr-10 py-3 border border-gray-200 rounded-xl text-[14px] font-medium text-gray-900 bg-gray-50 focus:bg-white focus:border-[#0056D2] outline-none transition-all" 
-                      placeholder="Enter new password" 
-                    />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-3.5 text-gray-400 hover:text-[#0056D2]">
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">Confirm Password <span className="text-red-500">*</span></label>
-                  <div className="relative group">
-                    <Lock size={18} className="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      value={confirmPassword} 
-                      onChange={(e) => setConfirmPassword(e.target.value)} 
-                      required 
-                      className={`w-full pl-11 pr-4 py-3 border rounded-xl text-[14px] font-medium outline-none transition-all ${confirmPassword && newPassword !== confirmPassword ? 'border-red-300 bg-red-50 focus:border-red-500 text-red-900' : 'border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-[#0056D2]'}`} 
-                      placeholder="Confirm new password" 
-                    />
-                  </div>
-                  {confirmPassword && newPassword !== confirmPassword && (
-                    <p className="text-red-500 text-[11px] font-bold mt-1.5 ml-1">Passwords do not match</p>
-                  )}
-                </div>
-              </div>
-
+              {/* Submit Button Added Back */}
               <motion.button 
                 whileTap={{ scale: 0.98 }} 
                 type="submit" 
-                disabled={isLoading || otp.join("").length < 6 || !newPassword || newPassword !== confirmPassword} 
+                disabled={isLoading || otp.join("").length < 6} 
                 className="w-full bg-[#0056D2] hover:bg-[#0044A8] text-white font-bold text-[15px] py-3.5 rounded-xl shadow-[0_4px_14px_rgba(0,86,210,0.25)] hover:shadow-[0_6px_20px_rgba(0,86,210,0.3)] transition-all outline-none flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:shadow-none"
               >
-                {isLoading ? <Loader2 size={20} className="animate-spin" /> : <>Reset Password <ArrowRight size={18} /></>}
+                {isLoading ? <Loader2 size={20} className="animate-spin" /> : <>Verify OTP <ArrowRight size={18} /></>}
               </motion.button>
             </form>
           </div>
         ) : (
-          /* Success Screen */
+          /* Missing Success State Added Back */
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} 
-            className="flex flex-col items-center text-center py-8"
+            className="flex flex-col items-center text-center py-6"
           >
-            <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center text-green-600 mb-6 shadow-md">
+            <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center text-green-600 mb-6 shadow-md border-4 border-white">
               <CheckCircle size={48} strokeWidth={2.5} />
             </div>
-            <h2 className="text-[26px] font-black text-gray-900 mb-2">Password Reset Successful!</h2>
-            <p className="text-[14px] text-gray-500 font-medium mb-8">
-              Your password has been successfully updated. Redirecting you to login...
+            <h2 className="text-[26px] font-black text-gray-900 mb-2">OTP Verified!</h2>
+            <p className="text-[14px] text-gray-500 font-medium mb-8 leading-relaxed">
+              Your code has been verified successfully. <br/>
+              Redirecting you to set a new password...
             </p>
             <Loader2 size={24} className="text-[#0056D2] animate-spin" />
           </motion.div>
@@ -174,7 +136,7 @@ export default function OtpVerify() {
 
         {/* Footer */}
         {!isSuccess && (
-          <div className="mt-6 pt-6 border-t border-gray-100 w-full flex justify-start">
+          <div className="mt-4 pt-6 border-t border-gray-100 w-full flex justify-start">
             <Link to="/forgot-password" className="flex items-center gap-2 text-[14px] font-bold text-gray-500 hover:text-[#0056D2] transition-colors group">
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
               Change Email

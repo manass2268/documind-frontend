@@ -24,6 +24,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup"; 
 import ForgotPassword from "./pages/ForgotPassword"; 
 import OTPVerify from "./pages/OtpVerify";
+import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
 import Dashboard from './pages/Dashboard';
 import ChatRoom from "./pages/ChatRoom";
@@ -159,6 +160,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="/otp-verify" element={<OTPVerify />} />
+          <Route path="/new-password" element={<NewPassword />} />
           
           <Route path="chat/:chatId" element={<ChatRoom />} />
           
