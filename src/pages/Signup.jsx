@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, Building, Mail, Lock, Eye, EyeOff, 
-  ArrowRight, Check, FileText, ArrowLeft, MessageSquare, Loader2 
+  ArrowRight, Check, FileText, ArrowLeft, MessageSquare, Loader2, UserCheck, Briefcase 
 } from "lucide-react";
 
 export default function Signup() {
@@ -14,8 +14,10 @@ export default function Signup() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Added orgType and adminName to formData
   const [formData, setFormData] = useState({
-    fullName: "", email: "", mobile: "", orgName: "",
+    fullName: "", email: "", mobile: "", 
+    orgName: "", orgType: "", adminName: "",
     registrationId: "", officialEmail: "", contactNumber: "",
     password: "", confirmPassword: ""
   });
@@ -54,7 +56,7 @@ export default function Signup() {
         initial={{ opacity: 0, scale: 0.95, y: 15 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[520px] bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.08)] border border-white/50 p-6 sm:p-8 z-20 relative"
+        className="w-full max-w-[540px] bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.08)] border border-white/50 p-6 sm:p-8 z-20 relative"
       >
         <div className="mb-6 text-center sm:text-left">
           <h2 className="text-[26px] font-black text-[#0056D2] leading-tight mb-1 tracking-tight">Create Account</h2>
@@ -149,9 +151,10 @@ export default function Signup() {
                 </div>
               ) : (
                 <div className="space-y-4">
+                  {/* Row 1: Org Name & Type */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Organization <span className="text-red-500">*</span></label>
+                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Organization Name <span className="text-red-500">*</span></label>
                       <div className="relative group">
                         <Building size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
                         <input 
@@ -159,12 +162,85 @@ export default function Signup() {
                           name="orgName" 
                           value={formData.orgName} 
                           onChange={handleInputChange} 
-                          autoComplete="off" 
-                          spellCheck="false" 
-                          autoCorrect="off"
-                          required 
+                          autoComplete="off" spellCheck="false" autoCorrect="off" required 
                           className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
-                          placeholder="Organization Name" 
+                          placeholder="E.g. KIOT Kanpur" 
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Organization Type <span className="text-red-500">*</span></label>
+                      <div className="relative group">
+                        <Briefcase size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <select 
+                          name="orgType" 
+                          value={formData.orgType} 
+                          onChange={handleInputChange} 
+                          required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="" disabled>Select Type</option>
+                          <option value="school">K-12 School</option>
+                          <option value="college">College / University</option>
+                          <option value="coaching">Coaching Institute</option>
+                          <option value="corporate">Corporate / Business</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Row 2: Admin Name & Official Email */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Admin / POC Name <span className="text-red-500">*</span></label>
+                      <div className="relative group">
+                        <UserCheck size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="text" 
+                          name="adminName" 
+                          value={formData.adminName} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" spellCheck="false" autoCorrect="off" required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Nodal Officer Name" 
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Official Email <span className="text-red-500">*</span></label>
+                      <div className="relative group">
+                        <Mail size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="email" 
+                          name="officialEmail" 
+                          value={formData.officialEmail} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" spellCheck="false" autoCorrect="off" required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="admin@kiot.edu.in" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Contact & U-DISE */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Contact Number <span className="text-red-500">*</span></label>
+                      <div className="flex group">
+                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-600">+91</div>
+                        <input 
+                          type="tel" 
+                          name="contactNumber" 
+                          maxLength="10" 
+                          value={formData.contactNumber} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" spellCheck="false" autoCorrect="off" required 
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Phone number" 
                         />
                       </div>
                     </div>
@@ -177,50 +253,9 @@ export default function Signup() {
                           name="registrationId" 
                           value={formData.registrationId} 
                           onChange={handleInputChange} 
-                          autoComplete="off" 
-                          spellCheck="false" 
-                          autoCorrect="off"
+                          autoComplete="off" spellCheck="false" autoCorrect="off"
                           className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="Registration ID" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Official Email <span className="text-red-500">*</span></label>
-                      <div className="relative group">
-                        <Mail size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                        <input 
-                          type="email" 
-                          name="officialEmail" 
-                          value={formData.officialEmail} 
-                          onChange={handleInputChange} 
-                          autoComplete="off" 
-                          spellCheck="false" 
-                          autoCorrect="off"
-                          required 
-                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
-                          placeholder="org@example.com" 
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Contact <span className="text-red-500">*</span></label>
-                      <div className="flex group">
-                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-600">+91</div>
-                        <input 
-                          type="tel" 
-                          name="contactNumber" 
-                          maxLength="10" 
-                          value={formData.contactNumber} 
-                          onChange={handleInputChange} 
-                          autoComplete="off" 
-                          spellCheck="false" 
-                          autoCorrect="off"
-                          required 
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
-                          placeholder="Phone number" 
                         />
                       </div>
                     </div>
@@ -230,7 +265,8 @@ export default function Signup() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          {/* Password Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div>
               <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Password <span className="text-red-500">*</span></label>
               <div className="relative group">
@@ -286,7 +322,7 @@ export default function Signup() {
             {isLoading ? <Loader2 size={18} className="animate-spin" /> : <><ArrowRight size={16} /> Create Account</>}
           </motion.button>
 
-          <div className="relative flex items-center justify-center mt-6 mb-4">
+          <div className="relative flex items-center justify-center mt-5 mb-3">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200/80"></div></div>
             <div className="relative bg-white px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest rounded-full">OR</div>
           </div>
@@ -310,7 +346,7 @@ export default function Signup() {
           </div>
         </form>
 
-        <div className="text-center mt-6 pt-5 border-t border-gray-100">
+        <div className="text-center mt-5 pt-4 border-t border-gray-100">
           <p className="text-[13px] font-medium text-gray-500">
             Already have an account? <Link to="/login" className="text-[#0056D2] hover:text-[#003366] hover:underline font-bold inline-flex items-center transition-colors">Login here</Link>
           </p>
