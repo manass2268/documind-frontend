@@ -84,7 +84,7 @@ export default function NewPassword() {
                 </div>
               </div>
 
-              {/* Confirm Password Input */}
+              {/* Confirm Password Input  i*/}
               <div>
                 <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">
                   Confirm Password <span className="text-red-500">*</span>
