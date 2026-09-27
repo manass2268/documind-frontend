@@ -54,7 +54,7 @@ export default function Signup() {
         initial={{ opacity: 0, scale: 0.95, y: 15 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[520px] bg-white/80 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.08)] border border-white/50 p-6 sm:p-8 z-20 relative"
+        className="w-full max-w-[520px] bg-white/90 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.08)] border border-white/50 p-6 sm:p-8 z-20 relative"
       >
         <div className="mb-6 text-center sm:text-left">
           <h2 className="text-[26px] font-black text-[#0056D2] leading-tight mb-1 tracking-tight">Create Account</h2>
@@ -102,7 +102,7 @@ export default function Signup() {
                         spellCheck="false" 
                         autoCorrect="off"
                         required 
-                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                         placeholder="Enter your full name" 
                       />
                     </div>
@@ -121,7 +121,7 @@ export default function Signup() {
                           spellCheck="false" 
                           autoCorrect="off"
                           required 
-                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="Email address" 
                         />
                       </div>
@@ -129,7 +129,7 @@ export default function Signup() {
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Mobile <span className="text-red-500">*</span></label>
                       <div className="flex group">
-                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-500">+91</div>
+                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-600">+91</div>
                         <input 
                           type="tel" 
                           name="mobile" 
@@ -140,7 +140,7 @@ export default function Signup() {
                           spellCheck="false" 
                           autoCorrect="off"
                           required 
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="10-digit number" 
                         />
                       </div>
@@ -163,7 +163,7 @@ export default function Signup() {
                           spellCheck="false" 
                           autoCorrect="off"
                           required 
-                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="Organization Name" 
                         />
                       </div>
@@ -180,7 +180,7 @@ export default function Signup() {
                           autoComplete="off" 
                           spellCheck="false" 
                           autoCorrect="off"
-                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="Registration ID" 
                         />
                       </div>
@@ -200,7 +200,7 @@ export default function Signup() {
                           spellCheck="false" 
                           autoCorrect="off"
                           required 
-                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="org@example.com" 
                         />
                       </div>
@@ -208,7 +208,7 @@ export default function Signup() {
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Contact <span className="text-red-500">*</span></label>
                       <div className="flex group">
-                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-500">+91</div>
+                        <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-600">+91</div>
                         <input 
                           type="tel" 
                           name="contactNumber" 
@@ -219,7 +219,7 @@ export default function Signup() {
                           spellCheck="false" 
                           autoCorrect="off"
                           required 
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                           placeholder="Phone number" 
                         />
                       </div>
@@ -243,7 +243,7 @@ export default function Signup() {
                   autoComplete="new-password"
                   spellCheck="false"
                   required 
-                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                   placeholder="Create password" 
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-gray-400 hover:text-[#0056D2] transition-colors">
@@ -263,7 +263,7 @@ export default function Signup() {
                   autoComplete="new-password"
                   spellCheck="false"
                   required 
-                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
                   placeholder="Confirm password" 
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3 text-gray-400 hover:text-[#0056D2] transition-colors">
