@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  User, Building, Mail, Phone, Lock, Eye, EyeOff, 
+  User, Building, Mail, Lock, Eye, EyeOff, 
   ArrowRight, Check, FileText, ArrowLeft, MessageSquare, Loader2 
 } from "lucide-react";
 
@@ -61,7 +61,7 @@ export default function Signup() {
           <p className="text-[13px] text-gray-500 font-medium">Join DocuMind to start your learning journey.</p>
         </div>
 
-        {/* Enhanced Toggle */}
+        {/* Toggle Buttons */}
         <div className="bg-gray-100/80 p-1.5 rounded-xl flex gap-1 mb-6 relative">
           <button type="button" onClick={() => setAccountType('individual')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-left transition-all duration-300 z-10 ${accountType === 'individual' ? 'bg-white text-[#0056D2] shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'}`}>
@@ -92,23 +92,57 @@ export default function Signup() {
                   <div>
                     <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Full Name <span className="text-red-500">*</span></label>
                     <div className="relative group">
-                      <User size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                      <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} required className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Enter your full name" />
+                      <User size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                      <input 
+                        type="text" 
+                        name="fullName" 
+                        value={formData.fullName} 
+                        onChange={handleInputChange} 
+                        autoComplete="off" 
+                        spellCheck="false" 
+                        autoCorrect="off"
+                        required 
+                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                        placeholder="Enter your full name" 
+                      />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Email <span className="text-red-500">*</span></label>
                       <div className="relative group">
-                        <Mail size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Email address" />
+                        <Mail size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="email" 
+                          name="email" 
+                          value={formData.email} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Email address" 
+                        />
                       </div>
                     </div>
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Mobile <span className="text-red-500">*</span></label>
                       <div className="flex group">
                         <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-500">+91</div>
-                        <input type="tel" name="mobile" maxLength="10" value={formData.mobile} onChange={handleInputChange} required className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="10-digit number" />
+                        <input 
+                          type="tel" 
+                          name="mobile" 
+                          maxLength="10" 
+                          value={formData.mobile} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          required 
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="10-digit number" 
+                        />
                       </div>
                     </div>
                   </div>
@@ -119,15 +153,36 @@ export default function Signup() {
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Organization <span className="text-red-500">*</span></label>
                       <div className="relative group">
-                        <Building size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                        <input type="text" name="orgName" value={formData.orgName} onChange={handleInputChange} required className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Organization Name" />
+                        <Building size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="text" 
+                          name="orgName" 
+                          value={formData.orgName} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Organization Name" 
+                        />
                       </div>
                     </div>
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">U-DISE / Reg No <span className="text-gray-400 font-normal">(Opt)</span></label>
                       <div className="relative group">
-                        <FileText size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                        <input type="text" name="registrationId" value={formData.registrationId} onChange={handleInputChange} className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Registration ID" />
+                        <FileText size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="text" 
+                          name="registrationId" 
+                          value={formData.registrationId} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Registration ID" 
+                        />
                       </div>
                     </div>
                   </div>
@@ -135,15 +190,38 @@ export default function Signup() {
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Official Email <span className="text-red-500">*</span></label>
                       <div className="relative group">
-                        <Mail size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                        <input type="email" name="officialEmail" value={formData.officialEmail} onChange={handleInputChange} required className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="org@example.com" />
+                        <Mail size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                        <input 
+                          type="email" 
+                          name="officialEmail" 
+                          value={formData.officialEmail} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          required 
+                          className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="org@example.com" 
+                        />
                       </div>
                     </div>
                     <div>
                       <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Contact <span className="text-red-500">*</span></label>
                       <div className="flex group">
                         <div className="flex items-center bg-gray-50 border border-r-0 border-gray-200 rounded-l-lg px-2.5 text-[12px] font-bold text-gray-500">+91</div>
-                        <input type="tel" name="contactNumber" maxLength="10" value={formData.contactNumber} onChange={handleInputChange} required className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Phone number" />
+                        <input 
+                          type="tel" 
+                          name="contactNumber" 
+                          maxLength="10" 
+                          value={formData.contactNumber} 
+                          onChange={handleInputChange} 
+                          autoComplete="off" 
+                          spellCheck="false" 
+                          autoCorrect="off"
+                          required 
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-r-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                          placeholder="Phone number" 
+                        />
                       </div>
                     </div>
                   </div>
@@ -156,9 +234,19 @@ export default function Signup() {
             <div>
               <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Password <span className="text-red-500">*</span></label>
               <div className="relative group">
-                <Lock size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleInputChange} required className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Create password" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5 text-gray-400 hover:text-[#0056D2] transition-colors">
+                <Lock size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="password" 
+                  value={formData.password} 
+                  onChange={handleInputChange} 
+                  autoComplete="new-password"
+                  spellCheck="false"
+                  required 
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                  placeholder="Create password" 
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-gray-400 hover:text-[#0056D2] transition-colors">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -166,9 +254,19 @@ export default function Signup() {
             <div>
               <label className="block text-[12px] font-bold text-[#1E293B] mb-1">Confirm Password <span className="text-red-500">*</span></label>
               <div className="relative group">
-                <Lock size={16} className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
-                <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" placeholder="Confirm password" />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-2.5 text-gray-400 hover:text-[#0056D2] transition-colors">
+                <Lock size={16} className="absolute left-3 top-3 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  name="confirmPassword" 
+                  value={formData.confirmPassword} 
+                  onChange={handleInputChange} 
+                  autoComplete="new-password"
+                  spellCheck="false"
+                  required 
+                  className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg text-[13px] bg-white/50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
+                  placeholder="Confirm password" 
+                />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3 text-gray-400 hover:text-[#0056D2] transition-colors">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
