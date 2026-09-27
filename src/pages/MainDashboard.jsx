@@ -2,12 +2,12 @@ import React from "react";
 import { 
   LayoutDashboard, Upload, FileText, Sparkles, MessageSquare, BookOpen, 
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
-  Clock, CheckCircle2, AlertCircle, PlayCircle, MoreHorizontal, FileIcon
+  Clock, CheckCircle2
 } from "lucide-react";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-[#F4F7FB] text-slate-800 font-sans flex flex-col w-full">
+    <div className="min-h-screen bg-[#F4F7FB] text-slate-800 font-sans flex flex-col w-full absolute top-0 left-0 right-0 z-50">
       
       {/* 1. TOP GOVT BAR */}
       <div className="bg-gray-100/80 border-b border-gray-200 text-[11px] font-medium py-1.5 px-6 flex justify-between items-center text-gray-600">
@@ -25,11 +25,9 @@ export default function Dashboard() {
       {/* 2. MAIN HEADER */}
       <header className="bg-white border-b border-gray-200 py-3 px-6 flex justify-between items-center sticky top-0 z-30">
         <div className="flex items-center gap-6">
-          {/* MoSPI Logo Section */}
           <div className="flex items-center gap-3 pr-6 border-r border-gray-200">
-            <div className="w-10 h-12 bg-gray-200 rounded-sm flex items-center justify-center text-[8px] text-center border border-gray-300">
-              {/* Replace with actual Lion Capital Logo Image */}
-              Emblem
+            <div className="w-10 h-12 bg-gray-200 rounded-sm flex items-center justify-center text-[8px] text-center border border-gray-300 overflow-hidden">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" className="w-6 h-auto opacity-70" />
             </div>
             <div className="leading-tight">
               <h1 className="font-extrabold text-[13px] text-slate-900">Ministry of Statistics &</h1>
@@ -38,7 +36,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* DocuMind Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">D</div>
             <div>
@@ -48,7 +45,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Search & Profile */}
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block w-96">
             <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
@@ -101,17 +97,12 @@ export default function Dashboard() {
         </aside>
 
         {/* CONTENT AREA */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto pb-12">
           <div className="max-w-7xl mx-auto space-y-6">
             
-            {/* ROW 1: Banner & Profile */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Welcome Banner */}
               <div className="lg:col-span-2 bg-[#F8FAFC] rounded-2xl border border-gray-200 p-6 flex flex-col justify-between relative overflow-hidden">
-                {/* Background Pattern/Image Simulation */}
                 <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                
                 <div className="relative z-10 w-2/3">
                   <p className="text-gray-500 text-[13px] font-semibold mb-1">Welcome back,</p>
                   <h2 className="text-3xl font-black text-[#1A365D] mb-3">Manas Singh 👋</h2>
@@ -127,15 +118,12 @@ export default function Dashboard() {
                     </button>
                   </div>
                 </div>
-
-                {/* Quote Card inside Banner */}
-                <div className="absolute right-6 top-6 bottom-6 w-1/4 bg-white/80 backdrop-blur-md border border-white p-4 rounded-xl shadow-sm flex flex-col justify-center">
+                <div className="absolute right-6 top-6 bottom-6 w-[28%] bg-white/80 backdrop-blur-md border border-white p-4 rounded-xl shadow-sm flex flex-col justify-center">
                    <div className="text-4xl text-blue-200 font-serif leading-none mb-2">"</div>
                    <p className="text-[13px] font-semibold text-slate-700 italic">Knowledge empowers people and drives better policies.</p>
                 </div>
               </div>
 
-              {/* Profile Card */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col justify-between shadow-sm">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex gap-3 items-center">
@@ -161,10 +149,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* ROW 2: Stats & Progress */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Stats Grid (Takes 2/3 space) */}
               <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { val: "12", lbl: "Documents Uploaded", icon: FileText, bg: "bg-blue-100", tc: "text-blue-600" },
@@ -184,14 +169,12 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {/* Learning Progress (Takes 1/3 space) */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-[14px] text-slate-900">Learning Progress</h3>
                   <button className="text-[11px] font-semibold text-blue-600">View Details →</button>
                 </div>
                 <div className="flex items-center gap-6">
-                  {/* Fake Donut Chart */}
                   <div className="w-20 h-20 rounded-full border-8 border-gray-100 border-t-blue-600 border-r-blue-600 flex items-center justify-center shrink-0">
                     <div className="text-center">
                       <span className="font-black text-lg text-slate-900 leading-none">68%</span>
@@ -206,10 +189,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* ROW 3: Detailed Sections */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Recent Documents */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-[14px] text-slate-900">Recent Documents</h3>
@@ -235,7 +215,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Continue Learning */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-[14px] text-slate-900">Continue Learning</h3>
@@ -260,7 +239,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Quick Actions & Notifications */}
               <div className="flex flex-col gap-6">
                 <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                   <h3 className="font-bold text-[14px] text-slate-900 mb-4">Quick Actions</h3>

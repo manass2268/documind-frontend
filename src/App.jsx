@@ -9,11 +9,11 @@ import { onAuthStateChanged } from "firebase/auth";
 // Components
 import LandingPage from "./components/LandingPage";
 import LoadingScreen from "./components/LoadingScreen";
+import About from "./components/About"; 
 import Sidebar from "./components/Sidebar"; 
 import ChatInterface from "./components/ChatInterface";
 import DashboardLayout from "./components/DashboardLayout"; 
 import Footer from "./components/Footer";
-import About from "./components/About"; 
 import Header from "./components/Header"; 
 
 // Pages
@@ -26,15 +26,15 @@ import ForgotPassword from "./pages/ForgotPassword";
 import OTPVerify from "./pages/OtpVerify";
 import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
-import Dashboard from './pages/Dashboard';
-import ChatRoom from "./pages/ChatRoom";
+import Dashboard from './pages/MainDashboard';
+
 import Platform from "./pages/PlatformOverview";
 import KnowledgeCenter from "./pages/KnowledgeCentre";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 
 // Dashboard Pages
-import Activity from "./pages/Activity";
+
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 
@@ -83,7 +83,6 @@ function HomeFlow() {
           key="landing" 
           exit={{ opacity: 0, y: -20 }} 
           transition={{ duration: 0.5 }} 
-          // FIX: Added Header and Footer specifically for Landing Page here
           className="flex flex-col min-h-screen w-full"
         >
           <Header />
@@ -104,7 +103,7 @@ function HomeFlow() {
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ duration: 1 }} 
-          // FIX: No Header/Footer here, ensuring full-screen Chat UI
+
           className="flex h-screen w-full relative z-10 overflow-hidden bg-[#F4F7FA]"
         >
           <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
@@ -162,16 +161,14 @@ export default function App() {
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/new-password" element={<NewPassword />} />
           
-          <Route path="chat/:chatId" element={<ChatRoom />} />
+         
           
           {/* --- 🔴 PRIVATE DASHBOARD ROUTES --- */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<Dashboard />} /> 
-            <Route path="activity" element={<Activity />} />
+          <Route element={<Dashboard />}>
+            <Route path="/dashboard" element={<DashboardLayout />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>
-          
         </Routes>
       </div>
     </Router>
