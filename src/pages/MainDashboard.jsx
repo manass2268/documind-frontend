@@ -52,8 +52,8 @@ export default function Dashboard() {
           {/* DocuMind Logo Section */}
           <div className="flex items-center gap-3">
             {/* Soft blue rounded square container */}
-            <div className="w-10 h-10 bg-[#1D4ED8] rounded-xl flex items-center justify-center shadow-sm p-1.5">
-               <img src={documindLogo} alt="DocuMind Logo" className="w-full h-full object-contain brightness-0 invert" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm p-1.5">
+               <img src={documindLogo} alt="DocuMind Logo" className="h-9 w-12 object-fit" />
             </div>
             <div className="leading-tight">
               <h2 className="font-bold text-[16px] text-[#1E3A8A]">DocuMind</h2>
