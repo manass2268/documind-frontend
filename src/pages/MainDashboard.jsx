@@ -5,6 +5,8 @@ import {
   Clock, CheckCircle2
 } from "lucide-react";
 import ashokaLogo from "../assets/ashoka.png";
+import indiaLogo from "../assets/India Logo.png";
+import documindLogo from "../assets/logo.png";
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F4F7FB] text-slate-800 font-sans flex flex-col w-full absolute top-0 left-0 right-0 z-50">
@@ -12,7 +14,7 @@ export default function Dashboard() {
       {/* 1. TOP GOVT BAR */}
       <div className="bg-gray-100/80 border-b border-gray-200 text-[11px] font-medium py-1.5 px-6 flex justify-between items-center text-gray-600">
         <div className="flex items-center gap-2">
-          <span className="text-sm">🇮🇳</span>
+         <img src={indiaLogo} alt="India Logo" className="h-3 sm:h-4 md:h-5 object-contain" />
           <span>Government of India <span className="mx-1">|</span> भारत सरकार</span>
         </div>
         <div className="flex gap-4">
@@ -36,7 +38,7 @@ export default function Dashboard() {
         
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">D</div>
+            <img src={documindLogo} alt="DocuMind Logo" className="h-10 sm:h-10 md:h-10 object-contain" />
             <div>
               <h2 className="font-bold text-[15px] text-blue-900 leading-none">DocuMind</h2>
               <p className="text-[10px] text-gray-500 mt-0.5">Learn • Understand • Grow</p>
