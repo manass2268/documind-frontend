@@ -4,7 +4,7 @@ import {
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
   Clock, CheckCircle2
 } from "lucide-react";
-
+import ashokaLogo from "../assets/ashoka.png";
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#F4F7FB] text-slate-800 font-sans flex flex-col w-full absolute top-0 left-0 right-0 z-50">
@@ -26,15 +26,14 @@ export default function Dashboard() {
       <header className="bg-white border-b border-gray-200 py-3 px-6 flex justify-between items-center sticky top-0 z-30">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3 pr-6 border-r border-gray-200">
-            <div className="w-10 h-12 bg-gray-200 rounded-sm flex items-center justify-center text-[8px] text-center border border-gray-300 overflow-hidden">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem" className="w-6 h-auto opacity-70" />
-            </div>
+              <img src={ashokaLogo} alt="Satyameva Jayate" className="h-10 sm:h-12 md:h-12 object-contain" />
             <div className="leading-tight">
               <h1 className="font-extrabold text-[13px] text-slate-900">Ministry of Statistics &</h1>
               <h1 className="font-extrabold text-[13px] text-slate-900">Programme Implementation</h1>
               <p className="text-[10px] text-gray-500">Government of India</p>
             </div>
           </div>
+        
 
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">D</div>
