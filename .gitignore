@@ -23,3 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# 🔒 Security & Private Files (Never push these to GitHub)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# 🚫 Secret Scripts (Prevent data leak)
+UploadStudents.jsx
+src/components/UploadStudents.jsx
