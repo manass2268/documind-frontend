@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Mail, Lock, Eye, EyeOff, User, BookOpen, Shield, Building,
+  Mail, Lock, Eye, EyeOff, User, BookOpen, Shield,
   ArrowRight, Check, Loader2, ChevronDown
 } from "lucide-react";
 import DocumindLogo from "../assets/logo.png";
@@ -15,7 +15,6 @@ export default function Login() {
   const navigate = useNavigate();
   
   // States
-  const [loginType, setLoginType] = useState("individual"); // 'individual' | 'organization'
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   
@@ -25,7 +24,7 @@ export default function Login() {
 
   // Form State
   const [formData, setFormData] = useState({
-    role: "learner", // Default role
+    role: "learner", // Default role automatically selected
     identifier: "",
     password: ""
   });
@@ -46,7 +45,7 @@ export default function Login() {
     if (error) setError(""); 
   };
 
-  // 🔥 2. Firebase Email/Password Login
+  // 🔥 2. Firebase Email/Password/RollNo Login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -54,12 +53,22 @@ export default function Login() {
     
     try {
       console.log("Logging in as:", formData.role); 
-      await signInWithEmailAndPassword(auth, formData.identifier, formData.password);
+
+      // 💡 SMART TRICK: Agar role learner hai aur input me '@' nahi hai, toh usey email format me convert karo
+      let finalLoginId = formData.identifier.trim();
+      
+      if (formData.role === "learner" && !finalLoginId.includes("@")) {
+        finalLoginId = `${finalLoginId}@student.documind.com`;
+      }
+
+      console.log("Final ID sent to Firebase:", finalLoginId);
+      
+      await signInWithEmailAndPassword(auth, finalLoginId, formData.password);
       // Successful login par onAuthStateChanged automatically redirect kar dega
     } catch (err) {
       console.error("Login Error:", err.code);
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError("Invalid email or password. Please try again.");
+        setError("Invalid User ID/Email or password. Please try again.");
       } else {
         setError("Login failed. Please check your connection.");
       }
@@ -126,7 +135,7 @@ export default function Login() {
           )}
         </AnimatePresence>
 
-        <div className="text-center mb-6">
+        <div className="text-center mb-8">
           <img src={DocumindLogo} alt="DocuMind Logo" className="mx-auto w-16 h-16 object-contain mb-3" />
           <h2 className="text-[22px] font-black text-[#0F172A] leading-tight">
             Login to <span className="text-[#0056D2]">DocuMind</span>
@@ -141,45 +150,12 @@ export default function Login() {
           {error && (
             <motion.div 
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              className="mb-5 bg-red-50 border border-red-100 text-red-600 text-[12px] font-bold p-3 rounded-lg text-center"
+              className="mb-6 bg-red-50 border border-red-100 text-red-600 text-[12px] font-bold p-3 rounded-lg text-center"
             >
               {error}
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* 🟢 TOGGLE ACCOUNT TYPE */}
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          <motion.button 
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={() => setLoginType('individual')}
-            className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all duration-200 ${loginType === 'individual' ? 'border-[#0056D2] bg-[#0056D2]/5 ring-1 ring-[#0056D2] shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'}`}
-          >
-            <div className={`mt-0.5 transition-colors ${loginType === 'individual' ? 'text-[#0056D2]' : 'text-gray-400'}`}>
-              <User size={18} strokeWidth={2.5}/>
-            </div>
-            <div>
-              <p className={`text-[12px] font-bold leading-none mb-1 transition-colors ${loginType === 'individual' ? 'text-[#0056D2]' : 'text-gray-700'}`}>For Myself</p>
-              <p className="text-[10px] text-gray-500 leading-tight">Students & Learners</p>
-            </div>
-          </motion.button>
-
-          <motion.button 
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={() => setLoginType('organization')}
-            className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all duration-200 ${loginType === 'organization' ? 'border-[#0056D2] bg-[#0056D2]/5 ring-1 ring-[#0056D2] shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'}`}
-          >
-            <div className={`mt-0.5 transition-colors ${loginType === 'organization' ? 'text-[#0056D2]' : 'text-gray-400'}`}>
-              <Building size={18} strokeWidth={2.5}/>
-            </div>
-            <div>
-              <p className={`text-[12px] font-bold leading-none mb-1 transition-colors ${loginType === 'organization' ? 'text-[#0056D2]' : 'text-gray-700'}`}>For Organization</p>
-              <p className="text-[10px] text-gray-500 leading-tight">Institutions & Schools</p>
-            </div>
-          </motion.button>
-        </div>
 
         {/* 🟢 ROLE SELECTOR DROPDOWN */}
         <div className="mb-6">
@@ -219,15 +195,15 @@ export default function Login() {
                 <Mail size={16} className="text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
               </div>
               <input 
-                type="email" 
+                type="text" 
                 name="identifier"
                 value={formData.identifier}
                 onChange={handleInputChange}
                 required
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-[13px] font-medium focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
                 placeholder={
-                  formData.role === 'admin' ? "admin@documind.com" : 
-                  formData.role === 'trainer' ? "teacher@institute.edu" : "student@example.com"
+                  formData.role === 'learner' ? "e.g. 101 or student@example.com" :
+                  formData.role === 'admin' ? "admin@documind.com" : "teacher@institute.edu"
                 }
               />
             </div>
