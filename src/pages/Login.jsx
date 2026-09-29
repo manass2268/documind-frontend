@@ -2,30 +2,30 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Mail, Lock, Eye, EyeOff, User, Building, 
-  MessageSquare, ArrowRight, Check, Loader2, Smartphone, KeyRound
+  Mail, Lock, Eye, EyeOff, User, BookOpen, Shield,
+  MessageSquare, ArrowRight, Check, Loader2, Smartphone, KeyRound, ChevronDown
 } from "lucide-react";
 import DocumindLogo from "../assets/logo.png";
 
 // 🔥 Firebase Imports
-import { auth, googleProvider } from "../firebase"; // googleProvider import kiya hai
+import { auth, googleProvider } from "../firebase"; 
 import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 
 export default function Login() {
   const navigate = useNavigate();
   
   // States
-  const [loginType, setLoginType] = useState("individual"); // 'individual' | 'organization'
   const [loginMethod, setLoginMethod] = useState("password"); // 'password' | 'otp' | 'otp_verify'
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Google Loading state
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false); 
   const [error, setError] = useState(""); 
 
-  // Form State
+  // Form State (Yahan role add kiya gaya hai)
   const [formData, setFormData] = useState({
+    role: "learner", // Default role
     identifier: "",
     password: "",
     mobile: "",
@@ -56,6 +56,8 @@ export default function Login() {
     
     try {
       if (loginMethod === "password") {
+        // Aap chaho toh backend API mein formData.role bhi bhej sakte ho user verify karne ke liye
+        console.log("Logging in as:", formData.role); 
         await signInWithEmailAndPassword(auth, formData.identifier, formData.password);
       } else if (loginMethod === "otp_verify") {
         setTimeout(() => {
@@ -74,13 +76,13 @@ export default function Login() {
     }
   };
 
-  // 🔥 3. Firebase Google Login Handler
+  // 🔥 3. Firebase Google Login
   const handleGoogleLogin = async () => {
     setError("");
     setIsGoogleLoading(true);
     try {
+      console.log("Logging in with Google as:", formData.role);
       await signInWithPopup(auth, googleProvider);
-      // Successful hone par onAuthStateChanged automatically redirect kar dega
     } catch (err) {
       console.error("Google Login Error:", err.code);
       setError("Google Sign-In failed. Please try again.");
@@ -165,38 +167,32 @@ export default function Login() {
           )}
         </AnimatePresence>
 
-        {/* 🟢 TOGGLE ACCOUNT TYPE */}
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          <motion.button 
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={() => setLoginType('individual')}
-            className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all duration-200 ${loginType === 'individual' ? 'border-[#0056D2] bg-[#0056D2]/5 ring-1 ring-[#0056D2] shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'}`}
-          >
-            <div className={`mt-0.5 transition-colors ${loginType === 'individual' ? 'text-[#0056D2]' : 'text-gray-400'}`}>
-              <User size={18} strokeWidth={2.5}/>
+        {/* 🟢 ROLE SELECTOR DROPDOWN */}
+        {loginMethod !== 'otp_verify' && (
+          <div className="mb-6">
+            <label className="block text-[12px] font-bold text-[#1E293B] mb-1.5">Select Your Role</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                {formData.role === 'learner' && <User size={16} className="text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />}
+                {formData.role === 'trainer' && <BookOpen size={16} className="text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />}
+                {formData.role === 'admin' && <Shield size={16} className="text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />}
+              </div>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-[13px] font-bold text-gray-700 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all appearance-none bg-white cursor-pointer hover:border-gray-400 shadow-sm"
+              >
+                <option value="learner">Learner (Student)</option>
+                <option value="trainer">Trainer (Teacher)</option>
+                <option value="admin">Administrator</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                <ChevronDown size={14} className="text-gray-400" />
+              </div>
             </div>
-            <div>
-              <p className={`text-[12px] font-bold leading-none mb-1 transition-colors ${loginType === 'individual' ? 'text-[#0056D2]' : 'text-gray-700'}`}>For Myself</p>
-              <p className="text-[10px] text-gray-500 leading-tight">Students & Learners</p>
-            </div>
-          </motion.button>
-
-          <motion.button 
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={() => setLoginType('organization')}
-            className={`flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all duration-200 ${loginType === 'organization' ? 'border-[#0056D2] bg-[#0056D2]/5 ring-1 ring-[#0056D2] shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'}`}
-          >
-            <div className={`mt-0.5 transition-colors ${loginType === 'organization' ? 'text-[#0056D2]' : 'text-gray-400'}`}>
-              <Building size={18} strokeWidth={2.5}/>
-            </div>
-            <div>
-              <p className={`text-[12px] font-bold leading-none mb-1 transition-colors ${loginType === 'organization' ? 'text-[#0056D2]' : 'text-gray-700'}`}>For Organization</p>
-              <p className="text-[10px] text-gray-500 leading-tight">Institutions & Schools</p>
-            </div>
-          </motion.button>
-        </div>
+          </div>
+        )}
 
         {/* 🟢 DYNAMIC FORM AREA */}
         <AnimatePresence mode="wait">
@@ -222,7 +218,10 @@ export default function Login() {
                     onChange={handleInputChange}
                     required
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-[13px] font-medium focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
-                    placeholder={loginType === 'individual' ? "Enter your email" : "Enter organization email"}
+                    placeholder={
+                      formData.role === 'admin' ? "admin@documind.com" : 
+                      formData.role === 'trainer' ? "teacher@institute.edu" : "student@example.com"
+                    }
                   />
                 </div>
               </div>
