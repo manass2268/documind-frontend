@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Mail, Lock, Eye, EyeOff, User, BookOpen, Shield,
+  Mail, Lock, Eye, EyeOff, User, BookOpen, Shield, Building,
   ArrowRight, Check, Loader2, ChevronDown
 } from "lucide-react";
 import DocumindLogo from "../assets/logo.png";
@@ -23,7 +23,7 @@ export default function Login() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false); 
   const [error, setError] = useState(""); 
 
-  // Form State (OTP aur Mobile hata diya gaya hai)
+  // Form State
   const [formData, setFormData] = useState({
     role: "learner", // Default role
     identifier: "",
