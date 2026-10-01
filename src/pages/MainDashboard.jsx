@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { 
   LayoutDashboard, Upload, FileText, Sparkles, MessageSquare, BookOpen, 
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
-  Clock, CheckCircle2, Menu, X
+  Clock, CheckCircle2, Menu, X, LogOut
 } from "lucide-react";
 import ashokaLogo from "../assets/ashoka.png";
 import documindLogo from "../assets/logo.png";
 import indiaLogo from "../assets/India Logo.png";
 
-// FIREBASE IMPORTS (Path apne folder ke hisaab se check kar lena)
+// FIREBASE IMPORTS 
 import { auth, db } from "../firebase"; 
 import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom"; 
 
 export default function Dashboard() {
@@ -29,18 +29,16 @@ export default function Dashboard() {
       if (user) {
         setUserEmail(user.email);
         
-        // Extract Roll Number from email (e.g. 2503511790020@student.documind.com -> 2503511790020)
+        // Extract Roll Number
         const rollNo = user.email.split('@')[0];
 
         try {
-          // Fetch user details from Firestore database
           const docRef = doc(db, "students", rollNo);
           const docSnap = await getDoc(docRef);
 
           if (docSnap.exists()) {
             const fetchedName = docSnap.data().name;
             setUserName(fetchedName);
-            // Get the first letter of the name for the avatar
             setUserInitial(fetchedName.charAt(0).toUpperCase());
           } else {
             setUserName("Student");
@@ -52,7 +50,6 @@ export default function Dashboard() {
           setUserInitial("S");
         }
       } else {
-        // Agar koi login nahi hai toh login page par bhej do
         navigate("/login");
       }
     });
@@ -60,12 +57,20 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [navigate]);
 
+  // LOGOUT FUNCTION
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 font-sans flex flex-col w-full absolute top-0 left-0 right-0 z-50">
       
-      {/* ========================================= */}
-      {/* 1. TOP GOVT BAR                           */}
-      {/* ========================================= */}
+      {/* 1. TOP GOVT BAR */}
       <div className="bg-[#F8FAFC] border-b border-gray-200 text-[10px] sm:text-[12px] font-medium py-1.5 px-4 sm:px-8 flex justify-between items-center text-slate-600">
         <div className="flex items-center gap-1.5">
           <img src={indiaLogo} alt="India Logo" className="h-3 sm:h-4 md:h-5 object-contain" />
@@ -81,12 +86,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ========================================= */}
-      {/* 2. MAIN HEADER                            */}
-      {/* ========================================= */}
+      {/* 2. MAIN HEADER */}
       <header className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-30 shadow-sm">
         
-        {/* Left Side: Mobile Menu & Logos */}
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-10">
           <button 
             className="lg:hidden text-slate-600 hover:text-blue-600 p-1"
@@ -115,7 +117,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right Side: Search & Profile */}
         <div className="flex items-center gap-4 sm:gap-8">
           <div className="relative hidden xl:block w-[400px]">
             <Search size={16} className="absolute left-4 top-2.5 text-slate-400" />
@@ -134,7 +135,6 @@ export default function Dashboard() {
               <Bell size={20} strokeWidth={1.5} />
             </button>
             
-            {/* DYNAMIC HEADER PROFILE */}
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">
                 {userInitial || "M"}
@@ -150,9 +150,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* ========================================= */}
-      {/* 3. MAIN LAYOUT (SIDEBAR + CONTENT)        */}
-      {/* ========================================= */}
+      {/* 3. MAIN LAYOUT (SIDEBAR + CONTENT) */}
       <div className="flex flex-1 overflow-hidden relative">
         
         {isSidebarOpen && (
@@ -162,16 +160,19 @@ export default function Dashboard() {
           />
         )}
 
+        {/* SIDEBAR WITH NEW LOGOUT/SETTINGS SECTION */}
         <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-in-out h-full`}>
-          <div>
-            <div className="flex justify-between items-center mb-6 lg:hidden">
+          
+          {/* Top Menu Section */}
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex justify-between items-center mb-6 lg:hidden shrink-0">
               <span className="font-bold text-[#1E3A8A] text-lg">Menu</span>
               <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-red-500 p-1">
                 <X size={20} />
               </button>
             </div>
 
-            <nav className="space-y-1">
+            <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
               {[
                 { icon: LayoutDashboard, label: "Dashboard", active: true },
                 { icon: Upload, label: "Upload Document" },
@@ -182,7 +183,6 @@ export default function Dashboard() {
                 { icon: CheckSquare, label: "Assessments" },
                 { icon: Bookmark, label: "Bookmarks" },
                 { icon: TrendingUp, label: "My Progress" },
-                { icon: Settings, label: "Settings" },
               ].map((item, i) => (
                 <button key={i} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${item.active ? "bg-blue-50 text-blue-700 border border-blue-100" : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"}`}>
                   <item.icon size={16} className={item.active ? "text-blue-600" : "text-gray-400"} />
@@ -192,10 +192,28 @@ export default function Dashboard() {
             </nav>
           </div>
           
-          <div className="p-4 bg-slate-50 border border-gray-200 rounded-xl text-center mt-6 shadow-sm">
-            <div className="w-10 h-1 bg-gradient-to-r from-orange-400 via-white to-green-500 mx-auto mb-3 border border-gray-200"></div>
-            <h5 className="text-[12px] font-bold text-slate-800">Knowledge for<br/>A Stronger, Data-Driven<br/>India</h5>
+          {/* Bottom Settings & Logout Section */}
+          <div className="pt-4 border-t border-gray-200 mt-4 space-y-4 shrink-0">
+            <div className="space-y-1">
+              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-slate-50 hover:text-gray-900 transition-all">
+                <Settings size={16} className="text-gray-400" />
+                Settings
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-red-600 hover:bg-red-50 transition-all group"
+              >
+                <LogOut size={16} className="text-red-400 group-hover:text-red-600 transition-colors" />
+                Logout
+              </button>
+            </div>
+
+            <div className="p-4 bg-slate-50 border border-gray-200 rounded-xl text-center shadow-sm">
+              <div className="w-10 h-1 bg-gradient-to-r from-orange-400 via-white to-green-500 mx-auto mb-3 border border-gray-200"></div>
+              <h5 className="text-[12px] font-bold text-slate-800">Knowledge for<br/>A Stronger, Data-Driven<br/>India</h5>
+            </div>
           </div>
+
         </aside>
 
         <main className="flex-1 p-4 sm:p-6 overflow-y-auto pb-12 w-full">
@@ -203,7 +221,6 @@ export default function Dashboard() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               
-              {/* DYNAMIC WELCOME CARD */}
               <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden shadow-sm">
                 <div className="absolute top-0 right-0 w-full md:w-1/2 h-full opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 <div className="relative z-10 w-full md:w-2/3">
@@ -227,7 +244,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* DYNAMIC PROFILE CARD */}
               <div className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col justify-between shadow-sm">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex gap-3 items-center">
