@@ -26,6 +26,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import OTPVerify from "./pages/OtpVerify";
 import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
+import UploadDocuments from "./pages/UploadDocument";
 
 // Platform Info Pages
 import Platform from "./pages/PlatformOverview";
@@ -162,6 +163,7 @@ export default function App() {
           {/* --- 🔴 PRIVATE DASHBOARD ROUTES (Fixed Routing) --- */}
   
           <Route path="/dashboard" element={<MainDashboard />} />
+          <Route path="/upload" element={<UploadDocuments />} />
           <Route path="/settings" element={<DashboardSettings />} />
           <Route path="/help" element={<Help />} />
           

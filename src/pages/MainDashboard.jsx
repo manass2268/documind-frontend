@@ -223,17 +223,26 @@ export default function Dashboard() {
 
             <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
               {[
-                { icon: LayoutDashboard, label: "Dashboard", active: true },
-                { icon: Upload, label: "Upload Document" },
-                { icon: FileText, label: "My Documents" },
-                { icon: Sparkles, label: "AI Notes" },
-                { icon: MessageSquare, label: "Ask DocuMind" },
-                { icon: BookOpen, label: "Learning Paths" },
-                { icon: CheckSquare, label: "Assessments" },
-                { icon: Bookmark, label: "Bookmarks" },
-                { icon: TrendingUp, label: "My Progress" },
+                { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", active: true },
+                { icon: Upload, label: "Upload Document", path: "/upload", active: false },
+                { icon: FileText, label: "My Documents", path: "#", active: false },
+                { icon: Sparkles, label: "AI Notes", path: "#", active: false },
+                { icon: MessageSquare, label: "Ask DocuMind", path: "#", active: false },
+                { icon: BookOpen, label: "Learning Paths", path: "#", active: false },
+                { icon: CheckSquare, label: "Assessments", path: "#", active: false },
+                { icon: Bookmark, label: "Bookmarks", path: "#", active: false },
+                { icon: TrendingUp, label: "My Progress", path: "#", active: false },
               ].map((item, i) => (
-                <button key={i} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${item.active ? "bg-blue-50 text-blue-700 border border-blue-100" : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"}`}>
+                <button 
+                  key={i} 
+                  onClick={() => {
+                    
+                    if (item.path && item.path !== "#") {
+                      navigate(item.path);
+                    }
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${item.active ? "bg-blue-50 text-blue-700 border border-blue-100" : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"}`}
+                >
                   <item.icon size={16} className={item.active ? "text-blue-600" : "text-gray-400"} />
                   {item.label}
                 </button>
@@ -281,9 +290,9 @@ export default function Dashboard() {
                   Continue your learning journey with DocuMind. Upload documents, get AI summaries, take notes and explore government data — all in one secure platform.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="bg-[#1A365D] justify-center text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-sm">
+                  <button onClick={() => navigate('/upload')} className="bg-[#1A365D] justify-center text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-sm">
                     Upload Document →
-                  </button>
+                  </button> 
                   <button className="bg-slate-50 justify-center text-blue-700 border border-blue-200 px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
                     <Sparkles size={16} /> Ask DocuMind
                   </button>
@@ -389,7 +398,9 @@ export default function Dashboard() {
                 <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                   <h3 className="font-bold text-[14px] text-slate-900 mb-4 border-b border-gray-100 pb-3">Quick Actions</h3>
                   <div className="grid grid-cols-2 gap-3 mt-2">
-                    <button className="bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 sm:p-4 rounded-xl text-center transition-colors border border-blue-100 shadow-sm">
+                 
+
+                    <button onClick={() => navigate('/upload')} className="bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 sm:p-4 rounded-xl text-center transition-colors border border-blue-100 shadow-sm">
                       <Upload size={18} className="mx-auto mb-2 sm:w-5 sm:h-5"/>
                       <p className="text-[10px] sm:text-[11px] font-bold">Upload Doc</p>
                     </button>
