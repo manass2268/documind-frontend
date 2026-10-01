@@ -7,14 +7,13 @@ import {
 } from "lucide-react";
 import DocumindLogo from "../assets/logo.png";
 
-// 🔥 Firebase Imports
-import { auth, googleProvider } from "../firebase"; 
+import { auth, googleProvider, db } from "../firebase"; 
 import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore"; 
 
 export default function Login() {
   const navigate = useNavigate();
   
-  // States
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   
@@ -22,14 +21,12 @@ export default function Login() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false); 
   const [error, setError] = useState(""); 
 
-  // Form State
   const [formData, setFormData] = useState({
-    role: "learner", // Default role automatically selected
+    role: "learner", 
     identifier: "",
     password: ""
   });
 
-  // 🔥 1. Real-Time Session Check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -45,30 +42,35 @@ export default function Login() {
     if (error) setError(""); 
   };
 
-  // 🔥 2. Firebase Email/Password/RollNo Login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
     
     try {
-      console.log("Logging in as:", formData.role); 
-
-      // 💡 SMART TRICK: Agar role learner hai aur input me '@' nahi hai, toh usey email format me convert karo
       let finalLoginId = formData.identifier.trim();
       
-      if (formData.role === "learner" && !finalLoginId.includes("@")) {
+      if (formData.role === "learner") {
+        // Step 1: Check in Firestore Database
+        const studentRef = doc(db, "students", finalLoginId);
+        const studentSnap = await getDoc(studentRef);
+
+        if (!studentSnap.exists()) {
+          setError("Roll Number not found in database. Please contact Admin.");
+          setIsLoading(false);
+          return; 
+        }
+
+        // Step 2: Format for Firebase Auth
         finalLoginId = `${finalLoginId}@student.documind.com`;
       }
 
-      console.log("Final ID sent to Firebase:", finalLoginId);
-      
       await signInWithEmailAndPassword(auth, finalLoginId, formData.password);
-      // Successful login par onAuthStateChanged automatically redirect kar dega
+      
     } catch (err) {
       console.error("Login Error:", err.code);
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError("Invalid User ID/Email or password. Please try again.");
+        setError("Invalid Credentials. Please try again.");
       } else {
         setError("Login failed. Please check your connection.");
       }
@@ -76,12 +78,10 @@ export default function Login() {
     }
   };
 
-  // 🔥 3. Firebase Google Login
   const handleGoogleLogin = async () => {
     setError("");
     setIsGoogleLoading(true);
     try {
-      console.log("Logging in with Google as:", formData.role);
       await signInWithPopup(auth, googleProvider);
     } catch (err) {
       console.error("Google Login Error:", err.code);
@@ -93,21 +93,18 @@ export default function Login() {
   return (
     <main className="w-full flex-grow relative flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 min-h-[85vh] lg:min-h-[calc(100vh-140px)] overflow-hidden bg-[#F8F9FA] selection:bg-[#0056D2] selection:text-white">
       
-      {/* 🟢 TOP SAFFRON WAVE */}
       <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none z-0">
         <svg viewBox="0 0 1440 320" className="w-full h-auto opacity-[0.15]">
           <path fill="#FF9933" d="M0,64L80,85.3C160,107,320,150,480,149.3C640,149,800,107,960,106.7C1120,107,1280,149,1360,170.7L1440,192L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path>
         </svg>
       </div>
 
-      {/* 🟢 BOTTOM GREEN WAVE */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden pointer-events-none z-0">
         <svg viewBox="0 0 1440 320" className="w-full h-auto opacity-[0.15]">
           <path fill="#138808" d="M0,192L80,170.7C160,149,320,107,480,106.7C640,107,800,149,960,149.3C1120,149,1280,107,1360,85.3L1440,64L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
         </svg>
       </div>
 
-      {/* 🟢 LEFT & RIGHT MONUMENT SKETCHES */}
       <div 
         className="absolute left-0 top-1/2 -translate-y-1/2 w-[400px] h-[350px] bg-no-repeat bg-left pointer-events-none z-0 mix-blend-multiply opacity-[0.12] grayscale hidden lg:block" 
         style={{ backgroundImage: "url('https://png.pngtree.com/png-vector/20220815/ourmid/pngtree-indian-monuments-line-art-vector-png-image_6110826.png')", backgroundSize: '1000px auto', backgroundPosition: 'left center' }}>
@@ -117,7 +114,6 @@ export default function Login() {
         style={{ backgroundImage: "url('https://png.pngtree.com/png-vector/20220815/ourmid/pngtree-indian-monuments-line-art-vector-png-image_6110826.png')", backgroundSize: '1000px auto', backgroundPosition: 'right center' }}>
       </div>
 
-      {/* 🟢 LOGIN CARD */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -125,7 +121,6 @@ export default function Login() {
         className="bg-white/95 backdrop-blur-md w-full max-w-[460px] rounded-[1.5rem] shadow-[0_0_40px_rgba(0,0,0,0.06)] border border-gray-100 p-8 sm:p-10 relative z-20 overflow-hidden"
       >
         
-        {/* Loading Overlay */}
         <AnimatePresence>
           {(isLoading || isGoogleLoading) && (
             <motion.div 
@@ -145,7 +140,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* 🔥 DYNAMIC ERROR MESSAGE */}
         <AnimatePresence>
           {error && (
             <motion.div 
@@ -157,7 +151,6 @@ export default function Login() {
           )}
         </AnimatePresence>
 
-        {/* 🟢 ROLE SELECTOR DROPDOWN */}
         <div className="mb-6">
           <label className="block text-[12px] font-bold text-[#1E293B] mb-1.5">Select Your Role</label>
           <div className="relative group">
@@ -182,14 +175,16 @@ export default function Login() {
           </div>
         </div>
 
-        {/* --- PASSWORD LOGIN FORM --- */}
         <motion.form 
           initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}
           onSubmit={handleLogin} 
           className="space-y-5"
         >
+          {/* 🔥 FIX: Added bg-white and text-gray-900 to ensure visibility */}
           <div>
-            <label className="block text-[12px] font-bold text-[#1E293B] mb-1.5">Email Address / User ID</label>
+            <label className="block text-[12px] font-bold text-[#1E293B] mb-1.5">
+              {formData.role === 'learner' ? "Roll Number" : "Email Address"}
+            </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Mail size={16} className="text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
@@ -200,15 +195,16 @@ export default function Login() {
                 value={formData.identifier}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-[13px] font-medium focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
                 placeholder={
-                  formData.role === 'learner' ? "e.g. 101 or student@example.com" :
+                  formData.role === 'learner' ? "e.g. 2503511790020" : 
                   formData.role === 'admin' ? "admin@documind.com" : "teacher@institute.edu"
                 }
               />
             </div>
           </div>
 
+          {/* 🔥 FIX: Added bg-white and text-gray-900 to ensure visibility */}
           <div>
             <div className="flex justify-between items-end mb-1.5">
               <label className="block text-[12px] font-bold text-[#1E293B]">Password</label>
@@ -224,7 +220,7 @@ export default function Login() {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-[13px] font-medium focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
+                className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
                 placeholder="Enter your password"
               />
               <button 
@@ -262,7 +258,6 @@ export default function Login() {
             <div className="relative bg-white px-3 text-[11px] font-bold text-gray-400 uppercase tracking-widest">OR</div>
           </div>
 
-          {/* 🟢 GOOGLE LOGIN BUTTON */}
           <button 
             type="button" 
             onClick={handleGoogleLogin}
@@ -281,16 +276,7 @@ export default function Login() {
               </>
             )}
           </button>
-
         </motion.form>
-
-        {/* Signup Link */}
-        <div className="text-center mt-6 pt-4 border-t border-gray-100">
-          <p className="text-[13px] font-medium text-gray-600">
-            New user? <Link to="/signup" className="text-[#0056D2] hover:text-[#003366] hover:underline font-black inline-flex items-center gap-1 ml-1 transition-colors">Create an account <ArrowRight size={12}/></Link>
-          </p>
-        </div>
-
       </motion.div>
     </main>
   );

@@ -16,6 +16,8 @@ import DashboardLayout from "./components/DashboardLayout";
 import Footer from "./components/Footer";
 import Header from "./components/Header"; 
 
+
+
 // Pages
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -34,7 +36,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 
 // Dashboard Pages
-
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 
@@ -103,7 +104,6 @@ function HomeFlow() {
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ duration: 1 }} 
-
           className="flex h-screen w-full relative z-10 overflow-hidden bg-[#F4F7FA]"
         >
           <Sidebar isOpen={isSidebarOpen} closeSidebar={() => setIsSidebarOpen(false)} />
@@ -162,6 +162,7 @@ export default function App() {
           <Route path="/new-password" element={<NewPassword />} />
           
          
+         
           
           {/* --- 🔴 PRIVATE DASHBOARD ROUTES --- */}
           <Route element={<Dashboard />}>
@@ -169,6 +170,7 @@ export default function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>
+          
         </Routes>
       </div>
     </Router>
