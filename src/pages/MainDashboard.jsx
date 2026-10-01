@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { 
   LayoutDashboard, Upload, FileText, Sparkles, MessageSquare, BookOpen, 
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
-  Clock, CheckCircle2, Menu, X, LogOut
+  Clock, CheckCircle2, Menu, X, LogOut, UserCircle
 } from "lucide-react";
 import ashokaLogo from "../assets/ashoka.png";
 import documindLogo from "../assets/logo.png";
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   // DYNAMIC USER STATES
@@ -135,16 +136,64 @@ export default function Dashboard() {
               <Bell size={20} strokeWidth={1.5} />
             </button>
             
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">
-                {userInitial || "M"}
+            {/* PROFILE DROPDOWN */}
+            <div className="relative">
+              <div 
+                className="flex items-center gap-3 cursor-pointer group"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">
+                  {userInitial || "M"}
+                </div>
+                <div className="text-left hidden sm:block leading-tight">
+                  <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-900 flex items-center gap-1 group-hover:text-blue-700 transition-colors uppercase">
+                    {userName}
+                    <ChevronDown size={14} className={`text-slate-400 ml-1 stroke-[2.5px] transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}/>
+                  </h4>
+                  <p className="text-[11px] sm:text-[12px] text-slate-500 font-medium">Learner</p>
+                </div>
               </div>
-              <div className="text-left hidden sm:block leading-tight">
-                <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-900 flex items-center gap-1 group-hover:text-blue-700 transition-colors">
-                  {userName} <ChevronDown size={14} className="text-slate-400 ml-1 stroke-[2.5px]"/>
-                </h4>
-                <p className="text-[11px] sm:text-[12px] text-slate-500 font-medium">Student</p>
-              </div>
+
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                  
+                  {/* Mobile Only Details */}
+                  <div className="px-4 py-3 border-b border-gray-100 sm:hidden">
+                    <p className="text-[12px] font-bold text-slate-900 uppercase truncate">{userName}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{userEmail}</p>
+                  </div>
+                  
+                  {/* Edit Profile Button */}
+                  <button 
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      navigate("/settings");
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-blue-600 flex items-center gap-2 transition-colors border-b border-gray-50"
+                  >
+                    <UserCircle size={16} /> Edit Profile
+                  </button>
+
+                  {/* Settings Button */}
+                  <button 
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      navigate("/settings");
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-blue-600 flex items-center gap-2 transition-colors"
+                  >
+                    <Settings size={16} /> Settings
+                  </button>
+
+                  {/* Logout Button */}
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                  >
+                    <LogOut size={16} /> Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -160,7 +209,7 @@ export default function Dashboard() {
           />
         )}
 
-        {/* SIDEBAR WITH NEW LOGOUT/SETTINGS SECTION */}
+        {/* SIDEBAR WITH LOGOUT/SETTINGS SECTION */}
         <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-in-out h-full`}>
           
           {/* Top Menu Section */}
@@ -195,7 +244,10 @@ export default function Dashboard() {
           {/* Bottom Settings & Logout Section */}
           <div className="pt-4 border-t border-gray-200 mt-4 space-y-4 shrink-0">
             <div className="space-y-1">
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-slate-50 hover:text-gray-900 transition-all">
+              <button 
+                onClick={() => navigate("/settings")} 
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-slate-50 hover:text-gray-900 transition-all"
+              >
                 <Settings size={16} className="text-gray-400" />
                 Settings
               </button>
@@ -219,55 +271,27 @@ export default function Dashboard() {
         <main className="flex-1 p-4 sm:p-6 overflow-y-auto pb-12 w-full">
           <div className="max-w-7xl mx-auto space-y-6">
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-              
-              <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden shadow-sm">
-                <div className="absolute top-0 right-0 w-full md:w-1/2 h-full opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                <div className="relative z-10 w-full md:w-2/3">
-                  <p className="text-gray-500 text-[12px] sm:text-[13px] font-semibold mb-1">Welcome back,</p>
-                  <h2 className="text-2xl sm:text-3xl font-black text-[#1A365D] mb-3">{userName} 👋</h2>
-                  <p className="text-gray-600 text-[12px] sm:text-[13px] mb-6 leading-relaxed">
-                    Continue your learning journey with DocuMind. Upload documents, get AI summaries, take notes and explore government data — all in one secure platform.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button className="bg-[#1A365D] justify-center text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-sm">
-                      Upload Document →
-                    </button>
-                    <button className="bg-slate-50 justify-center text-blue-700 border border-blue-200 px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
-                      <Sparkles size={16} /> Ask DocuMind
-                    </button>
-                  </div>
-                </div>
-                <div className="hidden md:flex absolute right-6 top-6 bottom-6 w-[28%] bg-slate-50/80 backdrop-blur-md border border-gray-100 p-4 rounded-xl shadow-sm flex-col justify-center">
-                   <div className="text-4xl text-blue-200 font-serif leading-none mb-2">"</div>
-                   <p className="text-[13px] font-semibold text-slate-700 italic">Knowledge empowers people and drives better policies.</p>
+            {/* FULL WIDTH WELCOME CARD (REVERTED TO WHITE/CLEAN DESIGN) */}
+            <div className="w-full bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden shadow-sm">
+              <div className="absolute top-0 right-0 w-full md:w-1/2 h-full opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+              <div className="relative z-10 w-full md:w-2/3">
+                <p className="text-gray-500 text-[12px] sm:text-[13px] font-semibold mb-1">Welcome back,</p>
+                <h2 className="text-2xl sm:text-3xl font-black text-[#1A365D] mb-3 uppercase">{userName} 👋</h2>
+                <p className="text-gray-600 text-[12px] sm:text-[13px] mb-6 leading-relaxed">
+                  Continue your learning journey with DocuMind. Upload documents, get AI summaries, take notes and explore government data — all in one secure platform.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button className="bg-[#1A365D] justify-center text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-sm">
+                    Upload Document →
+                  </button>
+                  <button className="bg-slate-50 justify-center text-blue-700 border border-blue-200 px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
+                    <Sparkles size={16} /> Ask DocuMind
+                  </button>
                 </div>
               </div>
-
-              <div className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col justify-between shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex gap-3 items-center">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1A365D] text-white flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">
-                      {userInitial || "M"}
-                    </div>
-                    <div className="overflow-hidden">
-                      <h3 className="font-bold text-[14px] sm:text-[15px] text-slate-900 leading-tight truncate">{userName}</h3>
-                      <p className="text-[11px] sm:text-[12px] text-gray-500">BCA Student</p>
-                    </div>
-                  </div>
-                  <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-md border border-blue-100 shrink-0">Student</span>
-                </div>
-                <div className="space-y-3 mb-4 border-t border-gray-100 pt-4">
-                  <div className="flex items-center gap-2 text-[11px] sm:text-[12px] text-gray-600">
-                    <MessageSquare size={14} className="text-gray-400 shrink-0"/> <span className="truncate">{userEmail}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] sm:text-[12px] text-gray-600">
-                    <span className="text-gray-400 shrink-0">🎓</span> <span className="truncate">Krishna Institute of Technology</span>
-                  </div>
-                </div>
-                <button className="w-full py-2 bg-slate-50 border border-gray-200 rounded-lg text-[12px] font-semibold text-gray-600 hover:bg-gray-100 transition-colors flex justify-center items-center gap-1.5 shadow-sm">
-                  <Settings size={14}/> Edit Profile
-                </button>
+              <div className="hidden md:flex absolute right-6 top-6 bottom-6 w-[28%] bg-slate-50/80 backdrop-blur-md border border-gray-100 p-4 rounded-xl shadow-sm flex-col justify-center">
+                 <div className="text-4xl text-blue-200 font-serif leading-none mb-2">"</div>
+                 <p className="text-[13px] font-semibold text-slate-700 italic">Knowledge empowers people and drives better policies.</p>
               </div>
             </div>
 

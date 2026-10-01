@@ -16,8 +16,6 @@ import DashboardLayout from "./components/DashboardLayout";
 import Footer from "./components/Footer";
 import Header from "./components/Header"; 
 
-
-
 // Pages
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -28,18 +26,19 @@ import ForgotPassword from "./pages/ForgotPassword";
 import OTPVerify from "./pages/OtpVerify";
 import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
-import Dashboard from './pages/MainDashboard';
 
+// Platform Info Pages
 import Platform from "./pages/PlatformOverview";
 import KnowledgeCenter from "./pages/KnowledgeCentre";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 
-// Dashboard Pages
-import Settings from "./pages/Settings";
+// 🔴 DASHBOARD & SETTINGS PAGES (Updated Imports)
+import MainDashboard from "./pages/MainDashboard"; 
+import DashboardSettings from "../src/components/DashboardSettings"; 
 import Help from "./pages/Help";
 
-// 🟢 SMART SCROLL TO TOP (Hash Support Ke Saath)
+// 🚀 SMART SCROLL TO TOP (Hash Support Ke Saath)
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
@@ -60,7 +59,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-// 🟢 MAIN HOME FLOW (Landing -> Loading -> Chat)
+// 🚀 MAIN HOME FLOW (Landing -> Loading -> Chat)
 function HomeFlow() {
   const [view, setView] = useState("landing"); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -117,12 +116,11 @@ function HomeFlow() {
   );
 }
 
-// 🟢 PUBLIC LAYOUT (Baaki sabhi informational pages ke liye)
+// 🚀 PUBLIC LAYOUT (Header + Footer ke Saath)
 function PublicLayout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      {/* Ensures content takes full height but doesn't cause horizontal scroll */}
       <div className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
         <Outlet /> 
       </div>
@@ -138,10 +136,10 @@ export default function App() {
       <div className="font-sans overflow-x-hidden min-h-screen selection:bg-[#0056D2] selection:text-white">
         <Routes>
           
-          {/* 🟢 FULL SCREEN ANIMATED ROUTE (Landing -> Chat) */}
+          {/* 🚀 FULL SCREEN ANIMATED ROUTE (Landing -> Chat) */}
           <Route path="/" element={<HomeFlow />} />
           
-          {/* 🟢 PUBLIC ROUTES (Humesha Header & Footer ke sath) */}
+          {/* 🚀 PUBLIC ROUTES (Humesha Header & Footer ke sath) */}
           <Route element={<PublicLayout />}>
              <Route path="/about" element={<About />} /> 
              <Route path="/platform" element={<Platform />} />
@@ -154,22 +152,18 @@ export default function App() {
              <Route path="/terms-conditions" element={<TermsConditions />} />
           </Route>
 
-          {/* 🟢 STANDALONE PUBLIC ROUTES (Auth Pages - Bina Header/Footer) */}
+          {/* 🚀 STANDALONE PUBLIC ROUTES (Auth Pages - Bina Header/Footer) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/new-password" element={<NewPassword />} />
           
-         
-         
-          
-          {/* --- 🔴 PRIVATE DASHBOARD ROUTES --- */}
-          <Route element={<Dashboard />}>
-            <Route path="/dashboard" element={<DashboardLayout />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="help" element={<Help />} />
-          </Route>
+          {/* --- 🔴 PRIVATE DASHBOARD ROUTES (Fixed Routing) --- */}
+  
+          <Route path="/dashboard" element={<MainDashboard />} />
+          <Route path="/settings" element={<DashboardSettings />} />
+          <Route path="/help" element={<Help />} />
           
         </Routes>
       </div>
