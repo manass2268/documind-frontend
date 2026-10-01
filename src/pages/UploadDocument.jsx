@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { 
   LayoutDashboard, Upload, FileText, Sparkles, MessageSquare, BookOpen, 
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
-  Clock, CheckCircle2, Menu, X, LogOut, UserCircle, UploadCloud, Loader2, 
+  Clock, CheckCircle2, CheckCircle, Menu, X, LogOut, UserCircle, UploadCloud, Loader2, 
   ChevronRight, Home, AlertCircle, Shield
 } from "lucide-react";
 import ashokaLogo from "../assets/ashoka.png";
@@ -20,7 +20,7 @@ export default function UploadDocument() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  // DYNAMIC USER STATES (Same as Dashboard)
+  // DYNAMIC USER STATES 
   const [userName, setUserName] = useState("Loading...");
   const [userEmail, setUserEmail] = useState("Loading...");
   const [userInitial, setUserInitial] = useState("");
@@ -31,7 +31,9 @@ export default function UploadDocument() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingProgress, setProcessingProgress] = useState(0);
-  const [formData, setFormData] = useState({ title: "", category: "Learning Material", visibility: "Private (Only Me)" });
+  
+  // CATEGORY REMOVED FROM STATE
+  const [formData, setFormData] = useState({ title: "" });
 
   const [processSteps, setProcessSteps] = useState([
     { id: 1, text: "Upload complete", status: "pending" },
@@ -41,8 +43,8 @@ export default function UploadDocument() {
     { id: 5, text: "Finalizing", status: "pending" }
   ]);
 
+  // Firebase Auth Hook
   useEffect(() => {
-    // Fetch User Data
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserEmail(user.email);
@@ -68,6 +70,20 @@ export default function UploadDocument() {
     return () => unsubscribe();
   }, [navigate]);
 
+  // CHROME BACK BUTTON INTERCEPTOR
+  useEffect(() => {
+    window.history.pushState(null, null, window.location.pathname);
+    const handleBackButton = (e) => {
+      e.preventDefault();
+      navigate("/dashboard"); 
+    };
+    window.addEventListener("popstate", handleBackButton);
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, [navigate]);
+
+  // LOGOUT HANDLER
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -82,7 +98,7 @@ export default function UploadDocument() {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setFormData({ ...formData, title: file.name.split('.')[0] });
+      setFormData({ title: file.name.split('.')[0] });
       setUploadState("selected");
     }
   };
@@ -93,7 +109,7 @@ export default function UploadDocument() {
     const file = e.dataTransfer.files[0];
     if (file) {
       setSelectedFile(file);
-      setFormData({ ...formData, title: file.name.split('.')[0] });
+      setFormData({ title: file.name.split('.')[0] });
       setUploadState("selected");
     }
   };
@@ -132,10 +148,10 @@ export default function UploadDocument() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-800 font-sans flex flex-col w-full absolute top-0 left-0 right-0 z-50">
+    <div className="h-screen bg-slate-100 text-slate-800 font-sans flex flex-col w-full">
       
       {/* 1. TOP GOVT BAR */}
-      <div className="bg-[#F8FAFC] border-b border-gray-200 text-[10px] sm:text-[12px] font-medium py-1.5 px-4 sm:px-8 flex justify-between items-center text-slate-600">
+      <div className="bg-[#F8FAFC] border-b border-gray-200 text-[10px] sm:text-[12px] font-medium py-1.5 px-4 sm:px-8 flex justify-between items-center text-slate-600 shrink-0">
         <div className="flex items-center gap-1.5">
           <img src={indiaLogo} alt="India Logo" className="h-3 sm:h-4 md:h-5 object-contain" />
           <span><span className="hidden sm:inline">Government of India <span className="mx-2 text-slate-300">|</span></span>भारत सरकार</span>
@@ -146,9 +162,10 @@ export default function UploadDocument() {
       </div>
 
       {/* 2. MAIN HEADER */}
-      <header className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+      <header className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8 flex justify-between items-center shadow-sm shrink-0 z-30">
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-10">
           <button className="lg:hidden text-slate-600 hover:text-blue-600 p-1" onClick={() => setIsSidebarOpen(true)}><Menu size={24} /></button>
+          
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={ashokaLogo} alt="Satyameva Jayate" className="h-8 sm:h-10 md:h-12 object-contain" />
             <div className="leading-tight hidden md:block">
@@ -157,6 +174,7 @@ export default function UploadDocument() {
               <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">Government of India</p>
             </div>
           </div>
+
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shadow-sm p-1 sm:p-1.5"><img src={documindLogo} alt="DocuMind Logo" className="h-6 w-8 sm:h-8 sm:w-11 object-contain" /></div>
             <div className="leading-tight">
@@ -171,22 +189,32 @@ export default function UploadDocument() {
             <Search size={16} className="absolute left-4 top-2.5 text-slate-400" />
             <input type="text" placeholder="Search documents, notes, topics..." className="w-full pl-11 pr-4 py-2 bg-[#F8FAFC] border border-slate-200 rounded-full text-[13px] text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-all shadow-sm" />
           </div>
+          
           <div className="flex items-center gap-4 sm:gap-6">
             <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer hidden sm:block"><Search size={20} strokeWidth={1.5} className="xl:hidden" /></button>
             <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer"><Bell size={20} strokeWidth={1.5} /></button>
+            
+            {/* PROFILE DROPDOWN */}
             <div className="relative">
               <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}>
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">{userInitial || "M"}</div>
                 <div className="text-left hidden sm:block leading-tight">
-                  <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-900 flex items-center gap-1 group-hover:text-blue-700 transition-colors uppercase">{userName}<ChevronDown size={14} className={`text-slate-400 ml-1 stroke-[2.5px] transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}/></h4>
+                  <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-900 flex items-center gap-1 group-hover:text-blue-700 transition-colors uppercase">
+                    {userName} <ChevronDown size={14} className={`text-slate-400 ml-1 stroke-[2.5px] transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}/>
+                  </h4>
                   <p className="text-[11px] sm:text-[12px] text-slate-500 font-medium">Student</p>
                 </div>
               </div>
+
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                  <button onClick={() => { setIsProfileDropdownOpen(false); navigate("/settings"); }} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2 border-b border-gray-50"><UserCircle size={16} /> Edit Profile</button>
-                  <button onClick={() => { setIsProfileDropdownOpen(false); navigate("/settings"); }} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2"><Settings size={16} /> Settings</button>
-                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2"><LogOut size={16} /> Logout</button>
+                  <div className="px-4 py-3 border-b border-gray-100 sm:hidden">
+                    <p className="text-[12px] font-bold text-slate-900 uppercase truncate">{userName}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{userEmail}</p>
+                  </div>
+                  <button onClick={() => { setIsProfileDropdownOpen(false); navigate("/settings"); }} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-blue-600 flex items-center gap-2 transition-colors border-b border-gray-50"><UserCircle size={16} /> Edit Profile</button>
+                  <button onClick={() => { setIsProfileDropdownOpen(false); navigate("/settings"); }} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-blue-600 flex items-center gap-2 transition-colors"><Settings size={16} /> Settings</button>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"><LogOut size={16} /> Logout</button>
                 </div>
               )}
             </div>
@@ -194,17 +222,18 @@ export default function UploadDocument() {
         </div>
       </header>
 
-      {/* 3. MAIN LAYOUT */}
+      {/* 3. MAIN LAYOUT (SIDEBAR + SCROLLABLE CONTENT) */}
       <div className="flex flex-1 overflow-hidden relative">
-        {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
+        {isSidebarOpen && <div className="fixed inset-0 bg-white z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
         
         {/* SIDEBAR */}
-        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-in-out h-full`}>
+        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0)] z-20 transition-transform duration-300 ease-in-out h-full`}>
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex justify-between items-center mb-6 lg:hidden shrink-0">
               <span className="font-bold text-[#1E3A8A] text-lg">Menu</span>
               <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-red-500 p-1"><X size={20} /></button>
             </div>
+
             <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
               {[
                 { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", active: false },
@@ -219,7 +248,7 @@ export default function UploadDocument() {
               ].map((item, i) => (
                 <button 
                   key={i} 
-                  onClick={() => navigate(item.path)}
+                  onClick={() => { if(item.path && item.path !== "#") navigate(item.path); }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${item.active ? "bg-blue-50 text-blue-700 border border-blue-100" : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"}`}
                 >
                   <item.icon size={16} className={item.active ? "text-blue-600" : "text-gray-400"} />
@@ -228,16 +257,21 @@ export default function UploadDocument() {
               ))}
             </nav>
           </div>
+          
           <div className="pt-4 border-t border-gray-200 mt-4 space-y-4 shrink-0">
             <div className="space-y-1">
-              <button onClick={() => navigate("/settings")} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-slate-50 transition-all"><Settings size={16} className="text-gray-400" />Settings</button>
-              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-red-600 hover:bg-red-50 transition-all group"><LogOut size={16} className="text-red-400 group-hover:text-red-600" />Logout</button>
+              <button onClick={() => navigate("/settings")} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-slate-50 hover:text-gray-900 transition-all"><Settings size={16} className="text-gray-400" /> Settings</button>
+              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-red-600 hover:bg-red-50 transition-all group"><LogOut size={16} className="text-red-400 group-hover:text-red-600 transition-colors" /> Logout</button>
+            </div>
+            <div className="p-4 bg-slate-50 border border-gray-200 rounded-xl text-center shadow-sm">
+              <div className="w-10 h-1 bg-gradient-to-r from-orange-400 via-white to-green-500 mx-auto mb-3 border border-gray-200"></div>
+              <h5 className="text-[12px] font-bold text-slate-800">Knowledge for<br/>A Stronger, Data-Driven<br/>India</h5>
             </div>
           </div>
         </aside>
 
-        {/* CONTENT AREA (Upload Component Flow) */}
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto pb-12 w-full">
+        {/* CONTENT AREA (Independent Scrolling) */}
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto w-full pb-12">
           <div className="max-w-4xl mx-auto space-y-6">
             
             {/* Breadcrumbs */}
@@ -267,7 +301,16 @@ export default function UploadDocument() {
                     </div>
                     <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Drag & Drop your file here</h3>
                     <p className="text-[12px] sm:text-sm text-gray-500 mb-6">or click below to browse from your computer</p>
-                    <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.png,.jpg,.jpeg" />
+                    
+                    {/* FIXED MIME TYPES FOR MOBILE DOCUMENT SUPPORT */}
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileSelect} 
+                      className="hidden" 
+                      accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/plain, image/jpeg, image/png, .pdf, .doc, .docx, .ppt, .pptx, .txt" 
+                    />
+                    
                     <button onClick={() => fileInputRef.current.click()} className="bg-[#1A365D] text-white px-6 py-2.5 rounded-lg text-[13px] sm:text-[14px] font-semibold hover:bg-blue-900 shadow-sm transition-colors">
                       Browse Files
                     </button>
@@ -294,27 +337,13 @@ export default function UploadDocument() {
 
                     <div>
                       <h3 className="font-bold text-slate-800 mb-4 text-[14px]">Upload Options</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-                        <div className="space-y-1.5">
-                          <label className="text-[11px] sm:text-[12px] font-bold text-gray-600">Document Title *</label>
-                          <input type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[12px] sm:text-[13px] text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[11px] sm:text-[12px] font-bold text-gray-600">Category</label>
-                          <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[12px] sm:text-[13px] text-slate-800 focus:outline-none focus:border-blue-500 bg-white">
-                            <option>Learning Material</option><option>Government Reports</option><option>Assignments</option>
-                          </select>
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[11px] sm:text-[12px] font-bold text-gray-600">Visibility</label>
-                          <select value={formData.visibility} onChange={(e) => setFormData({...formData, visibility: e.target.value})} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[12px] sm:text-[13px] text-slate-800 focus:outline-none focus:border-blue-500 bg-white">
-                            <option>Private (Only Me)</option><option>Public (All Students)</option>
-                          </select>
-                        </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] sm:text-[12px] font-bold text-gray-600">Document Title *</label>
+                        <input type="text" value={formData.title} onChange={(e) => setFormData({ title: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-[12px] sm:text-[13px] text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder:text-gray-400" placeholder="Enter a descriptive title for your document..." />
                       </div>
                       <div className="mt-4 flex items-start gap-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
                         <Shield size={14} className="text-blue-600 mt-0.5 shrink-0" />
-                        <p className="text-[10px] sm:text-[11px] text-slate-600 leading-tight">Your documents are secure and private. They will only be used to generate personal study materials and notes.</p>
+                        <p className="text-[10px] sm:text-[11px] text-slate-600 leading-tight">Your documents are securely encrypted and strictly private to your account. No one else can access them.</p>
                       </div>
                     </div>
 
@@ -408,8 +437,8 @@ export default function UploadDocument() {
                       <button className="w-full bg-blue-600 text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-700 shadow-sm transition-colors">
                         Open Document →
                       </button>
-                      <button className="w-full bg-white border border-gray-200 text-gray-700 px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-gray-50 transition-colors">
-                        View in My Documents
+                      <button onClick={() => navigate('/dashboard')} className="w-full bg-white border border-gray-200 text-gray-700 px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-gray-50 transition-colors">
+                        Back to Dashboard
                       </button>
                     </div>
                   </div>
