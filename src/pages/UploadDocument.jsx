@@ -32,7 +32,6 @@ export default function UploadDocument() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingProgress, setProcessingProgress] = useState(0);
   
-  // CATEGORY REMOVED FROM STATE
   const [formData, setFormData] = useState({ title: "" });
 
   const [processSteps, setProcessSteps] = useState([
@@ -83,7 +82,6 @@ export default function UploadDocument() {
     };
   }, [navigate]);
 
-  // LOGOUT HANDLER
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -147,6 +145,15 @@ export default function UploadDocument() {
     setProcessSteps(prev => prev.map(step => step.id === id ? { ...step, status: newStatus } : step));
   };
 
+  const handleViewDocument = () => {
+    if (selectedFile) {
+      const fileUrl = URL.createObjectURL(selectedFile);
+      window.open(fileUrl, "_blank");
+    } else {
+      alert("Document not available for viewing yet.");
+    }
+  };
+
   return (
     <div className="h-screen bg-slate-100 text-slate-800 font-sans flex flex-col w-full">
       
@@ -164,7 +171,9 @@ export default function UploadDocument() {
       {/* 2. MAIN HEADER */}
       <header className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8 flex justify-between items-center shadow-sm shrink-0 z-30">
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-10">
-          <button className="lg:hidden text-slate-600 hover:text-blue-600 p-1" onClick={() => setIsSidebarOpen(true)}><Menu size={24} /></button>
+          <button className="lg:hidden text-slate-600 hover:text-blue-600 p-1" onClick={() => setIsSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
           
           <div className="flex items-center gap-2 sm:gap-3">
             <img src={ashokaLogo} alt="Satyameva Jayate" className="h-8 sm:h-10 md:h-12 object-contain" />
@@ -191,8 +200,12 @@ export default function UploadDocument() {
           </div>
           
           <div className="flex items-center gap-4 sm:gap-6">
-            <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer hidden sm:block"><Search size={20} strokeWidth={1.5} className="xl:hidden" /></button>
-            <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer"><Bell size={20} strokeWidth={1.5} /></button>
+            <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer hidden sm:block">
+              <Search size={20} strokeWidth={1.5} className="xl:hidden" />
+            </button>
+            <button className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer">
+              <Bell size={20} strokeWidth={1.5} />
+            </button>
             
             {/* PROFILE DROPDOWN */}
             <div className="relative">
@@ -224,10 +237,10 @@ export default function UploadDocument() {
 
       {/* 3. MAIN LAYOUT (SIDEBAR + SCROLLABLE CONTENT) */}
       <div className="flex flex-1 overflow-hidden relative">
-        {isSidebarOpen && <div className="fixed inset-0 bg-white z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
+        {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
         
         {/* SIDEBAR */}
-        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0)] z-20 transition-transform duration-300 ease-in-out h-full`}>
+        <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0.1)] z-20 transition-transform duration-300 ease-in-out h-full`}>
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex justify-between items-center mb-6 lg:hidden shrink-0">
               <span className="font-bold text-[#1E3A8A] text-lg">Menu</span>
@@ -276,8 +289,8 @@ export default function UploadDocument() {
             
             {/* Breadcrumbs */}
             <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-500 mb-2">
-              <Home size={14} className="cursor-pointer hover:text-blue-600" onClick={() => navigate('/dashboard')}/> 
-              <ChevronRight size={14} className="text-slate-300"/> 
+              <Home size={14} className="cursor-pointer hover:text-blue-600" onClick={() => navigate('/dashboard')} /> 
+              <ChevronRight size={14} className="text-slate-300" /> 
               <span className="text-blue-600">Upload Document</span>
             </div>
 
@@ -302,7 +315,6 @@ export default function UploadDocument() {
                     <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Drag & Drop your file here</h3>
                     <p className="text-[12px] sm:text-sm text-gray-500 mb-6">or click below to browse from your computer</p>
                     
-                    {/* FIXED MIME TYPES FOR MOBILE DOCUMENT SUPPORT */}
                     <input 
                       type="file" 
                       ref={fileInputRef} 
@@ -434,7 +446,10 @@ export default function UploadDocument() {
                       </div>
                     </div>
                     <div className="space-y-3 pt-4">
-                      <button className="w-full bg-blue-600 text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-700 shadow-sm transition-colors">
+                      <button 
+                        onClick={handleViewDocument}
+                        className="w-full bg-blue-600 text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                      >
                         Open Document →
                       </button>
                       <button onClick={() => navigate('/dashboard')} className="w-full bg-white border border-gray-200 text-gray-700 px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-gray-50 transition-colors">
