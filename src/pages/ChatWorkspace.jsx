@@ -5,13 +5,13 @@ import {
   Download, MoreHorizontal, Settings, Bell, ChevronDown, UserCircle, LogOut,
   Image as ImageIcon, ZoomIn, ZoomOut, Maximize,
   Home, Bookmark, MessageSquare, Users, Star, LayoutTemplate,
-  ThumbsUp, ThumbsDown, Copy, Compass, UploadCloud // 🚀 ADDED UploadCloud HERE 🚀
+  ThumbsUp, ThumbsDown, Copy, Compass, UploadCloud 
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// FIREBASE IMPORTS
+// FIREBASE IMPORTS (Added Real-time DB functions)
 import { auth, db } from "../firebase"; 
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import documindLogo from "../assets/logo.png";
@@ -22,6 +22,7 @@ export default function ChatWorkspace() {
 
   // --- USER STATES ---
   const [userName, setUserName] = useState("Loading...");
+  const [userEmail, setUserEmail] = useState("");
   const [userInitial, setUserInitial] = useState("L"); 
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
@@ -29,6 +30,10 @@ export default function ChatWorkspace() {
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   
+  // Real-time Chat History States
+  const [recentChats, setRecentChats] = useState([]);
+  const [chatId, setChatId] = useState(null); // Current active chat ID
+
   // Gets document name from Upload flow
   const initialDocName = location.state?.documentName || "";
   const docSize = location.state?.fileSize ? (location.state.fileSize / (1024*1024)).toFixed(1) : "12.4";
@@ -49,19 +54,16 @@ export default function ChatWorkspace() {
     ] : []
   );
 
-  const recentChats = [
-    { id: 1, title: "Statistical_Sampling.pdf", type: "PDF", time: "Now", active: !isNewChat },
-    { id: 2, title: "Economic Survey 2024-25", type: "PDF", time: "2 days ago", active: false },
-    { id: 3, title: "Annual Report 2025", type: "PDF", time: "5 days ago", active: false },
-    { id: 4, title: "Data Quality Framework", type: "PDF", time: "1 week ago", active: false },
-  ];
-
-  // Auth Hook
+  // 🚀 REAL-TIME AUTH & FIRESTORE FETCH 🚀
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribeChats; // Real-time listener ko clear karne ke liye
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        setUserEmail(user.email);
         const rollNo = user.email.split('@')[0];
         try {
+          // 1. Fetch Profile Name
           const docRef = doc(db, "students", rollNo);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
@@ -72,6 +74,38 @@ export default function ChatWorkspace() {
             setUserName("Learner");
             setUserInitial("L");
           }
+
+          // 2. Fetch REAL-TIME Chat History
+          const chatsRef = collection(db, "students", rollNo, "chats");
+          // Order by latest updated chat
+          const q = query(chatsRef, orderBy("updatedAt", "desc"));
+          
+          unsubscribeChats = onSnapshot(q, (snapshot) => {
+            const fetchedChats = snapshot.docs.map(doc => {
+              const data = doc.data();
+              let timeString = "Just now";
+              
+              // Formatting Firebase Timestamp beautifully
+              if (data.updatedAt) {
+                const date = data.updatedAt.toDate();
+                const today = new Date();
+                if (date.toDateString() === today.toDateString()) {
+                  timeString = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); // e.g. "10:30 AM"
+                } else {
+                  timeString = date.toLocaleDateString([], { month: 'short', day: 'numeric' }); // e.g. "Oct 2"
+                }
+              }
+
+              return {
+                id: doc.id,
+                title: data.title || "New Chat",
+                type: data.type || "Chat",
+                time: timeString,
+              };
+            });
+            setRecentChats(fetchedChats);
+          });
+
         } catch (error) {
           console.error(error);
           setUserName("Learner");
@@ -80,7 +114,11 @@ export default function ChatWorkspace() {
         navigate("/login");
       }
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeChats) unsubscribeChats(); // Memory leak roko
+    };
   }, [navigate]);
 
   const handleLogout = async () => {
@@ -97,25 +135,42 @@ export default function ChatWorkspace() {
     setIsNewChat(true);
     setDocumentName("");
     setMessages([]);
+    setChatId(null); // Reset current chat ID
   };
 
-  const handleSendMessage = (e, customText = null) => {
+  // SWITCH BETWEEN REAL CHATS
+  const loadChat = (chat) => {
+    setChatId(chat.id);
+    setDocumentName(chat.title);
+    setIsNewChat(false);
+    
+    // Future update: Yahan us specific chat ke subcollection se messages fetch honge.
+    // Abhi ke liye context set kar rahe hain:
+    setMessages([{
+      id: Date.now(),
+      sender: "ai",
+      text: `Loaded previous conversation for "${chat.title}". How can I help you today?`,
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    }]);
+  };
+
+  // SEND MESSAGE & SAVE TO DB
+  const handleSendMessage = async (e, customText = null) => {
     if (e) e.preventDefault();
     const textToSend = customText || inputMessage;
     if (!textToSend.trim()) return;
 
-    // Agar New Chat mode me first message bheja, toh interface switch karo
     if (isNewChat) setIsNewChat(false);
 
     const timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    
     const newUserMsg = { id: Date.now(), sender: "user", text: textToSend, time: timeString };
     
+    // AI Dummy Response
     const newAiMsg = { 
       id: Date.now() + 1, 
       sender: "ai", 
       text: documentName 
-        ? "Based on the document context, this methodology ensures high representation of sub-groups, reducing sampling error compared to simple random sampling."
+        ? "Based on the document context, this ensures high representation of sub-groups, reducing error."
         : "I can help you with that! If you have a specific document in mind, feel free to upload it.",
       citation: documentName ? `📄 ${documentName}  Page 14 >` : null,
       time: timeString
@@ -123,6 +178,33 @@ export default function ChatWorkspace() {
 
     setMessages(prev => [...prev, newUserMsg, newAiMsg]);
     setInputMessage("");
+
+    // 🚀 CREATE OR UPDATE CHAT IN FIREBASE REAL-TIME DB 🚀
+    if (userEmail) {
+      const rollNo = userEmail.split('@')[0];
+      const chatsRef = collection(db, "students", rollNo, "chats");
+      
+      try {
+        if (!chatId) {
+          // Pehli baar message bheja -> Nayi chat banao
+          const newChatRef = await addDoc(chatsRef, {
+            title: documentName || textToSend.substring(0, 25) + "...", // Context ka naam ya user ke sawal ka pehla hissa
+            type: documentName ? "PDF" : "Chat",
+            updatedAt: serverTimestamp(),
+            createdAt: serverTimestamp()
+          });
+          setChatId(newChatRef.id);
+        } else {
+          // Chat pehle se exist karti hai -> Bas uska Timestamp update karo taaki wo top par aa jaye
+          const chatDocRef = doc(db, "students", rollNo, "chats", chatId);
+          await updateDoc(chatDocRef, {
+            updatedAt: serverTimestamp()
+          });
+        }
+      } catch (error) {
+        console.error("Error saving chat history:", error);
+      }
+    }
   };
 
   return (
@@ -170,6 +252,7 @@ export default function ChatWorkspace() {
           </button>
         </nav>
 
+        {/* 🚀 REAL-TIME CHATS LIST RENDERER 🚀 */}
         <div className="flex-1 overflow-y-auto px-3 w-full custom-scrollbar">
           {isSidebarExpanded && (
             <div className="flex items-center justify-between px-3 mb-2">
@@ -177,13 +260,23 @@ export default function ChatWorkspace() {
             </div>
           )}
           <div className={`space-y-1 ${!isSidebarExpanded && 'flex flex-col items-center'}`}>
+            
+            {recentChats.length === 0 && isSidebarExpanded && (
+              <p className="text-[11px] text-slate-500 px-3 mt-4 text-center">No chats yet</p>
+            )}
+
             {recentChats.map((chat) => (
-              <div key={chat.id} className={`cursor-pointer transition-colors ${chat.active ? 'bg-[#1C274A] text-white shadow-inner' : 'hover:bg-white/5 border border-transparent text-slate-400'} ${!isSidebarExpanded ? 'p-2 rounded-full w-10 h-10 flex justify-center items-center' : 'p-2.5 rounded-xl'}`} title={!isSidebarExpanded ? chat.title : ''}>
+              <div 
+                key={chat.id} 
+                onClick={() => loadChat(chat)}
+                className={`cursor-pointer transition-colors ${chatId === chat.id ? 'bg-[#1C274A] text-white shadow-inner' : 'hover:bg-white/5 border border-transparent text-slate-400'} ${!isSidebarExpanded ? 'p-2 rounded-full w-10 h-10 flex justify-center items-center' : 'p-2.5 rounded-xl'}`} 
+                title={!isSidebarExpanded ? chat.title : ''}
+              >
                 <div className={`flex items-center ${isSidebarExpanded ? 'gap-3' : 'justify-center w-full'}`}>
-                  <MessageSquare size={16} className={`${chat.active ? "text-blue-400" : "text-slate-500"}`} />
+                  <MessageSquare size={16} className={`${chatId === chat.id ? "text-blue-400" : "text-slate-500"}`} />
                   {isSidebarExpanded && (
-                    <div className="overflow-hidden">
-                      <h5 className={`text-[12px] font-medium truncate ${chat.active ? 'text-white' : 'text-slate-300'}`}>{chat.title}</h5>
+                    <div className="overflow-hidden flex-1">
+                      <h5 className={`text-[12px] font-medium truncate ${chatId === chat.id ? 'text-white' : 'text-slate-300'}`}>{chat.title}</h5>
                     </div>
                   )}
                 </div>
