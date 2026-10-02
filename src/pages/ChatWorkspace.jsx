@@ -6,17 +6,17 @@ import {
   Image as ImageIcon, ZoomIn, ZoomOut, Maximize,
   Home, Bookmark, MessageSquare, Users, Star, LayoutTemplate,
   ThumbsUp, ThumbsDown, Copy, Compass, UploadCloud,
-  Mic, Link as LinkIcon, HardDrive, X
+  Mic, Link as LinkIcon, HardDrive, X,
+  MoreVertical, Pin, Trash2, Edit2, Share2, BookPlus
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // FIREBASE IMPORTS
 import { auth, db } from "../firebase"; 
-import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import documindLogo from "../assets/logo.png";
-import ashokaLogo from "../assets/ashoka.png";
 
 export default function ChatWorkspace() {
   const navigate = useNavigate();
@@ -32,17 +32,16 @@ export default function ChatWorkspace() {
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   
-  // 🚀 Attachment Menu & Voice States 🚀
+  // Attachment Menu & Voice States
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  
-  // 🚀 NAYA: Chat ke andar file upload handle karne ke states 🚀
   const chatFileInputRef = useRef(null);
   const [chatAttachments, setChatAttachments] = useState([]);
 
-  // Real-time Chat History States
+  // REAL-TIME CHAT HISTORY STATES
   const [recentChats, setRecentChats] = useState([]);
   const [chatId, setChatId] = useState(null); 
+  const [activeMenuId, setActiveMenuId] = useState(null); // Track which chat's 3-dots menu is open
 
   // Gets document name from Upload flow
   const initialDocName = location.state?.documentName || "";
@@ -100,7 +99,13 @@ export default function ChatWorkspace() {
                   timeString = date.toLocaleDateString([], { month: 'short', day: 'numeric' }); 
                 }
               }
-              return { id: doc.id, title: data.title || "New Chat", type: data.type || "Chat", time: timeString };
+              return { 
+                id: doc.id, 
+                title: data.title || "New Chat", 
+                type: data.type || "Chat", 
+                time: timeString,
+                isPinned: data.isPinned || false
+              };
             });
             setRecentChats(fetchedChats);
           });
@@ -168,27 +173,56 @@ export default function ChatWorkspace() {
     setIsNewChat(true);
     setDocumentName("");
     setChatId(null); 
-    setChatAttachments([]); // Reset attachments
+    setChatAttachments([]); 
   };
 
   const loadChat = (chat) => {
     setChatId(chat.id);
     setDocumentName(chat.title);
     setIsNewChat(false);
+    setActiveMenuId(null); 
   };
 
-  // 🚀 NAYA FUNCTION: Chat Box me file attach karne ke liye 🚀
+  // 🚀 DELETE CHAT LOGIC 🚀
+  const handleDeleteChat = async (e, id) => {
+    e.stopPropagation(); 
+    if (userEmail) {
+      const rollNo = userEmail.split('@')[0];
+      try {
+        await deleteDoc(doc(db, "students", rollNo, "chats", id));
+        if (chatId === id) handleNewChat(); // Active chat delete hone par reset
+        setActiveMenuId(null);
+      } catch (error) {
+        console.error("Error deleting chat:", error);
+      }
+    }
+  };
+
+  // 🚀 PIN CHAT LOGIC 🚀
+  const handleTogglePin = async (e, id, currentStatus) => {
+    e.stopPropagation();
+    if (userEmail) {
+      const rollNo = userEmail.split('@')[0];
+      try {
+        await updateDoc(doc(db, "students", rollNo, "chats", id), {
+          isPinned: !currentStatus
+        });
+        setActiveMenuId(null);
+      } catch (error) {
+        console.error("Error pinning chat:", error);
+      }
+    }
+  };
+
   const handleChatFileSelect = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       setChatAttachments((prev) => [...prev, ...files]);
     }
-    // Ek hi file dobara select karne ke liye input reset karna zaroori hai
     e.target.value = null;
-    setIsAttachmentMenuOpen(false); // File select hone par menu band kar do
+    setIsAttachmentMenuOpen(false); 
   };
 
-  // Attachment remove karne ke liye
   const removeAttachment = (indexToRemove) => {
     setChatAttachments(chatAttachments.filter((_, idx) => idx !== indexToRemove));
   };
@@ -198,7 +232,6 @@ export default function ChatWorkspace() {
     const textToSend = customText || inputMessage;
     const hasAttachments = chatAttachments.length > 0;
     
-    // Check if both text and attachments are empty
     if (!textToSend.trim() && !hasAttachments) return;
 
     if (isNewChat) setIsNewChat(false);
@@ -218,6 +251,7 @@ export default function ChatWorkspace() {
           const newChatRef = await addDoc(chatsRef, {
             title: documentName || textToSend.substring(0, 25) + "...", 
             type: documentName ? "PDF" : "Chat",
+            isPinned: false, 
             updatedAt: serverTimestamp(),
             createdAt: serverTimestamp()
           });
@@ -238,7 +272,6 @@ export default function ChatWorkspace() {
           await updateDoc(chatDocRef, { updatedAt: serverTimestamp() });
         }
 
-        // Save User Message (with Attachment info if any)
         let messageText = textToSend;
         if (hasAttachments && !textToSend) {
            messageText = `Sent ${chatAttachments.length} attachment(s)`;
@@ -247,12 +280,11 @@ export default function ChatWorkspace() {
         await addDoc(collection(db, "students", rollNo, "chats", currentChatId, "messages"), {
           sender: "user",
           text: messageText,
-          attachments: chatAttachments.map(f => f.name), // Just saving names for now
+          attachments: chatAttachments.map(f => f.name), 
           time: timeString,
           createdAt: serverTimestamp()
         });
 
-        // Clear attachments after sending
         setChatAttachments([]);
 
         setTimeout(async () => {
@@ -275,9 +307,18 @@ export default function ChatWorkspace() {
 
   const isSendDisabled = !inputMessage.trim() && chatAttachments.length === 0;
 
+  // Split chats into Pinned and Recent
+  const pinnedChats = recentChats.filter(chat => chat.isPinned);
+  const unpinnedChats = recentChats.filter(chat => !chat.isPinned);
+
   return (
     <div className="flex h-screen bg-white font-sans overflow-hidden">
       
+      {/* Invisible overlay to close dropdowns when clicking outside */}
+      {activeMenuId && (
+        <div className="fixed inset-0 z-40" onClick={() => setActiveMenuId(null)}></div>
+      )}
+
       {/* 1. LEFT SIDEBAR */}
       <aside className={`${isSidebarExpanded ? 'w-[260px]' : 'w-[68px] items-center'} transition-all duration-300 bg-[#0B132B] text-slate-300 flex flex-col shrink-0 h-full relative z-40`}>
         <div className={`h-16 flex items-center ${isSidebarExpanded ? 'px-5 justify-between' : 'justify-center w-full'} shrink-0`}>
@@ -318,31 +359,120 @@ export default function ChatWorkspace() {
           </button>
         </nav>
 
-        <div className="flex-1 overflow-y-auto px-3 w-full custom-scrollbar">
-          {isSidebarExpanded && (
-            <div className="flex items-center justify-between px-3 mb-2">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Recent Chats</span>
+        {/* 🚀 CHATS LIST RENDERER (Inline JSX to prevent unmounting bugs) 🚀 */}
+        <div className="flex-1 overflow-y-auto px-3 w-full custom-scrollbar pb-4">
+          
+          {/* Pinned Chats Section */}
+          {pinnedChats.length > 0 && (
+            <div className="mb-4">
+              {isSidebarExpanded && <span className="text-[11px] font-bold text-slate-500 px-3 mb-2 block uppercase tracking-widest">Pinned</span>}
+              <div className={`space-y-1 ${!isSidebarExpanded && 'flex flex-col items-center'}`}>
+                {pinnedChats.map((chat) => (
+                  <div key={chat.id} className="relative group">
+                    <div 
+                      onClick={() => loadChat(chat)}
+                      className={`cursor-pointer transition-colors flex items-center justify-between ${chatId === chat.id ? 'bg-[#1C274A] text-white shadow-inner' : 'hover:bg-white/5 border border-transparent text-slate-300'} ${!isSidebarExpanded ? 'p-2 rounded-full w-10 h-10 flex justify-center items-center mx-auto' : 'p-2.5 rounded-xl'}`} 
+                      title={!isSidebarExpanded ? chat.title : ''}
+                    >
+                      <div className={`flex items-center ${isSidebarExpanded ? 'gap-3' : 'justify-center w-full'} overflow-hidden`}>
+                        <MessageSquare size={16} className={`${chatId === chat.id ? "text-blue-400" : "text-slate-500"} shrink-0`} />
+                        {isSidebarExpanded && (
+                          <div className="overflow-hidden flex-1 pr-6">
+                            <h5 className={`text-[12px] font-medium truncate ${chatId === chat.id ? 'text-white' : 'text-slate-300'}`}>{chat.title}</h5>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {isSidebarExpanded && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === chat.id ? null : chat.id); }}
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-all ${activeMenuId === chat.id ? 'opacity-100 bg-slate-700 text-white' : 'opacity-0 group-hover:opacity-100'}`}
+                      >
+                        <MoreVertical size={14} />
+                      </button>
+                    )}
+
+                    {activeMenuId === chat.id && isSidebarExpanded && (
+                      <div className="absolute right-2 top-10 w-48 bg-[#1E293B] border border-slate-700 rounded-xl shadow-2xl py-1.5 z-[100] animate-in fade-in zoom-in duration-150 text-slate-300">
+                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                          <Share2 size={14} /> Share conversation
+                        </button>
+                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => handleTogglePin(e, chat.id, chat.isPinned)}>
+                          <Pin size={14} className={chat.isPinned ? "fill-current" : ""} /> {chat.isPinned ? "Unpin" : "Pin"}
+                        </button>
+                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                          <Edit2 size={14} /> Rename
+                        </button>
+                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                          <BookPlus size={14} /> Add to notebook
+                        </button>
+                        <div className="border-t border-slate-700 my-1"></div>
+                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors" onClick={(e) => handleDeleteChat(e, chat.id)}>
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
+          {/* Recent Chats Section */}
+          {isSidebarExpanded && (
+             <span className="text-[11px] font-bold text-slate-500 px-3 mb-2 block uppercase tracking-widest">Recent Chats</span>
+          )}
           <div className={`space-y-1 ${!isSidebarExpanded && 'flex flex-col items-center'}`}>
-            {recentChats.length === 0 && isSidebarExpanded && (
-              <p className="text-[11px] text-slate-500 px-3 mt-4 text-center">No chats yet</p>
+            {unpinnedChats.length === 0 && isSidebarExpanded && (
+              <p className="text-[11px] text-slate-500 px-3 mt-2">No recent chats</p>
             )}
-            {recentChats.map((chat) => (
-              <div 
-                key={chat.id} 
-                onClick={() => loadChat(chat)}
-                className={`cursor-pointer transition-colors ${chatId === chat.id ? 'bg-[#1C274A] text-white shadow-inner' : 'hover:bg-white/5 border border-transparent text-slate-400'} ${!isSidebarExpanded ? 'p-2 rounded-full w-10 h-10 flex justify-center items-center' : 'p-2.5 rounded-xl'}`} 
-                title={!isSidebarExpanded ? chat.title : ''}
-              >
-                <div className={`flex items-center ${isSidebarExpanded ? 'gap-3' : 'justify-center w-full'}`}>
-                  <MessageSquare size={16} className={`${chatId === chat.id ? "text-blue-400" : "text-slate-500"}`} />
-                  {isSidebarExpanded && (
-                    <div className="overflow-hidden flex-1">
-                      <h5 className={`text-[12px] font-medium truncate ${chatId === chat.id ? 'text-white' : 'text-slate-300'}`}>{chat.title}</h5>
-                    </div>
-                  )}
+            {unpinnedChats.map((chat) => (
+              <div key={chat.id} className="relative group">
+                <div 
+                  onClick={() => loadChat(chat)}
+                  className={`cursor-pointer transition-colors flex items-center justify-between ${chatId === chat.id ? 'bg-[#1C274A] text-white shadow-inner' : 'hover:bg-white/5 border border-transparent text-slate-300'} ${!isSidebarExpanded ? 'p-2 rounded-full w-10 h-10 flex justify-center items-center mx-auto' : 'p-2.5 rounded-xl'}`} 
+                  title={!isSidebarExpanded ? chat.title : ''}
+                >
+                  <div className={`flex items-center ${isSidebarExpanded ? 'gap-3' : 'justify-center w-full'} overflow-hidden`}>
+                    <MessageSquare size={16} className={`${chatId === chat.id ? "text-blue-400" : "text-slate-500"} shrink-0`} />
+                    {isSidebarExpanded && (
+                      <div className="overflow-hidden flex-1 pr-6">
+                        <h5 className={`text-[12px] font-medium truncate ${chatId === chat.id ? 'text-white' : 'text-slate-300'}`}>{chat.title}</h5>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {isSidebarExpanded && (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === chat.id ? null : chat.id); }}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-all ${activeMenuId === chat.id ? 'opacity-100 bg-slate-700 text-white' : 'opacity-0 group-hover:opacity-100'}`}
+                  >
+                    <MoreVertical size={14} />
+                  </button>
+                )}
+
+                {activeMenuId === chat.id && isSidebarExpanded && (
+                  <div className="absolute right-2 top-10 w-48 bg-[#1E293B] border border-slate-700 rounded-xl shadow-2xl py-1.5 z-[100] animate-in fade-in zoom-in duration-150 text-slate-300">
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                      <Share2 size={14} /> Share conversation
+                    </button>
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => handleTogglePin(e, chat.id, chat.isPinned)}>
+                      <Pin size={14} className={chat.isPinned ? "fill-current" : ""} /> {chat.isPinned ? "Unpin" : "Pin"}
+                    </button>
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                      <Edit2 size={14} /> Rename
+                    </button>
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] hover:bg-white/10 transition-colors" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }}>
+                      <BookPlus size={14} /> Add to notebook
+                    </button>
+                    <div className="border-t border-slate-700 my-1"></div>
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-[12px] text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors" onClick={(e) => handleDeleteChat(e, chat.id)}>
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -373,18 +503,18 @@ export default function ChatWorkspace() {
       {/* 2. MAIN CHAT INTERFACE */}
       <main className="flex-1 flex flex-col min-w-0 relative border-r border-gray-200 h-full overflow-hidden bg-white">
         
-        <header className="h-14 px-4 sm:px-6 flex items-center justify-between shrink-0 bg-transparent absolute top-0 left-0 right-0 z-10">
-          <div className="flex items-center gap-3">
+        <header className="h-14 px-4 sm:px-6 flex items-center justify-between shrink-0 bg-transparent absolute top-0 left-0 right-0 z-10 pointer-events-none">
+          <div className="flex items-center gap-3 pointer-events-auto">
             {!isSidebarExpanded && (
-              <button onClick={() => setIsSidebarExpanded(true)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+              <button onClick={() => setIsSidebarExpanded(true)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors mt-2">
                 <Menu size={20} />
               </button>
             )}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors mt-2">
               DocuMind 1.5 <ChevronDown size={14} />
             </button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pointer-events-auto mt-2">
              <button className="flex items-center gap-2 px-3 py-1.5 text-[12px] font-semibold bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors hidden sm:flex">
                <Sparkles size={14} /> Upgrade
              </button>
@@ -464,7 +594,6 @@ export default function ChatWorkspace() {
                     <div className={`flex flex-col gap-2 w-full max-w-[85%] ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                       <div className={`text-[14px] leading-relaxed relative ${msg.sender === 'user' ? 'bg-[#F4F4F5] text-slate-800 px-5 py-3 rounded-2xl shadow-sm' : 'bg-transparent text-slate-800 px-1 py-1 w-full'}`}>
                         
-                        {/* Attachments UI Inside User Message */}
                         {msg.attachments && msg.attachments.length > 0 && (
                            <div className="flex flex-wrap gap-2 mb-2">
                              {msg.attachments.map((fileName, idx) => (
@@ -520,20 +649,17 @@ export default function ChatWorkspace() {
           </div>
         )}
 
-        {/* ------------------------------------------------------------------ */}
-        {/* 🚀 UPGRADED INPUT AREA 🚀 */}
-        {/* ------------------------------------------------------------------ */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white px-4 sm:px-8 py-5 border-t border-transparent bg-gradient-to-t from-white via-white to-white/80 z-20">
-          <div className="max-w-3xl mx-auto relative">
+        {/* INPUT AREA */}
+        <div className="absolute bottom-0 left-0 right-0 bg-white px-4 sm:px-8 py-5 border-t border-transparent bg-gradient-to-t from-white via-white to-white/80 z-20 pointer-events-none">
+          <div className="max-w-3xl mx-auto relative pointer-events-auto">
             
-            {/* Attachment Dropdown Menu */}
             {isAttachmentMenuOpen && (
               <div className="absolute bottom-[80px] left-0 bg-white border border-slate-200 shadow-xl rounded-2xl p-2 w-56 z-50 animate-in slide-in-from-bottom-2 fade-in duration-200">
                 <button 
                   onClick={() => { chatFileInputRef.current.click(); }}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition-colors"
                 >
-                  <UploadCloud size={18} className="text-blue-500" /> Upload from Device
+                  <UploadCloud size={18} className="text-blue-500" /> Upload from computer
                 </button>
                 <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-colors">
                   <HardDrive size={18} className="text-emerald-500" /> Add from Google Drive
@@ -547,7 +673,6 @@ export default function ChatWorkspace() {
               </div>
             )}
 
-            {/* Hidden Input for Local Uploads */}
             <input 
               type="file" 
               ref={chatFileInputRef} 
@@ -556,10 +681,8 @@ export default function ChatWorkspace() {
               multiple
             />
 
-            {/* Main Input Form */}
             <form onSubmit={(e) => handleSendMessage(e)} className={`relative flex flex-col bg-[#F4F4F5] rounded-[24px] p-2 focus-within:bg-white focus-within:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] focus-within:ring-1 focus-within:ring-slate-200 transition-all ${isAttachmentMenuOpen ? 'ring-1 ring-slate-200 bg-white' : ''}`}>
               
-              {/* Attachment Previews */}
               {chatAttachments.length > 0 && (
                 <div className="flex flex-wrap gap-2 px-2 pt-2 pb-1">
                   {chatAttachments.map((file, idx) => (
@@ -573,7 +696,6 @@ export default function ChatWorkspace() {
               )}
 
               <div className="flex items-end gap-2 w-full">
-                {/* Plus Attachment Button */}
                 <button 
                   type="button" 
                   onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
@@ -591,7 +713,6 @@ export default function ChatWorkspace() {
                   className={`flex-1 max-h-32 bg-transparent text-[14px] resize-none outline-none py-3.5 px-2 custom-scrollbar transition-colors ${isRecording ? 'text-red-500 placeholder:text-red-400 font-medium' : 'text-slate-800 placeholder:text-slate-500'}`}
                 />
                 
-                {/* Mic & Send Buttons */}
                 <div className="flex items-center gap-1 shrink-0 mb-1 mr-1">
                   <button 
                     type="button" 
