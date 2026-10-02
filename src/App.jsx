@@ -27,7 +27,7 @@ import OTPVerify from "./pages/OtpVerify";
 import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
 import UploadDocuments from "./pages/UploadDocument";
-
+import ChatWorspace from "./pages/ChatWorkspace";
 // Platform Info Pages
 import Platform from "./pages/PlatformOverview";
 import KnowledgeCenter from "./pages/KnowledgeCentre";
@@ -157,6 +157,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} /> 
           <Route path="/forgot-password" element={<ForgotPassword />} /> 
+          
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/new-password" element={<NewPassword />} />
           
@@ -164,6 +165,7 @@ export default function App() {
   
           <Route path="/dashboard" element={<MainDashboard />} />
           <Route path="/upload" element={<UploadDocuments />} />
+          <Route path="/chat" element={<ChatWorspace />} />s
           <Route path="/settings" element={<DashboardSettings />} />
           <Route path="/help" element={<Help />} />
           

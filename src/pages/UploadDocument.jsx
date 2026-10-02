@@ -3,15 +3,13 @@ import {
   LayoutDashboard, Upload, FileText, Sparkles, MessageSquare, BookOpen, 
   CheckSquare, Bookmark, TrendingUp, Settings, Search, Bell, ChevronDown,
   CheckCircle, Menu, X, LogOut, UserCircle, UploadCloud, Loader2, 
-  ChevronRight, Home, Shield, Plus
+  ChevronRight, Home, Shield, Plus, Eye
 } from "lucide-react";
 
-// Images/Logos (Ensure paths are correct as per your folder structure)
 import ashokaLogo from "../assets/ashoka.png";
 import documindLogo from "../assets/logo.png";
 import indiaLogo from "../assets/India Logo.png";
 
-// FIREBASE IMPORTS 
 import { auth, db } from "../firebase"; 
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -20,16 +18,13 @@ import { useNavigate } from "react-router-dom";
 export default function UploadDocument() {
   const navigate = useNavigate();
 
-  // --- UI STATES ---
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
-  // --- USER STATES ---
   const [userName, setUserName] = useState("Loading...");
   const [userEmail, setUserEmail] = useState("Loading...");
-  const [userInitial, setUserInitial] = useState("L"); // Initial is 'L', changes when data fetches
+  const [userInitial, setUserInitial] = useState("L"); 
 
-  // --- UPLOAD FLOW STATES ---
   const fileInputRef = useRef(null);
   const [uploadState, setUploadState] = useState("idle"); 
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -37,7 +32,6 @@ export default function UploadDocument() {
   const [processingProgress, setProcessingProgress] = useState(0);
   const [formData, setFormData] = useState({ title: "" });
 
-  // Processing Steps Data
   const [processSteps, setProcessSteps] = useState([
     { id: 1, text: "Upload complete", status: "pending" },
     { id: 2, text: "Reading documents", status: "pending" },
@@ -46,16 +40,12 @@ export default function UploadDocument() {
     { id: 5, text: "Finalizing", status: "pending" }
   ]);
 
-  // --- EFFECTS ---
-
-  // 1. Fetch User Data
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserEmail(user.email);
         const rollNo = user.email.split('@')[0];
         try {
-          // FIX: Changed collection back to "students" to fetch actual data
           const docRef = doc(db, "students", rollNo);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
@@ -78,7 +68,6 @@ export default function UploadDocument() {
     return () => unsubscribe();
   }, [navigate]);
 
-  // 2. Prevent Accidental Back Navigation
   useEffect(() => {
     window.history.pushState(null, null, window.location.pathname);
     const handleBackButton = (e) => {
@@ -86,12 +75,8 @@ export default function UploadDocument() {
       navigate("/dashboard"); 
     };
     window.addEventListener("popstate", handleBackButton);
-    return () => {
-      window.removeEventListener("popstate", handleBackButton);
-    };
+    return () => window.removeEventListener("popstate", handleBackButton);
   }, [navigate]);
-
-  // --- HANDLERS ---
 
   const handleLogout = async () => {
     try {
@@ -122,10 +107,7 @@ export default function UploadDocument() {
     if (files.length > 0) addFilesToState(files);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
+  const handleDragOver = (e) => e.preventDefault();
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
@@ -169,9 +151,10 @@ export default function UploadDocument() {
         clearInterval(uploadInterval);
         startProcessingFlow();
       }
-    }, 250);
+    }, 200);
   };
 
+  // 🚀 DIRECT ROUTING FIX 🚀
   const startProcessingFlow = () => {
     setUploadState("processing");
     setTimeout(() => updateProcessStep(1, "completed"), 500);
@@ -179,27 +162,29 @@ export default function UploadDocument() {
     setTimeout(() => { updateProcessStep(3, "in-progress"); setProcessingProgress(40); }, 2500);
     setTimeout(() => { updateProcessStep(3, "completed"); updateProcessStep(4, "in-progress"); setProcessingProgress(70); }, 4000);
     setTimeout(() => { updateProcessStep(4, "completed"); updateProcessStep(5, "completed"); setProcessingProgress(100); }, 5500);
-    setTimeout(() => setUploadState("success"), 6000);
+    
+    setTimeout(() => {
+      if (selectedFiles.length === 1) {
+        // Single File: Direct to Chat Workspace instantly
+        navigate('/chat', { state: { documentName: selectedFiles[0].name, fileSize: selectedFiles[0].size } });
+      } else {
+        // Multiple Files: Go to success screen for batch actions
+        setUploadState("success");
+      }
+    }, 6000);
   };
 
-  const updateProcessStep = (id, newStatus) => {
-    setProcessSteps(prev => prev.map(step => step.id === id ? { ...step, status: newStatus } : step));
-  };
-
-  const handleViewDocument = () => {
-    if (selectedFiles.length > 0) {
-      const fileUrl = URL.createObjectURL(selectedFiles[0]);
+  const handleViewSingleDocument = (file) => {
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
       window.open(fileUrl, "_blank");
-    } else {
-      alert("Document not available for viewing yet.");
     }
   };
 
-  // --- RENDER ---
   return (
     <div className="h-screen bg-slate-100 text-slate-800 font-sans flex flex-col w-full">
       
-      {/* 1. TOP GOVT BAR */}
+      {/* TOP GOVT BAR */}
       <div className="bg-[#F8FAFC] border-b border-gray-200 text-[10px] sm:text-[12px] font-medium py-1.5 px-4 sm:px-8 flex justify-between items-center text-slate-600 shrink-0">
         <div className="flex items-center gap-1.5">
           <img src={indiaLogo} alt="India Logo" className="h-3 sm:h-4 md:h-5 object-contain" />
@@ -212,7 +197,7 @@ export default function UploadDocument() {
         </div>
       </div>
 
-      {/* 2. MAIN HEADER */}
+      {/* MAIN HEADER */}
       <header className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8 flex justify-between items-center shadow-sm shrink-0 z-30">
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-10">
           <button className="lg:hidden text-slate-600 hover:text-blue-600 p-1" onClick={() => setIsSidebarOpen(true)}>
@@ -253,7 +238,6 @@ export default function UploadDocument() {
               <Bell size={20} strokeWidth={1.5} />
             </button>
             
-            {/* PROFILE DROPDOWN */}
             <div className="relative">
               <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}>
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">
@@ -289,18 +273,15 @@ export default function UploadDocument() {
         </div>
       </header>
 
-      {/* 3. MAIN LAYOUT (SIDEBAR + SCROLLABLE CONTENT) */}
+      {/* 3. MAIN LAYOUT */}
       <div className="flex flex-1 overflow-hidden relative">
         {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
         
-        {/* SIDEBAR */}
         <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:block w-64 bg-white border-r border-gray-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0 shadow-[2px_0_8px_-4px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-in-out h-full`}>
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex justify-between items-center mb-6 lg:hidden shrink-0">
               <span className="font-bold text-[#1E3A8A] text-lg">Menu</span>
-              <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-red-500 p-1">
-                <X size={20} />
-              </button>
+              <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-red-500 p-1"><X size={20} /></button>
             </div>
 
             <nav className="space-y-1 flex-1 overflow-y-auto pr-2">
@@ -309,7 +290,7 @@ export default function UploadDocument() {
                 { icon: Upload, label: "Upload Document", path: "/upload", active: true },
                 { icon: FileText, label: "My Documents", path: "#", active: false },
                 { icon: Sparkles, label: "AI Notes", path: "#", active: false },
-                { icon: MessageSquare, label: "Ask DocuMind", path: "#", active: false },
+                { icon: MessageSquare, label: "Ask DocuMind", path: "/chat", active: false },
                 { icon: BookOpen, label: "Learning Paths", path: "#", active: false },
                 { icon: CheckSquare, label: "Assessments", path: "#", active: false },
                 { icon: Bookmark, label: "Bookmarks", path: "#", active: false },
@@ -343,11 +324,9 @@ export default function UploadDocument() {
           </div>
         </aside>
 
-        {/* CONTENT AREA (Independent Scrolling) */}
         <main className="flex-1 p-4 sm:p-6 overflow-y-auto w-full pb-12">
           <div className="max-w-4xl mx-auto space-y-6">
             
-            {/* Breadcrumbs */}
             <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-500 mb-2">
               <Home size={14} className="cursor-pointer hover:text-blue-600" onClick={() => navigate('/dashboard')} /> 
               <ChevronRight size={14} className="text-slate-300" /> 
@@ -362,7 +341,7 @@ export default function UploadDocument() {
 
               <div className="p-5 sm:p-8">
                 
-                {/* STEP 1: IDLE (DRAG & DROP) */}
+                {/* IDLE (DRAG & DROP) */}
                 {uploadState === "idle" && (
                   <div 
                     onDragOver={handleDragOver} 
@@ -391,11 +370,10 @@ export default function UploadDocument() {
                   </div>
                 )}
 
-                {/* STEP 2: READY TO UPLOAD (MULTIPLE FILES LIST) */}
+                {/* SELECTED */}
                 {uploadState === "selected" && (
                   <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     
-                    {/* File List */}
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                       {selectedFiles.map((file, index) => (
                         <div key={index} className="bg-slate-50 border border-gray-200 rounded-xl p-3 sm:p-4 flex items-center justify-between gap-4">
@@ -419,7 +397,6 @@ export default function UploadDocument() {
                       <Plus size={14} /> Add more files
                     </button>
 
-                    {/* Upload Options */}
                     <div className="border-t border-gray-100 pt-4">
                       <h3 className="font-bold text-slate-800 mb-4 text-[14px]">Upload Options</h3>
                       <div className="space-y-1.5">
@@ -435,12 +412,11 @@ export default function UploadDocument() {
                       <div className="mt-4 flex items-start gap-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
                         <Shield size={14} className="text-blue-600 mt-0.5 shrink-0" />
                         <p className="text-[10px] sm:text-[11px] text-slate-600 leading-tight">
-                          Your documents are securely encrypted and strictly private to your account. No one else can access them.
+                          Your documents are securely encrypted. We use RAG (Retrieval-Augmented Generation) to power your interactive chat workspace.
                         </p>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                       <button onClick={cancelUpload} className="px-5 py-2.5 text-[12px] sm:text-[13px] font-bold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                         Cancel
@@ -452,7 +428,7 @@ export default function UploadDocument() {
                   </div>
                 )}
 
-                {/* STEP 3: UPLOADING */}
+                {/* UPLOADING */}
                 {uploadState === "uploading" && (
                   <div className="py-8 max-w-xl mx-auto space-y-8 animate-in fade-in duration-500">
                     <div className="text-center space-y-2">
@@ -480,7 +456,7 @@ export default function UploadDocument() {
                   </div>
                 )}
 
-                {/* STEP 4: PROCESSING */}
+                {/* PROCESSING */}
                 {uploadState === "processing" && (
                   <div className="py-8 max-w-xl mx-auto space-y-8 animate-in fade-in duration-500">
                     <div className="text-center space-y-2">
@@ -489,7 +465,7 @@ export default function UploadDocument() {
                     </div>
                     <div className="bg-white border border-gray-200 rounded-xl p-5 sm:p-6 shadow-sm space-y-6">
                       <div className="pb-5 border-b border-gray-100">
-                        <h4 className="font-bold text-[13px] sm:text-[14px] text-slate-900 truncate">Batch: {formData.title}</h4>
+                        <h4 className="font-bold text-[13px] sm:text-[14px] text-slate-900 truncate">Workspace: {formData.title}</h4>
                         <p className="text-[11px] text-gray-500">{selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} processing</p>
                       </div>
                       <div className="space-y-4 px-2">
@@ -509,7 +485,7 @@ export default function UploadDocument() {
                       </div>
                       <div className="pt-2">
                          <div className="flex justify-between text-[10px] sm:text-[11px] font-bold text-gray-500 mb-1">
-                            <span>Processing...</span> <span>{processingProgress}%</span>
+                            <span>Indexing Knowledge Base...</span> <span>{processingProgress}%</span>
                          </div>
                          <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
                            <div className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${processingProgress}%` }}></div>
@@ -519,32 +495,42 @@ export default function UploadDocument() {
                   </div>
                 )}
 
-                {/* STEP 5: SUCCESS */}
-                {uploadState === "success" && (
-                  <div className="py-10 max-w-sm mx-auto text-center space-y-6 animate-in zoom-in-95 duration-500">
+                {/* SUCCESS (ONLY FOR MULTIPLE FILES) */}
+                {uploadState === "success" && selectedFiles.length > 1 && (
+                  <div className="py-8 max-w-md mx-auto text-center space-y-6 animate-in zoom-in-95 duration-500">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-emerald-50">
                       <CheckCircle size={32} className="text-emerald-500" />
                     </div>
                     <div>
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">Processed Successfully!</h3>
-                      <p className="text-[12px] sm:text-[13px] text-gray-500">{selectedFiles.length} document(s) are ready to explore.</p>
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">Batch Processed!</h3>
+                      <p className="text-[12px] sm:text-[13px] text-gray-500">{selectedFiles.length} document(s) are ready in your collection.</p>
                     </div>
-                    <div className="bg-slate-50 border border-gray-200 rounded-xl p-4 flex items-center gap-4 text-left">
-                      <div className="bg-red-100 text-red-600 p-2 rounded-lg border border-red-200 shrink-0"><FileText size={20} /></div>
-                      <div className="overflow-hidden">
-                        <h4 className="font-bold text-[13px] sm:text-[14px] text-slate-900 truncate">{formData.title}</h4>
-                        <p className="text-[11px] text-gray-500">{selectedFiles.length} file(s)</p>
-                      </div>
+
+                    <div className="bg-slate-50 border border-gray-200 rounded-xl p-3 max-h-60 overflow-y-auto custom-scrollbar space-y-2 text-left">
+                      {selectedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="bg-red-100 text-red-600 p-2 rounded-md shrink-0">
+                              <FileText size={16} />
+                            </div>
+                            <div className="overflow-hidden">
+                              <h4 className="font-bold text-[12px] text-slate-900 truncate">{file.name}</h4>
+                              <p className="text-[10px] text-gray-500">{(file.size / (1024*1024)).toFixed(2)} MB</p>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => handleViewSingleDocument(file)}
+                            className="text-[11px] font-bold text-blue-600 hover:text-white hover:bg-blue-600 px-3 py-1.5 rounded-md border border-blue-200 transition-colors shrink-0 flex items-center gap-1"
+                          >
+                            <Eye size={12} /> View
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                    <div className="space-y-3 pt-4">
-                      <button 
-                        onClick={handleViewDocument}
-                        className="w-full bg-blue-600 text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-700 shadow-sm transition-colors"
-                      >
-                        Open Documents →
-                      </button>
-                      <button onClick={() => navigate('/dashboard')} className="w-full bg-white border border-gray-200 text-gray-700 px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-gray-50 transition-colors">
-                        Back to Dashboard
+
+                    <div className="space-y-3 pt-2">
+                      <button onClick={() => navigate('/my-documents')} className="w-full bg-[#1E3A8A] text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-900 shadow-sm transition-colors">
+                        Go to My Documents
                       </button>
                     </div>
                   </div>
