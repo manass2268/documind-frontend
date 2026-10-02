@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Menu, Search, Plus, FileText, ChevronLeft, ChevronRight, 
   Send, Sparkles, BookOpen, CheckSquare, Paperclip, View, 
@@ -6,7 +6,7 @@ import {
   Image as ImageIcon, ZoomIn, ZoomOut, Maximize,
   Home, Bookmark, MessageSquare, Users, Star, LayoutTemplate,
   ThumbsUp, ThumbsDown, Copy, Compass, UploadCloud,
-  Mic, Link as LinkIcon, HardDrive // 🚀 Added Mic and Import Icons
+  Mic, Link as LinkIcon, HardDrive, X
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, updateDoc,
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import documindLogo from "../assets/logo.png";
+import ashokaLogo from "../assets/ashoka.png";
 
 export default function ChatWorkspace() {
   const navigate = useNavigate();
@@ -31,9 +32,13 @@ export default function ChatWorkspace() {
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   
-  // 🚀 NEW: Attachment Menu & Voice States 🚀
+  // 🚀 Attachment Menu & Voice States 🚀
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  
+  // 🚀 NAYA: Chat ke andar file upload handle karne ke states 🚀
+  const chatFileInputRef = useRef(null);
+  const [chatAttachments, setChatAttachments] = useState([]);
 
   // Real-time Chat History States
   const [recentChats, setRecentChats] = useState([]);
@@ -51,7 +56,6 @@ export default function ChatWorkspace() {
   useEffect(() => {
     let timer;
     if (isRecording) {
-      // 3 seconds baad automatically ek mock transcribed text add kar dega
       timer = setTimeout(() => {
         setInputMessage("What is the main conclusion of this document?");
         setIsRecording(false);
@@ -164,6 +168,7 @@ export default function ChatWorkspace() {
     setIsNewChat(true);
     setDocumentName("");
     setChatId(null); 
+    setChatAttachments([]); // Reset attachments
   };
 
   const loadChat = (chat) => {
@@ -172,14 +177,34 @@ export default function ChatWorkspace() {
     setIsNewChat(false);
   };
 
+  // 🚀 NAYA FUNCTION: Chat Box me file attach karne ke liye 🚀
+  const handleChatFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setChatAttachments((prev) => [...prev, ...files]);
+    }
+    // Ek hi file dobara select karne ke liye input reset karna zaroori hai
+    e.target.value = null;
+    setIsAttachmentMenuOpen(false); // File select hone par menu band kar do
+  };
+
+  // Attachment remove karne ke liye
+  const removeAttachment = (indexToRemove) => {
+    setChatAttachments(chatAttachments.filter((_, idx) => idx !== indexToRemove));
+  };
+
   const handleSendMessage = async (e, customText = null) => {
     if (e) e.preventDefault();
     const textToSend = customText || inputMessage;
-    if (!textToSend.trim()) return;
+    const hasAttachments = chatAttachments.length > 0;
+    
+    // Check if both text and attachments are empty
+    if (!textToSend.trim() && !hasAttachments) return;
 
     if (isNewChat) setIsNewChat(false);
+    
     setInputMessage(""); 
-    setIsAttachmentMenuOpen(false); // Close menu on send
+    setIsAttachmentMenuOpen(false); 
 
     if (userEmail) {
       const rollNo = userEmail.split('@')[0];
@@ -213,20 +238,30 @@ export default function ChatWorkspace() {
           await updateDoc(chatDocRef, { updatedAt: serverTimestamp() });
         }
 
+        // Save User Message (with Attachment info if any)
+        let messageText = textToSend;
+        if (hasAttachments && !textToSend) {
+           messageText = `Sent ${chatAttachments.length} attachment(s)`;
+        }
+
         await addDoc(collection(db, "students", rollNo, "chats", currentChatId, "messages"), {
           sender: "user",
-          text: textToSend,
+          text: messageText,
+          attachments: chatAttachments.map(f => f.name), // Just saving names for now
           time: timeString,
           createdAt: serverTimestamp()
         });
 
+        // Clear attachments after sending
+        setChatAttachments([]);
+
         setTimeout(async () => {
            await addDoc(collection(db, "students", rollNo, "chats", currentChatId, "messages"), {
             sender: "ai",
-            text: documentName 
-              ? "Based on the document context, this ensures high representation of sub-groups, reducing error."
-              : "I can help you with that! If you have a specific document in mind, feel free to upload it.",
-            citation: documentName ? `📄 ${documentName}  Page 14 >` : null,
+            text: hasAttachments 
+              ? "I have received your files. Give me a moment to process them."
+              : (documentName ? "Based on the document context, this ensures high representation of sub-groups, reducing error." : "I can help you with that!"),
+            citation: (!hasAttachments && documentName) ? `📄 ${documentName}  Page 14 >` : null,
             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
             createdAt: serverTimestamp()
           });
@@ -237,6 +272,8 @@ export default function ChatWorkspace() {
       }
     }
   };
+
+  const isSendDisabled = !inputMessage.trim() && chatAttachments.length === 0;
 
   return (
     <div className="flex h-screen bg-white font-sans overflow-hidden">
@@ -372,7 +409,7 @@ export default function ChatWorkspace() {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl mt-8">
-                <div onClick={() => navigate('/upload')} className="bg-slate-50 border border-slate-100 p-4 rounded-2xl hover:bg-slate-100 cursor-pointer transition-colors text-left group">
+                <div onClick={() => { chatFileInputRef.current.click() }} className="bg-slate-50 border border-slate-100 p-4 rounded-2xl hover:bg-slate-100 cursor-pointer transition-colors text-left group">
                   <UploadCloud size={20} className="text-blue-500 mb-3" />
                   <p className="text-[13px] font-medium text-slate-700 group-hover:text-blue-700">Upload a document to analyze and generate smart notes</p>
                 </div>
@@ -426,7 +463,20 @@ export default function ChatWorkspace() {
                     </div>
                     <div className={`flex flex-col gap-2 w-full max-w-[85%] ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                       <div className={`text-[14px] leading-relaxed relative ${msg.sender === 'user' ? 'bg-[#F4F4F5] text-slate-800 px-5 py-3 rounded-2xl shadow-sm' : 'bg-transparent text-slate-800 px-1 py-1 w-full'}`}>
-                        {msg.text.split('\n').map((line, i) => <p key={i} className={i > 0 ? 'mt-3' : ''}>{line}</p>)}
+                        
+                        {/* Attachments UI Inside User Message */}
+                        {msg.attachments && msg.attachments.length > 0 && (
+                           <div className="flex flex-wrap gap-2 mb-2">
+                             {msg.attachments.map((fileName, idx) => (
+                               <div key={idx} className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-xl shadow-sm">
+                                 <FileText size={16} className="text-blue-500" />
+                                 <span className="text-[12px] font-medium text-slate-700 truncate max-w-[150px]">{fileName}</span>
+                               </div>
+                             ))}
+                           </div>
+                        )}
+
+                        {msg.text && msg.text.split('\n').map((line, i) => <p key={i} className={i > 0 ? 'mt-3' : ''}>{line}</p>)}
                         
                         {msg.isWelcome && documentName && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
@@ -471,19 +521,19 @@ export default function ChatWorkspace() {
         )}
 
         {/* ------------------------------------------------------------------ */}
-        {/* 🚀 NEW UPGRADED INPUT AREA (Attachment + Mic Features) 🚀 */}
+        {/* 🚀 UPGRADED INPUT AREA 🚀 */}
         {/* ------------------------------------------------------------------ */}
         <div className="absolute bottom-0 left-0 right-0 bg-white px-4 sm:px-8 py-5 border-t border-transparent bg-gradient-to-t from-white via-white to-white/80 z-20">
           <div className="max-w-3xl mx-auto relative">
             
             {/* Attachment Dropdown Menu */}
             {isAttachmentMenuOpen && (
-              <div className="absolute bottom-[70px] left-0 bg-white border border-slate-200 shadow-xl rounded-2xl p-2 w-52 z-50 animate-in slide-in-from-bottom-2 fade-in duration-200">
+              <div className="absolute bottom-[80px] left-0 bg-white border border-slate-200 shadow-xl rounded-2xl p-2 w-56 z-50 animate-in slide-in-from-bottom-2 fade-in duration-200">
                 <button 
-                  onClick={() => {navigate('/upload'); setIsAttachmentMenuOpen(false)}}
+                  onClick={() => { chatFileInputRef.current.click(); }}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition-colors"
                 >
-                  <UploadCloud size={18} className="text-blue-500" /> Upload from computer
+                  <UploadCloud size={18} className="text-blue-500" /> Upload from Device
                 </button>
                 <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-colors">
                   <HardDrive size={18} className="text-emerald-500" /> Add from Google Drive
@@ -497,47 +547,70 @@ export default function ChatWorkspace() {
               </div>
             )}
 
-            {/* Input Form */}
-            <form onSubmit={(e) => handleSendMessage(e)} className="relative flex items-end gap-2 bg-[#F4F4F5] rounded-[24px] p-2 focus-within:bg-white focus-within:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] focus-within:ring-1 focus-within:ring-slate-200 transition-all">
+            {/* Hidden Input for Local Uploads */}
+            <input 
+              type="file" 
+              ref={chatFileInputRef} 
+              onChange={handleChatFileSelect} 
+              className="hidden" 
+              multiple
+            />
+
+            {/* Main Input Form */}
+            <form onSubmit={(e) => handleSendMessage(e)} className={`relative flex flex-col bg-[#F4F4F5] rounded-[24px] p-2 focus-within:bg-white focus-within:shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] focus-within:ring-1 focus-within:ring-slate-200 transition-all ${isAttachmentMenuOpen ? 'ring-1 ring-slate-200 bg-white' : ''}`}>
               
-              {/* Plus Attachment Button */}
-              <button 
-                type="button" 
-                onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
-                className={`p-3 shrink-0 mb-0.5 rounded-full transition-all ${isAttachmentMenuOpen ? 'bg-slate-200 text-slate-800 rotate-45' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200'}`}
-              >
-                <Plus size={20} />
-              </button>
-              
-              <textarea 
-                rows="1"
-                placeholder={isRecording ? "Listening..." : (isNewChat ? "Ask DocuMind..." : "Ask anything about this document...")}
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }}
-                className={`flex-1 max-h-32 bg-transparent text-[14px] resize-none outline-none py-3.5 px-2 custom-scrollbar transition-colors ${isRecording ? 'text-red-500 placeholder:text-red-400 font-medium' : 'text-slate-800 placeholder:text-slate-500'}`}
-              />
-              
-              {/* Mic & Send Buttons */}
-              <div className="flex items-center gap-1 shrink-0 mb-1 mr-1">
+              {/* Attachment Previews */}
+              {chatAttachments.length > 0 && (
+                <div className="flex flex-wrap gap-2 px-2 pt-2 pb-1">
+                  {chatAttachments.map((file, idx) => (
+                    <div key={idx} className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                      <FileText size={14} className="text-blue-500 shrink-0" />
+                      <span className="text-[11px] font-bold text-slate-700 max-w-[120px] truncate">{file.name}</span>
+                      <X size={14} className="text-slate-400 hover:text-red-500 cursor-pointer shrink-0 ml-1" onClick={() => removeAttachment(idx)} />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-end gap-2 w-full">
+                {/* Plus Attachment Button */}
                 <button 
                   type="button" 
-                  onClick={() => setIsRecording(!isRecording)}
-                  className={`p-2.5 rounded-full transition-all flex items-center justify-center ${isRecording ? 'bg-red-50 text-red-500 animate-pulse' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200'}`}
-                  title="Voice Input"
+                  onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
+                  className={`p-3 shrink-0 mb-0.5 rounded-full transition-all ${isAttachmentMenuOpen ? 'bg-slate-200 text-slate-800 rotate-45' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200'}`}
                 >
-                  <Mic size={18} />
+                  <Plus size={20} />
                 </button>
+                
+                <textarea 
+                  rows="1"
+                  placeholder={isRecording ? "Listening..." : (isNewChat ? "Ask DocuMind..." : "Ask anything about this document...")}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }}
+                  className={`flex-1 max-h-32 bg-transparent text-[14px] resize-none outline-none py-3.5 px-2 custom-scrollbar transition-colors ${isRecording ? 'text-red-500 placeholder:text-red-400 font-medium' : 'text-slate-800 placeholder:text-slate-500'}`}
+                />
+                
+                {/* Mic & Send Buttons */}
+                <div className="flex items-center gap-1 shrink-0 mb-1 mr-1">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsRecording(!isRecording)}
+                    className={`p-2.5 rounded-full transition-all flex items-center justify-center ${isRecording ? 'bg-red-50 text-red-500 animate-pulse' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200'}`}
+                    title="Voice Input"
+                  >
+                    <Mic size={18} />
+                  </button>
 
-                <button 
-                  type="submit" 
-                  disabled={!inputMessage.trim()}
-                  className={`p-3 rounded-full ml-1 transition-all flex items-center justify-center ${inputMessage.trim() ? 'bg-slate-900 text-white shadow-sm hover:bg-slate-800 scale-100' : 'bg-transparent text-slate-300 cursor-not-allowed scale-95'}`}
-                >
-                  <Send size={18} className={inputMessage.trim() ? 'ml-0.5' : ''} />
-                </button>
+                  <button 
+                    type="submit" 
+                    disabled={isSendDisabled}
+                    className={`p-3 rounded-full ml-1 transition-all flex items-center justify-center ${!isSendDisabled ? 'bg-slate-900 text-white shadow-sm hover:bg-slate-800 scale-100' : 'bg-transparent text-slate-300 cursor-not-allowed scale-95'}`}
+                  >
+                    <Send size={18} className={!isSendDisabled ? 'ml-0.5' : ''} />
+                  </button>
+                </div>
               </div>
-
             </form>
             <p className="text-center text-[10px] text-slate-400 mt-3 font-medium">DocuMind can make mistakes. Verify important information with the source document.</p>
           </div>
