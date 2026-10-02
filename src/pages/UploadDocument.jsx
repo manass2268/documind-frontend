@@ -529,7 +529,7 @@ export default function UploadDocument() {
                     </div>
 
                     <div className="space-y-3 pt-2">
-                      <button onClick={() => navigate('/my-documents')} className="w-full bg-[#1E3A8A] text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-900 shadow-sm transition-colors">
+                      <button onClick={() => navigate('/chat')} className="w-full bg-[#1E3A8A] text-white px-5 py-2.5 sm:py-3 rounded-lg text-[13px] sm:text-[14px] font-bold hover:bg-blue-900 shadow-sm transition-colors">
                         Go to My Documents
                       </button>
                     </div>

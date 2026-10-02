@@ -5,7 +5,7 @@ import {
   Download, MoreHorizontal, Settings, Bell, ChevronDown, UserCircle, LogOut,
   Image as ImageIcon, ZoomIn, ZoomOut, Maximize,
   Home, Bookmark, MessageSquare, Users, Star, LayoutTemplate,
-  ThumbsUp, ThumbsDown, Copy, Compass
+  ThumbsUp, ThumbsDown, Copy, Compass, UploadCloud // 🚀 ADDED UploadCloud HERE 🚀
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
