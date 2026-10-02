@@ -43,12 +43,12 @@ export default function Dashboard() {
             setUserInitial(fetchedName.charAt(0).toUpperCase());
           } else {
             setUserName("Student");
-            setUserInitial("S");
+            setUserInitial("L");
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
           setUserName("Student");
-          setUserInitial("S");
+          setUserInitial("L");
         }
       } else {
         navigate("/login");
@@ -143,7 +143,7 @@ export default function Dashboard() {
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm group-hover:bg-blue-900 transition-colors">
-                  {userInitial || "M"}
+                  {userInitial || "L"}
                 </div>
                 <div className="text-left hidden sm:block leading-tight">
                   <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-900 flex items-center gap-1 group-hover:text-blue-700 transition-colors uppercase">
