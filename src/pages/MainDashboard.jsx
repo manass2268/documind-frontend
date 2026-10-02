@@ -227,7 +227,7 @@ export default function Dashboard() {
                 { icon: Upload, label: "Upload Document", path: "/upload", active: false },
                 { icon: FileText, label: "My Documents", path: "#", active: false },
                 { icon: Sparkles, label: "AI Notes", path: "#", active: false },
-                { icon: MessageSquare, label: "Ask DocuMind", path: "#", active: false },
+                { icon: MessageSquare, label: "Ask DocuMind", path: "/chat", active: false },
                 { icon: BookOpen, label: "Learning Paths", path: "#", active: false },
                 { icon: CheckSquare, label: "Assessments", path: "#", active: false },
                 { icon: Bookmark, label: "Bookmarks", path: "#", active: false },
@@ -293,9 +293,12 @@ export default function Dashboard() {
                   <button onClick={() => navigate('/upload')} className="bg-[#1A365D] justify-center text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-sm">
                     Upload Document →
                   </button> 
-                  <button className="bg-slate-50 justify-center text-blue-700 border border-blue-200 px-5 py-2.5 rounded-lg text-[13px] font-semibold flex items-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
-                    <Sparkles size={16} /> Ask DocuMind
-                  </button>
+                  <button 
+                onClick={() => navigate('/chat')} 
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-700 rounded-lg text-[13px] font-semibold border border-blue-100 hover:bg-blue-100 transition-colors"
+              >
+                <Sparkles size={16} /> Ask DocuMind
+              </button>
                 </div>
               </div>
               <div className="hidden md:flex absolute right-6 top-6 bottom-6 w-[28%] bg-slate-50/80 backdrop-blur-md border border-gray-100 p-4 rounded-xl shadow-sm flex-col justify-center">
