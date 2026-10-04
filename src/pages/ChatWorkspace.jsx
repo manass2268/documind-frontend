@@ -371,7 +371,7 @@ export default function ChatWorkspace() {
           setIsAiTyping(false);
           setIsAiStreaming(false);
           await addDoc(collection(db, "students", rollNo, "chats", currentChatId, "messages"), {
-            sender: "ai", text: "⚠ Server Error: Could not connect to Python backend.",
+            sender: "ai", text: "⚠ Server Error: Could not connect to  the Server.",
             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), createdAt: serverTimestamp()
           });
         }
