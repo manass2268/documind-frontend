@@ -8,8 +8,9 @@ import {
 import DocumindLogo from "../assets/logo.png";
 
 import { auth, googleProvider, db } from "../firebase"; 
-import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore"; 
+// 🚀 ADDED: updatePassword function from Firebase Auth
+import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, updatePassword } from "firebase/auth";
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 
 export default function Login() {
   const navigate = useNavigate();
@@ -37,16 +38,17 @@ export default function Login() {
   const [setupLoading, setSetupLoading] = useState(false);
   const [setupError, setSetupError] = useState('');
   const [setupSuccess, setSetupSuccess] = useState(''); 
+  
+  const [loggedInUserId, setLoggedInUserId] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // NOTE: Here you might want to prevent immediate redirect if first-time setup is pending
-      if (user && !showSetupModal) {
+      if (user && !showSetupModal && !isGoogleLoading) {
         navigate("/dashboard");
       }
     });
     return () => unsubscribe();
-  }, [navigate, showSetupModal]);
+  }, [navigate, showSetupModal, isGoogleLoading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +65,6 @@ export default function Login() {
       let finalLoginId = formData.identifier.trim();
       
       if (formData.role === "learner") {
-        // Step 1: Check in Firestore Database
         const studentRef = doc(db, "students", finalLoginId);
         const studentSnap = await getDoc(studentRef);
 
@@ -73,19 +74,21 @@ export default function Login() {
           return; 
         }
 
-        // ==========================================
-        // 🚀 FIRST TIME LOGIN CHECK 🚀
-        // ==========================================
         const studentData = studentSnap.data();
         if (studentData.isFirstLogin === true || studentData.isFirstLogin === undefined) {
-          // If first login, stop default flow, show security modal
           setIsLoading(false);
+          setLoggedInUserId(finalLoginId);
           setShowSetupModal(true);
           setSetupStep(1);
-          return; // Stop execution here
+          
+          // 🚀 IMPORTANT: We must sign them in silently here so we have auth.currentUser 
+          // available later to change their password in Step 3.
+          const tempLoginId = `${finalLoginId}@student.documind.com`;
+          await signInWithEmailAndPassword(auth, tempLoginId, formData.password);
+          
+          return; 
         }
 
-        // Step 2: Format for Firebase Auth (if not first login)
         finalLoginId = `${finalLoginId}@student.documind.com`;
       }
 
@@ -105,8 +108,28 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setError("");
     setIsGoogleLoading(true);
+    
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const userEmail = result.user.email;
+
+      let targetCollection = "students";
+      if (formData.role === "trainer") targetCollection = "teachers";
+      if (formData.role === "admin") targetCollection = "admins";
+
+      const q = query(collection(db, targetCollection), where("email", "==", userEmail));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        await signOut(auth); 
+        setError(`Access Denied: ${userEmail} is not linked to any account. Please login with your User ID first to set up your email.`);
+        setIsGoogleLoading(false);
+        return;
+      }
+
+      setIsGoogleLoading(false);
+      navigate("/dashboard");
+
     } catch (err) {
       console.error("Google Login Error:", err.code);
       setError("Google Sign-In failed. Please try again.");
@@ -115,42 +138,65 @@ export default function Login() {
   };
 
   // --- SETUP FLOW HANDLERS ---
-  const handleSendOTP = (e) => {
+  const handleSendOTP = async (e) => {
     e.preventDefault();
     if(!setupEmail) return;
     setSetupLoading(true);
     setSetupError('');
     setSetupSuccess('');
     
-    // MOCK: Generate OTP & send to 'setupEmail'
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: setupEmail })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSetupStep(2); 
+        setSetupSuccess(`OTP sent to ${setupEmail}`);
+      } else {
+        setSetupError(data.detail || "Failed to send OTP.");
+      }
+    } catch (err) {
+      setSetupError("Network error. Please make sure backend is running.");
+    } finally {
       setSetupLoading(false);
-      setSetupStep(2); 
-      setSetupSuccess(`OTP sent to ${setupEmail}`);
-    }, 1500);
+    }
   };
 
-  const handleVerifyOTP = (e) => {
+  const handleVerifyOTP = async (e) => {
     e.preventDefault();
     if(otp.length < 4) return;
     setSetupLoading(true);
     setSetupError('');
     setSetupSuccess('');
     
-    // MOCK: Verify OTP with backend
-    setTimeout(() => {
-      setSetupLoading(false);
-      
-      if(otp === '123456') { 
-         setSetupStep(3); 
-         setSetupSuccess('Email successfully verified!');
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: setupEmail, otp: otp })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSetupStep(3); 
+        setSetupSuccess('Email successfully verified!');
       } else {
-         setSetupError('Invalid Verification Code. Please try again.');
+        setSetupError(data.detail || "Invalid Verification Code. Please try again.");
       }
-    }, 1500);
+    } catch (err) {
+      setSetupError("Network error. Cannot verify OTP right now.");
+    } finally {
+      setSetupLoading(false);
+    }
   };
 
-  const handleCompleteSetup = (e) => {
+  const handleCompleteSetup = async (e) => {
     e.preventDefault();
     
     if(newPassword !== confirmPassword) {
@@ -169,15 +215,37 @@ export default function Login() {
     setSetupLoading(true);
     setSetupError('');
 
-    // ===============================================================
-    // 🚀 BACKEND INTEGRATION POINT 🚀
-    // Update Firebase DB here: set new email, password, isFirstLogin: false
-    // ===============================================================
-    setTimeout(() => {
-      setSetupLoading(false);
+    try {
+      // 1. Ensure user is logged in (they should be from Step 1)
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User session lost. Please reload the page and try again.");
+      }
+
+      // 🚀 2. UPDATE ACTUAL PASSWORD IN FIREBASE AUTH 🚀
+      await updatePassword(user, newPassword);
+
+      // 3. Update Firestore Document with Primary Email & remove firstLogin status
+      const studentRef = doc(db, "students", loggedInUserId);
+      await updateDoc(studentRef, {
+        email: setupEmail,
+        isFirstLogin: false
+      });
+
       setShowSetupModal(false);
       navigate('/dashboard'); 
-    }, 1500);
+      
+    } catch (err) {
+      console.error("Setup Completion Error:", err);
+      // More specific error handling for auth issues
+      if (err.code === 'auth/requires-recent-login') {
+        setSetupError("Security timeout. Please refresh and login again to change password.");
+      } else {
+        setSetupError(err.message || "Failed to update profile. Please try again.");
+      }
+    } finally {
+      setSetupLoading(false);
+    }
   };
 
   return (
@@ -383,14 +451,12 @@ export default function Login() {
             </div>
 
             <div className="p-8 bg-gray-50/50">
-              {/* Process Tracker */}
               <div className="flex gap-2 mb-6 justify-center">
                 <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 1 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
                 <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 2 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
                 <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 3 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
               </div>
 
-              {/* Status Messages */}
               {setupError && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-[12px] font-semibold text-center">
                   {setupError}
@@ -402,7 +468,6 @@ export default function Login() {
                 </div>
               )}
 
-              {/* STEP 1: LINK PRIMARY EMAIL & SEND OTP */}
               {setupStep === 1 && (
                 <form onSubmit={handleSendOTP} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                   <div className="flex flex-col gap-1.5">
@@ -428,7 +493,6 @@ export default function Login() {
                 </form>
               )}
 
-              {/* STEP 2: VERIFY OTP */}
               {setupStep === 2 && (
                 <form onSubmit={handleVerifyOTP} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                   <div className="flex flex-col gap-2">
@@ -451,7 +515,6 @@ export default function Login() {
                 </form>
               )}
 
-              {/* STEP 3: SET NEW PASSWORD */}
               {setupStep === 3 && (
                 <form onSubmit={handleCompleteSetup} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                   <div className="flex flex-col gap-4">

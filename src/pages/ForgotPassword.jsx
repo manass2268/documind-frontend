@@ -1,24 +1,103 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Loader2, KeyRound } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Loader2, KeyRound, User, BookOpen, Shield, ChevronDown } from "lucide-react";
+
+import { db } from "../firebase";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("learner");
+  const [identifier, setIdentifier] = useState(""); // Can be User ID or Email
+  
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (!identifier) return;
     
+    setError("");
     setIsLoading(true);
-    // Simulate API call to send OTP
-    setTimeout(() => {
+    
+    try {
+      let targetEmail = "";
+      let targetUserId = "";
+
+      // ==========================================
+      // 🚀 SCENARIO 1: ROLE IS LEARNER (USER ID)
+      // ==========================================
+      if (role === "learner") {
+        const studentRef = doc(db, "students", identifier.trim());
+        const studentSnap = await getDoc(studentRef);
+
+        if (!studentSnap.exists()) {
+          setError("User ID not found. Please check your User ID and try again.");
+          setIsLoading(false);
+          return;
+        }
+
+        const studentData = studentSnap.data();
+        
+        if (studentData.isFirstLogin === true || !studentData.email) {
+          setError("Account Setup Incomplete. You haven't linked a primary email yet. Please Login with your User ID and default password first.");
+          setIsLoading(false);
+          return;
+        }
+
+        // Setup the details for the OTP API
+        targetEmail = studentData.email;
+        targetUserId = identifier.trim();
+      } 
+      // ==========================================
+      // 🚀 SCENARIO 2: ROLE IS ADMIN/TRAINER (EMAIL)
+      // ==========================================
+      else {
+        const targetCollection = role === "admin" ? "admins" : "teachers";
+        const q = query(collection(db, targetCollection), where("email", "==", identifier.trim()));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          setError(`No ${role} account found with this email address.`);
+          setIsLoading(false);
+          return;
+        }
+
+        targetEmail = identifier.trim();
+        targetUserId = querySnapshot.docs[0].id;
+      }
+
+      // ==========================================
+      // 🚀 SEND OTP TO THE DISCOVERED EMAIL
+      // ==========================================
+      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: targetEmail })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success! Redirect to Verify page
+        navigate("/otp-verify", { 
+          state: { 
+            email: targetEmail,
+            role: role,
+            userId: targetUserId 
+          } 
+        });
+      } else {
+        setError(data.detail || "Failed to send OTP. Please try again.");
+      }
+
+    } catch (err) {
+      console.error("Forgot Password Error:", err);
+      setError("Network error. Cannot reach the server.");
+    } finally {
       setIsLoading(false);
-      // Redirect to OTP verify page and pass the email in state
-      navigate("/otp-verify", { state: { email: email } });
-    }, 1500);
+    }
   };
 
   return (
@@ -51,7 +130,7 @@ export default function ForgotPassword() {
           </h1>
           
           <p className="text-[15px] text-gray-600 font-medium mb-10 max-w-md leading-relaxed">
-            Don't worry! Enter your registered email address and we will send you a 6-digit verification code (OTP) to reset it safely.
+            Don't worry! Enter your details and we will send you a 6-digit verification code (OTP) to your registered primary email.
           </p>
 
           <div className="space-y-6">
@@ -71,7 +150,7 @@ export default function ForgotPassword() {
               </div>
               <div>
                 <h3 className="text-[15px] font-bold text-[#1E293B]">Instant Verification</h3>
-                <p className="text-[13px] text-gray-500 font-medium mt-0.5">Get a verification code instantly on your email.</p>
+                <p className="text-[13px] text-gray-500 font-medium mt-0.5">Get a verification code instantly on your linked email.</p>
               </div>
             </div>
           </div>
@@ -91,26 +170,63 @@ export default function ForgotPassword() {
               <KeyRound size={28} strokeWidth={2.5} />
             </div>
             
-            <h2 className="text-[24px] font-black text-[#0056D2] mb-2">Forgot Password?</h2>
-            <p className="text-[13px] text-gray-500 font-medium mb-8 px-4">
-              Enter your registered email address to receive a 6-digit OTP.
+            <h2 className="text-[24px] font-black text-[#0056D2] mb-2">Reset Password</h2>
+            <p className="text-[13px] text-gray-500 font-medium mb-6 px-4">
+              Please select your role and enter your details to receive an OTP.
             </p>
 
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                  className="mb-6 w-full bg-red-50 border border-red-100 text-red-600 text-[12px] font-bold p-3 rounded-lg text-center"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <form onSubmit={handleSubmit} className="w-full space-y-6 text-left mb-4">
+              
+              {/* Role Selection */}
+              <div>
+                <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">Select Your Role</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    {role === 'learner' && <User size={16} className="text-gray-400 group-focus-within:text-[#0056D2]" />}
+                    {role === 'trainer' && <BookOpen size={16} className="text-gray-400 group-focus-within:text-[#0056D2]" />}
+                    {role === 'admin' && <Shield size={16} className="text-gray-400 group-focus-within:text-[#0056D2]" />}
+                  </div>
+                  <select
+                    value={role}
+                    onChange={(e) => {setRole(e.target.value); setError(""); setIdentifier("");}}
+                    className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl text-[14px] font-bold text-gray-700 bg-gray-50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="learner">Learner (Student)</option>
+                    <option value="trainer">Trainer (Teacher)</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                    <ChevronDown size={16} className="text-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Identifier Input */}
               <div>
                 <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">
-                  Email Address <span className="text-red-500">*</span>
+                  {role === 'learner' ? "User ID (Roll Number)" : "Registered Email Address"} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative group">
                   <Mail size={18} className="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
                   <input 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
+                    type={role === 'learner' ? "text" : "email"}
+                    value={identifier} 
+                    onChange={(e) => {setIdentifier(e.target.value); setError("");}} 
                     autoComplete="off" 
                     required 
                     className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-[14px] font-medium text-gray-900 bg-gray-50 focus:bg-white focus:border-[#0056D2] focus:ring-4 focus:ring-[#0056D2]/10 outline-none transition-all placeholder:text-gray-400" 
-                    placeholder="Enter your registered email" 
+                    placeholder={role === 'learner' ? "e.g. 2503511790001" : "Enter your email"} 
                   />
                 </div>
               </div>
@@ -118,7 +234,7 @@ export default function ForgotPassword() {
               <motion.button 
                 whileTap={{ scale: 0.98 }} 
                 type="submit" 
-                disabled={isLoading || !email} 
+                disabled={isLoading || !identifier} 
                 className="w-full bg-[#0056D2] hover:bg-[#0044A8] text-white font-bold text-[15px] py-3.5 rounded-xl shadow-[0_4px_14px_rgba(0,86,210,0.25)] hover:shadow-[0_6px_20px_rgba(0,86,210,0.3)] transition-all outline-none flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:shadow-none"
               >
                 {isLoading ? <Loader2 size={20} className="animate-spin" /> : <>Get OTP <ArrowRight size={18} /></>}

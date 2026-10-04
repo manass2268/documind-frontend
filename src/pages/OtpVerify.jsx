@@ -1,26 +1,37 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { 
-  ShieldCheck, ArrowRight, ArrowLeft, Loader2, CheckCircle 
-} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShieldCheck, ArrowRight, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 
 export default function OtpVerify() {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || "your email";
+  
+  // Catch data passed from ForgotPassword screen
+  const email = location.state?.email || "";
+  const role = location.state?.role || "";
+  const userId = location.state?.userId || "";
   
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
   
   const inputRefs = useRef([]);
+
+  // Security Check: If user came directly to this URL, kick them out
+  useEffect(() => {
+    if (!email) {
+      navigate("/forgot-password");
+    }
+  }, [email, navigate]);
 
   const handleOtpChange = (index, value) => {
     if (isNaN(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
+    setError("");
 
     // Auto-focus next input
     if (value !== "" && index < 5) {
@@ -34,20 +45,63 @@ export default function OtpVerify() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleResendCode = async () => {
+    setError("");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+      });
+      if (response.ok) {
+        alert("New OTP has been sent to your email!");
+      } else {
+        setError("Failed to resend OTP. Please try again.");
+      }
+    } catch (err) {
+      setError("Network error. Cannot reach server.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const otpValue = otp.join("");
-    // Sirf 6 digit OTP check karega
+    
+    // Only proceed if 6 digits are entered
     if (otpValue.length < 6) return;
     
+    setError("");
     setIsLoading(true);
-    // Simulate OTP Verification API call
-    setTimeout(() => {
+    
+    try {
+      // 1. Send Verification Request to FastAPI
+      const response = await fetch("http://127.0.0.1:8000/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, otp: otpValue })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 2. Success! Show animation and redirect to New Password screen
+        setIsSuccess(true);
+        setTimeout(() => {
+          navigate("/new-password", {
+            state: { email, role, userId }
+          }); 
+        }, 1500);
+      } else {
+        setError(data.detail || "Invalid Verification Code. Please try again.");
+        // Clear OTP inputs on failure
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0].focus();
+      }
+    } catch (err) {
+      setError("Network error. Cannot verify OTP right now.");
+    } finally {
       setIsLoading(false);
-      setIsSuccess(true);
-      // Verify hone ke baad New Password page par redirect
-      setTimeout(() => navigate("/new-password"), 2000); 
-    }, 1500);
+    }
   };
 
   return (
@@ -77,11 +131,22 @@ export default function OtpVerify() {
               <strong className="text-gray-800">{email}</strong>
             </p>
 
-            <form onSubmit={handleSubmit} className="w-full text-left mb-4">
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                  className="mb-4 w-full bg-red-50 border border-red-100 text-red-600 text-[12px] font-bold p-3 rounded-lg text-center"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit} className="w-full text-left mb-4 mt-2">
               
               {/* OTP Input Boxes */}
               <div className="mb-8">
-                <label className="block text-[13px] font-bold text-[#1E293B] mb-2 text-center">
+                <label className="block text-[13px] font-bold text-[#1E293B] mb-3 text-center">
                   Enter Verification Code
                 </label>
                 <div className="flex justify-between gap-2 sm:gap-3">
@@ -98,14 +163,14 @@ export default function OtpVerify() {
                     />
                   ))}
                 </div>
-                <div className="text-right mt-2">
-                  <button type="button" className="text-[12px] font-bold text-[#0056D2] hover:underline">
+                <div className="text-right mt-3">
+                  <button type="button" onClick={handleResendCode} className="text-[12px] font-bold text-[#0056D2] hover:underline">
                     Resend Code
                   </button>
                 </div>
               </div>
 
-              {/* Submit Button Added Back */}
+              {/* Submit Button */}
               <motion.button 
                 whileTap={{ scale: 0.98 }} 
                 type="submit" 
@@ -117,7 +182,7 @@ export default function OtpVerify() {
             </form>
           </div>
         ) : (
-          /* Missing Success State Added Back */
+          /* Success State */
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} 
             className="flex flex-col items-center text-center py-6"
