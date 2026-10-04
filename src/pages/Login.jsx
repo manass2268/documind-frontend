@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Mail, Lock, Eye, EyeOff, User, BookOpen, Shield,
-  ArrowRight, Check, Loader2, ChevronDown
+  ArrowRight, Check, Loader2, ChevronDown, ShieldCheck, ShieldAlert
 } from "lucide-react";
 import DocumindLogo from "../assets/logo.png";
 
@@ -27,14 +27,26 @@ export default function Login() {
     password: ""
   });
 
+  // --- FIRST TIME SETUP (SECURITY) STATES ---
+  const [showSetupModal, setShowSetupModal] = useState(false);
+  const [setupStep, setSetupStep] = useState(1); 
+  const [setupEmail, setSetupEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [setupLoading, setSetupLoading] = useState(false);
+  const [setupError, setSetupError] = useState('');
+  const [setupSuccess, setSetupSuccess] = useState(''); 
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      // NOTE: Here you might want to prevent immediate redirect if first-time setup is pending
+      if (user && !showSetupModal) {
         navigate("/dashboard");
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, showSetupModal]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,12 +68,24 @@ export default function Login() {
         const studentSnap = await getDoc(studentRef);
 
         if (!studentSnap.exists()) {
-          setError("Roll Number not found in database. Please contact Admin.");
+          setError("User Id not found in database. Please contact Admin.");
           setIsLoading(false);
           return; 
         }
 
-        // Step 2: Format for Firebase Auth
+        // ==========================================
+        // 🚀 FIRST TIME LOGIN CHECK 🚀
+        // ==========================================
+        const studentData = studentSnap.data();
+        if (studentData.isFirstLogin === true || studentData.isFirstLogin === undefined) {
+          // If first login, stop default flow, show security modal
+          setIsLoading(false);
+          setShowSetupModal(true);
+          setSetupStep(1);
+          return; // Stop execution here
+        }
+
+        // Step 2: Format for Firebase Auth (if not first login)
         finalLoginId = `${finalLoginId}@student.documind.com`;
       }
 
@@ -88,6 +112,72 @@ export default function Login() {
       setError("Google Sign-In failed. Please try again.");
       setIsGoogleLoading(false);
     }
+  };
+
+  // --- SETUP FLOW HANDLERS ---
+  const handleSendOTP = (e) => {
+    e.preventDefault();
+    if(!setupEmail) return;
+    setSetupLoading(true);
+    setSetupError('');
+    setSetupSuccess('');
+    
+    // MOCK: Generate OTP & send to 'setupEmail'
+    setTimeout(() => {
+      setSetupLoading(false);
+      setSetupStep(2); 
+      setSetupSuccess(`OTP sent to ${setupEmail}`);
+    }, 1500);
+  };
+
+  const handleVerifyOTP = (e) => {
+    e.preventDefault();
+    if(otp.length < 4) return;
+    setSetupLoading(true);
+    setSetupError('');
+    setSetupSuccess('');
+    
+    // MOCK: Verify OTP with backend
+    setTimeout(() => {
+      setSetupLoading(false);
+      
+      if(otp === '123456') { 
+         setSetupStep(3); 
+         setSetupSuccess('Email successfully verified!');
+      } else {
+         setSetupError('Invalid Verification Code. Please try again.');
+      }
+    }, 1500);
+  };
+
+  const handleCompleteSetup = (e) => {
+    e.preventDefault();
+    
+    if(newPassword !== confirmPassword) {
+      setSetupError("Passwords do not match!");
+      return;
+    }
+    if(newPassword.length < 6) {
+      setSetupError("Password must be at least 6 characters long.");
+      return;
+    }
+    if(newPassword === formData.password) {
+      setSetupError("New password must be different from the default password.");
+      return;
+    }
+
+    setSetupLoading(true);
+    setSetupError('');
+
+    // ===============================================================
+    // 🚀 BACKEND INTEGRATION POINT 🚀
+    // Update Firebase DB here: set new email, password, isFirstLogin: false
+    // ===============================================================
+    setTimeout(() => {
+      setSetupLoading(false);
+      setShowSetupModal(false);
+      navigate('/dashboard'); 
+    }, 1500);
   };
 
   return (
@@ -180,10 +270,9 @@ export default function Login() {
           onSubmit={handleLogin} 
           className="space-y-5"
         >
-          {/* 🔥 FIX: Added bg-white and text-gray-900 to ensure visibility */}
           <div>
             <label className="block text-[12px] font-bold text-[#1E293B] mb-1.5">
-              {formData.role === 'learner' ? "Roll Number" : "Email Address"}
+              {formData.role === 'learner' ? "User ID" : "User ID / Email Address"}
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -197,14 +286,13 @@ export default function Login() {
                 required
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
                 placeholder={
-                  formData.role === 'learner' ? "e.g. 2503511790020" : 
-                  formData.role === 'admin' ? "admin@documind.com" : "teacher@institute.edu"
+                  formData.role === 'learner' ? "e.g. 2503511790001" : 
+                  formData.role === 'admin' ? "admin@institute.edu" : "teacher@institute.edu"
                 }
               />
             </div>
           </div>
 
-          {/* 🔥 FIX: Added bg-white and text-gray-900 to ensure visibility */}
           <div>
             <div className="flex justify-between items-end mb-1.5">
               <label className="block text-[12px] font-bold text-[#1E293B]">Password</label>
@@ -278,6 +366,139 @@ export default function Login() {
           </button>
         </motion.form>
       </motion.div>
+
+      {/* ========================================================= */}
+      {/* 🚀 FIRST TIME SETUP MODAL (PRIMARY EMAIL & PASSWORD) 🚀 */}
+      {/* ========================================================= */}
+      {showSetupModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-[400px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100">
+            
+            <div className="px-8 pt-8 pb-4 relative text-center border-b border-gray-50">
+              <div className="mx-auto w-14 h-14 bg-[#0056D2]/10 rounded-2xl flex items-center justify-center mb-4 border border-[#0056D2]/20">
+                <ShieldCheck size={28} className="text-[#0056D2]" />
+              </div>
+              <h2 className="text-[20px] font-black text-[#0F172A] leading-tight">Complete Your Profile</h2>
+              <p className="text-[13px] text-gray-500 font-medium mt-1">Please link your primary email and set a new password to continue.</p>
+            </div>
+
+            <div className="p-8 bg-gray-50/50">
+              {/* Process Tracker */}
+              <div className="flex gap-2 mb-6 justify-center">
+                <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 1 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
+                <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 2 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
+                <div className={`h-1.5 rounded-full flex-1 transition-colors ${setupStep >= 3 ? 'bg-[#0056D2]' : 'bg-gray-200'}`}></div>
+              </div>
+
+              {/* Status Messages */}
+              {setupError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-[12px] font-semibold text-center">
+                  {setupError}
+                </div>
+              )}
+              {setupSuccess && (
+                <div className="mb-4 p-3 bg-emerald-50 border border-emerald-100 rounded-lg text-emerald-600 text-[12px] font-semibold text-center flex items-center justify-center gap-2">
+                  <Check size={16} /> {setupSuccess}
+                </div>
+              )}
+
+              {/* STEP 1: LINK PRIMARY EMAIL & SEND OTP */}
+              {setupStep === 1 && (
+                <form onSubmit={handleSendOTP} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[12px] font-bold text-[#1E293B]">Link Primary Email <span className="text-red-500">*</span></label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <Mail size={16} className="text-gray-400" />
+                      </div>
+                      <input 
+                        type="email" 
+                        required
+                        placeholder="e.g. student@college.edu" 
+                        value={setupEmail}
+                        onChange={(e) => setSetupEmail(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-1">This email will be used for all future communications and password resets.</p>
+                  </div>
+                  <button type="submit" disabled={setupLoading} className="w-full bg-[#0056D2] hover:bg-[#0044A8] text-white font-bold text-[13px] py-2.5 rounded-lg shadow-sm transition-all flex items-center justify-center mt-2 disabled:opacity-70">
+                    {setupLoading ? <Loader2 size={16} className="animate-spin" /> : "Verify Email"}
+                  </button>
+                </form>
+              )}
+
+              {/* STEP 2: VERIFY OTP */}
+              {setupStep === 2 && (
+                <form onSubmit={handleVerifyOTP} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[13px] font-bold text-[#1E293B] text-center">Enter Verification Code</label>
+                    <p className="text-[12px] text-gray-500 mb-2 text-center leading-relaxed">We sent a 6-digit code to <br/><span className="font-bold text-gray-700">{setupEmail}</span></p>
+                    <input 
+                      type="text" 
+                      required
+                      maxLength={6}
+                      placeholder="6-digit OTP" 
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      className="w-full bg-white border border-gray-300 text-gray-900 text-[16px] font-bold tracking-[0.3em] py-3 px-4 text-center rounded-lg focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-300 placeholder:tracking-normal placeholder:font-normal"
+                    />
+                  </div>
+                  <button type="submit" disabled={setupLoading} className="w-full bg-[#0056D2] hover:bg-[#0044A8] text-white font-bold text-[13px] py-2.5 rounded-lg shadow-sm transition-all flex items-center justify-center mt-2 disabled:opacity-70">
+                    {setupLoading ? <Loader2 size={16} className="animate-spin" /> : "Verify OTP"}
+                  </button>
+                  <button type="button" onClick={() => {setSetupStep(1); setSetupSuccess(''); setSetupError('');}} className="w-full text-center text-[12px] font-semibold text-gray-500 hover:text-[#0056D2] mt-2 transition-colors">← Change Email</button>
+                </form>
+              )}
+
+              {/* STEP 3: SET NEW PASSWORD */}
+              {setupStep === 3 && (
+                <form onSubmit={handleCompleteSetup} className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                       <label className="text-[12px] font-bold text-[#1E293B]">Create New Password <span className="text-red-500">*</span></label>
+                       <div className="relative">
+                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                           <Lock size={16} className="text-gray-400" />
+                         </div>
+                         <input 
+                           type="password" 
+                           required
+                           placeholder="Enter new secure password" 
+                           value={newPassword}
+                           onChange={(e) => setNewPassword(e.target.value)}
+                           className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
+                         />
+                       </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                       <label className="text-[12px] font-bold text-[#1E293B]">Confirm Password <span className="text-red-500">*</span></label>
+                       <div className="relative">
+                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                           <Lock size={16} className="text-gray-400" />
+                         </div>
+                         <input 
+                           type="password" 
+                           required
+                           placeholder="Type password again" 
+                           value={confirmPassword}
+                           onChange={(e) => setConfirmPassword(e.target.value)}
+                           className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
+                         />
+                       </div>
+                    </div>
+                  </div>
+                  <button type="submit" disabled={setupLoading} className="w-full bg-[#138808] hover:bg-green-700 text-white font-bold text-[13px] py-2.5 rounded-lg shadow-sm transition-all flex items-center justify-center mt-4 disabled:opacity-70">
+                    {setupLoading ? <Loader2 size={16} className="animate-spin" /> : "Complete Account Setup"}
+                  </button>
+                </form>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }

@@ -1,4 +1,4 @@
-`import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Menu, Search, Plus, FileText, ChevronLeft, ChevronRight, 
   Send, Sparkles, BookOpen, CheckSquare, Paperclip, View, 
@@ -801,4 +801,4 @@ export default function ChatWorkspace() {
       </main>
     </div>
   );
-}`
+}
