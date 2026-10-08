@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 // --- Firebase Imports ---
@@ -28,16 +28,26 @@ import NewPassword from "./pages/NewPassword";
 import ContactSupport from "./pages/ContactSupport";
 import UploadDocuments from "./pages/UploadDocument";
 import ChatWorspace from "./pages/ChatWorkspace";
+
 // Platform Info Pages
 import Platform from "./pages/PlatformOverview";
 import KnowledgeCenter from "./pages/KnowledgeCentre";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 
-// 🔴 DASHBOARD & SETTINGS PAGES (Updated Imports)
+// 🔴 DASHBOARD & SETTINGS PAGES
 import MainDashboard from "./pages/MainDashboard"; 
 import DashboardSettings from "../src/components/DashboardSettings"; 
 import Help from "./pages/Help";
+
+// 🚀 TRAINER LAYOUT & PLACEHOLDERS (New Imports)
+import TrainerLayout from "./layouts/TrainerLayout";
+
+const TrainerDashboard = () => <div className="p-6 text-2xl font-bold text-slate-800">Trainer Dashboard View</div>;
+const ContentStudio = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Content Studio</div>;
+const AiBehavior = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Behavior Control</div>;
+const StudentList = () => <div className="p-6 text-2xl font-bold text-slate-800">Student Management</div>;
+const Analytics = () => <div className="p-6 text-2xl font-bold text-slate-800">Performance Analytics</div>;
 
 // 🚀 SMART SCROLL TO TOP (Hash Support Ke Saath)
 const ScrollToTop = () => {
@@ -161,13 +171,38 @@ export default function App() {
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/new-password" element={<NewPassword />} />
           
-          {/* --- 🔴 PRIVATE DASHBOARD ROUTES (Fixed Routing) --- */}
-  
+          {/* ========================================== */}
+          {/* 🔴 PRIVATE LEARNER DASHBOARD ROUTES */}
+          {/* ========================================== */}
           <Route path="/dashboard" element={<MainDashboard />} />
           <Route path="/upload" element={<UploadDocuments />} />
-          <Route path="/chat" element={<ChatWorspace />} />s
+          <Route path="/chat" element={<ChatWorspace />} />
           <Route path="/settings" element={<DashboardSettings />} />
           <Route path="/help" element={<Help />} />
+
+          {/* ========================================== */}
+          {/* 🚀 TRAINER / TEACHER ROUTES */}
+          {/* ========================================== */}
+          <Route path="/trainer" element={<TrainerLayout />}>
+            {/* Default redirect to dashboard if someone visits /trainer */}
+            <Route index element={<Navigate to="/trainer/dashboard" replace />} />
+            
+            <Route path="dashboard" element={<TrainerDashboard />} />
+            <Route path="classes" element={<div className="p-6 text-2xl font-bold text-slate-800">My Classes</div>} />
+            <Route path="schedule" element={<div className="p-6 text-2xl font-bold text-slate-800">Schedule</div>} />
+            <Route path="content-studio" element={<ContentStudio />} />
+            <Route path="ai-behavior" element={<AiBehavior />} />
+            <Route path="students" element={<StudentList />} />
+            <Route path="assignments" element={<div className="p-6 text-2xl font-bold text-slate-800">Assignments</div>} />
+            <Route path="assessments" element={<div className="p-6 text-2xl font-bold text-slate-800">Assessments</div>} />
+            <Route path="subjective-grading" element={<div className="p-6 text-2xl font-bold text-slate-800">Subjective Grading</div>} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="reports" element={<div className="p-6 text-2xl font-bold text-slate-800">Reports</div>} />
+            <Route path="settings" element={<div className="p-6 text-2xl font-bold text-slate-800">Trainer Settings</div>} />
+          </Route>
+          
+          {/* 404 Fallback */}
+          <Route path="*" element={<div className="flex items-center justify-center h-screen text-2xl font-bold text-slate-500">404 - Page Not Found</div>} />
           
         </Routes>
       </div>
