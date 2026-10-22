@@ -8,7 +8,6 @@ import {
 import DocumindLogo from "../assets/logo.png";
 
 import { auth, googleProvider, db } from "../firebase"; 
-// 🚀 ADDED: updatePassword function from Firebase Auth
 import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, updatePassword } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 
@@ -41,14 +40,38 @@ export default function Login() {
   
   const [loggedInUserId, setLoggedInUserId] = useState('');
 
+  // 🚀 UPDATED: Smart Auth Listener to route Trainers & Learners correctly on refresh
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && !showSetupModal && !isGoogleLoading) {
-        navigate("/dashboard");
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Only run auto-redirect if not currently logging in manually or setting up
+      if (user && !showSetupModal && !isGoogleLoading && !isLoading) {
+        try {
+          const response = await fetch("http://127.0.0.1:8000/api/auth/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              firebase_uid: user.uid,
+              email: user.email,
+              name: user.displayName || "DocuMind User",
+              role: "learner" 
+            })
+          });
+          const backendData = await response.json();
+          if (backendData.status === "success") {
+            if (backendData.data.role === "trainer") {
+              navigate("/trainer/dashboard");
+            } else {
+              navigate("/dashboard");
+            }
+          }
+        } catch (err) {
+          console.error("Auto-sync failed:", err);
+          navigate("/dashboard"); // Fallback
+        }
       }
     });
     return () => unsubscribe();
-  }, [navigate, showSetupModal, isGoogleLoading]);
+  }, [navigate, showSetupModal, isGoogleLoading, isLoading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +87,9 @@ export default function Login() {
     try {
       let finalLoginId = formData.identifier.trim();
       
+      // ==========================================
+      // 🎓 LEARNER LOGIN LOGIC (Existing First-Time Setup)
+      // ==========================================
       if (formData.role === "learner") {
         const studentRef = doc(db, "students", finalLoginId);
         const studentSnap = await getDoc(studentRef);
@@ -81,18 +107,55 @@ export default function Login() {
           setShowSetupModal(true);
           setSetupStep(1);
           
-          // 🚀 IMPORTANT: We must sign them in silently here so we have auth.currentUser 
-          // available later to change their password in Step 3.
           const tempLoginId = `${finalLoginId}@student.documind.com`;
           await signInWithEmailAndPassword(auth, tempLoginId, formData.password);
-          
           return; 
         }
-
         finalLoginId = `${finalLoginId}@student.documind.com`;
       }
 
-      await signInWithEmailAndPassword(auth, finalLoginId, formData.password);
+      // ==========================================
+      // 🚀 TRAINER LOGIN LOGIC (Dummy Domain Trick)
+      // ==========================================
+      if (formData.role === "trainer") {
+        if (!finalLoginId.includes("@")) {
+          finalLoginId = `${finalLoginId}@documind.local`;
+        }
+      }
+
+      // 1. FIREBASE AUTHENTICATION
+      const userCredential = await signInWithEmailAndPassword(auth, finalLoginId, formData.password);
+      const firebaseUser = userCredential.user;
+
+      // 2. POSTGRESQL BACKEND VERIFICATION
+      const response = await fetch("http://127.0.0.1:8000/api/auth/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firebase_uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || `DocuMind ${formData.role}`,
+          role: formData.role // Passes selected role as fallback
+        })
+      });
+
+      const backendData = await response.json();
+
+      if (response.ok && backendData.status === "success") {
+        const userRole = backendData.data.role; // Get REAL role from Postgres
+        
+        setIsLoading(false);
+        // 3. SMART ROUTING BASED ON ROLE
+        if (userRole === "trainer") {
+          navigate("/trainer/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        setError("Backend verification failed. Account inactive or not found.");
+        await signOut(auth);
+        setIsLoading(false);
+      }
       
     } catch (err) {
       console.error("Login Error:", err.code);
@@ -128,8 +191,7 @@ export default function Login() {
       }
 
       setIsGoogleLoading(false);
-      navigate("/dashboard");
-
+      // Auto-redirect handles the routing after Google Login
     } catch (err) {
       console.error("Google Login Error:", err.code);
       setError("Google Sign-In failed. Please try again.");
@@ -216,16 +278,13 @@ export default function Login() {
     setSetupError('');
 
     try {
-      // 1. Ensure user is logged in (they should be from Step 1)
       const user = auth.currentUser;
       if (!user) {
         throw new Error("User session lost. Please reload the page and try again.");
       }
 
-      // 🚀 2. UPDATE ACTUAL PASSWORD IN FIREBASE AUTH 🚀
       await updatePassword(user, newPassword);
 
-      // 3. Update Firestore Document with Primary Email & remove firstLogin status
       const studentRef = doc(db, "students", loggedInUserId);
       await updateDoc(studentRef, {
         email: setupEmail,
@@ -237,7 +296,6 @@ export default function Login() {
       
     } catch (err) {
       console.error("Setup Completion Error:", err);
-      // More specific error handling for auth issues
       if (err.code === 'auth/requires-recent-login') {
         setSetupError("Security timeout. Please refresh and login again to change password.");
       } else {
@@ -355,7 +413,7 @@ export default function Login() {
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg text-[13px] font-medium text-gray-900 focus:border-[#0056D2] focus:ring-2 focus:ring-[#0056D2]/20 outline-none transition-all placeholder:text-gray-400"
                 placeholder={
                   formData.role === 'learner' ? "e.g. 2503511790001" : 
-                  formData.role === 'admin' ? "admin@institute.edu" : "teacher@institute.edu"
+                  formData.role === 'admin' ? "admin@institute.edu" : "trainer01 or teacher@institute.edu"
                 }
               />
             </div>
