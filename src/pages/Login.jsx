@@ -40,35 +40,20 @@ export default function Login() {
   
   const [loggedInUserId, setLoggedInUserId] = useState('');
 
-  // 🚀 UPDATED: Smart Auth Listener to route Trainers & Learners correctly on refresh
+  // 🚀 FIXED: Disabled aggressive auto-redirect to prevent forcing into /dashboard
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      // Only run auto-redirect if not currently logging in manually or setting up
+      // Temporarily disabled so it doesn't interrupt the manual login flow
+      /*
       if (user && !showSetupModal && !isGoogleLoading && !isLoading) {
         try {
-          const response = await fetch("http://127.0.0.1:8000/api/auth/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              firebase_uid: user.uid,
-              email: user.email,
-              name: user.displayName || "DocuMind User",
-              role: "learner" 
-            })
-          });
-          const backendData = await response.json();
-          if (backendData.status === "success") {
-            if (backendData.data.role === "trainer") {
-              navigate("/trainer/dashboard");
-            } else {
-              navigate("/dashboard");
-            }
-          }
+          const response = await fetch("http://127.0.0.1:8000/api/auth/sync", { ... });
+          // ...
         } catch (err) {
           console.error("Auto-sync failed:", err);
-          navigate("/dashboard"); // Fallback
         }
       }
+      */
     });
     return () => unsubscribe();
   }, [navigate, showSetupModal, isGoogleLoading, isLoading]);
@@ -88,7 +73,7 @@ export default function Login() {
       let finalLoginId = formData.identifier.trim();
       
       // ==========================================
-      // 🎓 LEARNER LOGIN LOGIC (Existing First-Time Setup)
+      // 🎓 LEARNER LOGIN LOGIC
       // ==========================================
       if (formData.role === "learner") {
         const studentRef = doc(db, "students", finalLoginId);
@@ -115,7 +100,7 @@ export default function Login() {
       }
 
       // ==========================================
-      // 🚀 TRAINER LOGIN LOGIC (Dummy Domain Trick)
+      // 🚀 TRAINER LOGIN LOGIC
       // ==========================================
       if (formData.role === "trainer") {
         if (!finalLoginId.includes("@")) {
@@ -135,19 +120,20 @@ export default function Login() {
           firebase_uid: firebaseUser.uid,
           email: firebaseUser.email,
           name: firebaseUser.displayName || `DocuMind ${formData.role}`,
-          role: formData.role // Passes selected role as fallback
+          role: formData.role
         })
       });
 
       const backendData = await response.json();
 
       if (response.ok && backendData.status === "success") {
-        const userRole = backendData.data.role; // Get REAL role from Postgres
-        
         setIsLoading(false);
-        // 3. SMART ROUTING BASED ON ROLE
-        if (userRole === "trainer") {
+        
+        // 🚀 BYPASS: Navigating strictly based on UI Dropdown selection
+        if (formData.role === "trainer") {
           navigate("/trainer/dashboard");
+        } else if (formData.role === "admin") {
+          navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");
         }
@@ -191,7 +177,14 @@ export default function Login() {
       }
 
       setIsGoogleLoading(false);
-      // Auto-redirect handles the routing after Google Login
+      
+      // Frontend Bypass for Google Login too
+      if (formData.role === "trainer") {
+        navigate("/trainer/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+      
     } catch (err) {
       console.error("Google Login Error:", err.code);
       setError("Google Sign-In failed. Please try again.");
