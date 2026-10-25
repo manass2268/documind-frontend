@@ -42,8 +42,9 @@ import Help from "./pages/Help";
 
 // 🚀 TRAINER LAYOUT & PLACEHOLDERS (New Imports)
 import TrainerLayout from "./layouts/TrainerLayout";
+import TrainerDashboard from './pages/TrainerDashboard';
 
-const TrainerDashboard = () => <div className="p-6 text-2xl font-bold text-slate-800">Trainer Dashboard View</div>;
+
 const ContentStudio = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Content Studio</div>;
 const AiBehavior = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Behavior Control</div>;
 const StudentList = () => <div className="p-6 text-2xl font-bold text-slate-800">Student Management</div>;
