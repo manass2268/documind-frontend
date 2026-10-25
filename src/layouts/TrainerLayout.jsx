@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen, FileText, Bot, 
   ClipboardList, User, Search, Bell, Menu, X, LogOut, ChevronDown, Sparkles
 } from 'lucide-react';
-import DocumindLogo from '../assets/logo.png'; // Ensure path is correct
+import DocumindLogo from '../assets/logo.png'; 
 import { auth } from '../firebase'; 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -27,7 +27,8 @@ export default function TrainerLayout() {
           email: user.email || "trainer@kiot.edu.in"
         });
       } else {
-        navigate("/"); 
+       
+        navigate("/login"); 
       }
     });
 
@@ -37,14 +38,15 @@ export default function TrainerLayout() {
     };
   }, [navigate]);
 
-  // 🚀 FAIL-SAFE LOGOUT ROUTING TO '/'
+  // 🚀 FAIL-SAFE LOGOUT ROUTING TO LOGIN PAGE
   const handleLogout = async () => {
     try {
       await signOut(auth);
     } catch (error) {
       console.error("Logout Error:", error);
     } finally {
-      navigate("/"); // Always redirects to Main Login Page
+  
+      navigate("/login"); 
     }
   };
 
@@ -134,7 +136,7 @@ export default function TrainerLayout() {
               <Menu size={22} />
             </button>
             
-            {/* Search Bar - Hidden on very small screens, expands gracefully */}
+            {/* Search Bar */}
             <div className="relative w-full max-w-md hidden sm:block group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input 
