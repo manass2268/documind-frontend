@@ -20,7 +20,7 @@ export default function TrainerLayout() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setTrainerData({
-          name: user.displayName || "Prof. Trainer",
+          name: user.displayName || "MANAS SINGH", // Fallback name
           email: user.email || "trainer@kiot.edu.in"
         });
       } else {
@@ -40,6 +40,7 @@ export default function TrainerLayout() {
     }
   };
 
+  // Tumhare trainer items, image ki theme par styled
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/trainer/dashboard' },
     { icon: Users, label: 'My Classes', path: '/trainer/classes' },
@@ -51,22 +52,29 @@ export default function TrainerLayout() {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-[#F4F7FE] font-sans overflow-hidden">
+    // 🚀 MASTER CONTAINER (Strictly 100vh)
+    <div className="flex flex-col h-screen w-full bg-[#F8FAFC] font-sans overflow-hidden">
       
-      {/* 🚀 FULL WIDTH HEADER SECTION */}
-      <div className="flex-shrink-0 z-20 shadow-sm">
-        {/* Top Mini Gov Bar */}
-        <div className="bg-gray-50 border-b border-gray-200 px-4 sm:px-8 py-1.5 flex items-center gap-2 text-[11px] sm:text-[12px] text-gray-600 font-medium">
+      {/* 🚀 HEADER SECTION */}
+      <div className="flex-none z-20 shadow-sm bg-white">
+        
+        {/* Top Mini Gov Bar - Perfect SIH Style */}
+        <div className="bg-gray-50 border-b border-gray-200 px-4 sm:px-8 py-1.5 flex items-center justify-between text-[11px] sm:text-[12px] text-gray-600 font-medium">
           <div className="flex items-center gap-2">
-            <span className="text-orange-500 font-bold">■</span>
+            <span className="text-[14px]">🇮🇳</span>
             <span>Government of India</span>
             <span className="text-gray-300">|</span>
             <span>भारत सरकार</span>
           </div>
+          <div className="flex items-center gap-2 text-gray-500">
+            <span className="text-gray-800 font-bold cursor-pointer">English</span>
+            <span className="text-gray-300">|</span>
+            <span className="cursor-pointer hover:text-gray-800">हिंदी</span>
+          </div>
         </div>
 
         {/* Main Header */}
-        <header className="bg-white px-4 sm:px-8 py-3 flex items-center justify-between">
+        <header className="px-4 sm:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-6">
             <button className="lg:hidden text-gray-500 hover:text-blue-600" onClick={() => setIsSidebarOpen(true)}>
               <Menu size={24} />
@@ -77,7 +85,7 @@ export default function TrainerLayout() {
               <div className="hidden sm:flex items-center gap-3 border-r border-gray-200 pr-6">
                 <img src={GovLogo} alt="Gov Logo" className="w-10 h-12 object-contain grayscale opacity-80" />
                 <div className="leading-tight">
-                  <h2 className="text-[14px] font-black text-gray-800">Ministry of Education &<br/>AICTE India</h2>
+                  <h2 className="text-[14px] font-black text-[#0F172A]">Ministry of Statistics &<br/>Programme Implementation</h2>
                   <p className="text-[10px] text-gray-500">Government of India</p>
                 </div>
               </div>
@@ -86,48 +94,56 @@ export default function TrainerLayout() {
               <div className="flex items-center gap-3">
                 <img src={DocumindLogo} alt="DocuMind" className="w-10 h-10 object-contain" />
                 <div className="leading-tight">
-                  <h1 className="text-[16px] font-black text-blue-900">DocuMind Trainer</h1>
-                  <p className="text-[11px] text-gray-500 font-medium">Educate • Evaluate • Empower</p>
+                  <h1 className="text-[16px] font-black text-blue-900">DocuMind</h1>
+                  <p className="text-[11px] text-gray-500 font-medium">Learn • Understand • Grow</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
-              <Search size={22} />
+          <div className="flex items-center gap-4 sm:gap-5">
+            <button className="text-gray-400 hover:text-blue-600 transition-colors">
+              <Search size={20} />
             </button>
-            <div className="h-8 w-[1px] bg-gray-200 hidden sm:block"></div>
-            <div className="hidden sm:flex flex-col items-end">
-              <p className="text-[12px] font-bold text-gray-800 leading-none">{trainerData.name}</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">{trainerData.email}</p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-[15px] border border-blue-200 cursor-pointer">
-              {trainerData.name.charAt(0).toUpperCase()}
+            <button className="relative text-gray-400 hover:text-blue-600 transition-colors">
+              <Bell size={20} />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+            </button>
+            
+            <div className="flex items-center gap-3 ml-2 cursor-pointer group">
+              <div className="w-10 h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-[16px]">
+                {trainerData.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="hidden sm:flex flex-col">
+                <p className="text-[13px] font-bold text-gray-900 leading-none uppercase">{trainerData.name}</p>
+                <p className="text-[11px] text-gray-500 mt-1 font-medium">Trainer</p>
+              </div>
+              <ChevronDown size={16} className="text-gray-400 hidden sm:block group-hover:text-gray-600" />
             </div>
           </div>
         </header>
       </div>
 
-      {/* 🚀 BOTTOM LAYOUT (Sidebar + Main Content) */}
-      <div className="flex-1 flex overflow-hidden relative">
+      {/* 🚀 BOTTOM LAYOUT */}
+      <div className="flex-1 flex overflow-hidden relative min-h-0">
         
         {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-slate-900/40 z-30 lg:hidden backdrop-blur-sm"
+            className="fixed inset-0 bg-slate-900/40 z-[40] lg:hidden backdrop-blur-sm"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
 
-        {/* Sidebar */}
-        <aside className={`absolute lg:static top-0 left-0 h-full w-[260px] bg-white border-r-[3px] border-gray-900 flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
+        {/* 🚀 SIDEBAR (Exact image matching UI with thick black border) */}
+        <aside className={`absolute lg:static inset-y-0 left-0 z-[50] w-[260px] h-full bg-white border-r-[4px] border-[#0F172A] flex flex-col flex-none transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
           
-          <button className="lg:hidden absolute top-4 right-4 text-gray-400" onClick={() => setIsSidebarOpen(false)}>
+          <button className="lg:hidden absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1" onClick={() => setIsSidebarOpen(false)}>
             <X size={20} />
           </button>
 
-          <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2 mt-4 lg:mt-0">
+          {/* Sidebar Menu Items */}
+          <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1 mt-8 lg:mt-0 custom-scrollbar">
             {menuItems.map((item, idx) => {
               const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
               return (
@@ -135,36 +151,27 @@ export default function TrainerLayout() {
                   key={idx} 
                   to={item.path}
                   onClick={() => setIsSidebarOpen(false)}
-                  className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 ${isActive ? 'bg-[#0F172A] text-white font-bold shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium text-[14px]'}`}
+                  className={`flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all duration-200 ${isActive ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800 font-medium text-[14px]'}`}
                 >
-                  <item.icon size={20} className={isActive ? "text-white" : "text-gray-400"} />
+                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "text-blue-600" : "text-gray-400"} />
                   {item.label}
                 </Link>
               );
             })}
           </div>
 
-          {/* Bottom Settings & Logout */}
-          <div className="px-4 py-4 space-y-2">
+          {/* Settings & Logout Fixed at Bottom */}
+          <div className="flex-none px-4 py-4 space-y-1 bg-white">
+            <Link to="/trainer/settings" className="flex items-center gap-4 px-4 py-2.5 text-gray-500 hover:bg-gray-50 hover:text-gray-800 font-medium text-[14px] transition-colors rounded-lg">
+              <Settings size={20} className="text-gray-400" /> Settings
+            </Link>
             <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 py-2.5 text-red-500 hover:bg-red-50 font-bold text-[14px] transition-colors rounded-lg">
-              <LogOut size={20} /> Logout Account
+              <LogOut size={20} /> Logout
             </button>
-
-            {/* Knowledge Box */}
-            <div className="mt-4 bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
-              <div className="flex justify-center gap-1 mb-3">
-                <div className="w-3 h-1 bg-orange-500 rounded-full"></div>
-                <div className="w-3 h-1 bg-white border border-gray-200 rounded-full"></div>
-                <div className="w-3 h-1 bg-green-500 rounded-full"></div>
-              </div>
-              <p className="text-[11px] font-bold text-gray-700 leading-snug">
-                Empowering Education for<br/>A Stronger India
-              </p>
-            </div>
           </div>
         </aside>
 
-        {/* Main Content Area */}
+        {/* 🚀 MAIN CONTENT AREA (Outlets render here) */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 w-full bg-[#F4F7FE]">
           <Outlet />
         </main>
