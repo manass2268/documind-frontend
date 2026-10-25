@@ -1,56 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, BookOpen, FileText, CheckCircle, Calendar, 
-  ChevronRight, Bot, Sparkles, FileEdit, MessageSquare, 
-  BarChart, Clock, FileDigit, Loader2
-} from 'lucide-react';
+import { Users, BookOpen, FileText, CheckCircle, Calendar, Sparkles, Loader2 } from 'lucide-react';
 import { auth } from '../firebase';
 
 export default function TrainerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [userName, setUserName] = useState("");
   
-  // 🚀 API DATA STATES (Real-time update ke liye)
   const [dashboardData, setDashboardData] = useState({
     stats: { students: 0, subjects: 0, docs: 0, pending: 0 },
-    classes: [],
-    recentDocs: []
+    classes: []
   });
 
-  // 🚀 DYNAMIC FETCHING LOGIC
   useEffect(() => {
-    // 1. Firebase se name nikalna
-    const user = auth.currentUser;
-    if (user) {
-      setUserName(user.displayName?.split(" ")[0] || "Trainer");
-    }
+    // 1. Get Firebase User
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserName(user.displayName?.split(" ")[0] || "Trainer");
+        fetchDashboardData(user);
+      } else {
+        setIsLoading(false);
+      }
+    });
 
-    // 2. Mock API Fetch (Isko baad me apne FastAPI route se connect kar lena)
-    const fetchDashboardData = async () => {
+    // 2. Fetch Data from Backend
+    const fetchDashboardData = async (user) => {
       try {
-        // Yahan future me 'fetch("http://127.0.0.1:8000/api/trainer/stats")' aayega
-        setTimeout(() => {
+        const response = await fetch(`http://127.0.0.1:8000/api/trainer/dashboard/${user.uid}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.status === "success") {
+            setDashboardData(result.data);
+          }
+        } else {
+          // Fallback Dummy Data if API fails or backend is not connected yet
           setDashboardData({
             stats: { students: 120, subjects: 4, docs: 15, pending: 8 },
             classes: [
-              { title: 'Database Management', sub: 'BCA 2nd Year', count: 45 },
-              { title: 'Python Programming', sub: 'BCA 2nd Year', count: 45 },
+              { title: 'Database Management', sub: 'BCA 2nd Year (Section A)', count: 45 },
+              { title: 'Python Programming', sub: 'BCA 2nd Year (Section A)', count: 45 },
             ]
           });
-          setIsLoading(false);
-        }, 800); // 800ms ka loading effect
+        }
       } catch (error) {
-        console.error("Failed to load data", error);
+        console.error("API Fetch Error:", error);
+        // Fallback Dummy Data
+        setDashboardData({
+          stats: { students: 120, subjects: 4, docs: 15, pending: 8 },
+          classes: [
+            { title: 'Database Management', sub: 'BCA 2nd Year (Section A)', count: 45 },
+            { title: 'Python Programming', sub: 'BCA 2nd Year (Section A)', count: 45 },
+          ]
+        });
+      } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDashboardData();
+    return () => unsubscribe();
   }, []);
 
   if (isLoading) {
     return (
-      <div className="w-full h-[80vh] flex flex-col items-center justify-center text-blue-600">
+      <div className="w-full h-[70vh] flex flex-col items-center justify-center text-blue-600">
         <Loader2 size={40} className="animate-spin mb-4" />
         <p className="font-bold text-gray-500 animate-pulse">Loading your workspace...</p>
       </div>
@@ -60,11 +71,11 @@ export default function TrainerDashboard() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 pb-10 w-full animate-in fade-in duration-500">
       
-      {/* 🚀 1. DYNAMIC HEADER SECTION */}
+      {/* 🚀 Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-sm w-full">
         <div>
           <h1 className="text-[22px] sm:text-[26px] font-black text-[#0F172A] flex items-center gap-2">
-            Welcome back, Prof. {userName}! <span className="text-2xl animate-waving-hand origin-bottom-right">👋</span>
+            Welcome back, Prof. {userName}! <span className="text-2xl">👋</span>
           </h1>
           <p className="text-gray-500 text-[13px] sm:text-[14px] mt-1 font-medium">Here's what's happening in your classes today.</p>
         </div>
@@ -81,7 +92,7 @@ export default function TrainerDashboard() {
         </div>
       </div>
 
-      {/* 🚀 2. DYNAMIC STATS CARDS */}
+      {/* 🚀 Stats Cards */}
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {[
           { title: 'Total Students', count: dashboardData.stats.students, icon: Users, color: 'blue', bg: 'bg-blue-50', text: 'text-blue-600' },
@@ -103,7 +114,7 @@ export default function TrainerDashboard() {
         ))}
       </div>
 
-      {/* 🚀 3. RESPONSIVE MIDDLE GRID */}
+      {/* 🚀 Middle Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         
         {/* Schedule */}
@@ -113,7 +124,7 @@ export default function TrainerDashboard() {
           </div>
           <div className="relative border-l-2 border-gray-100 ml-3 space-y-6 flex-1">
             {[
-              { time: '10:00 AM', title: 'DBMS (BCA 2nd)', desc: 'Theory • Room 203', status: 'Now', color: 'bg-blue-500' },
+              { time: '10:00 AM', title: 'DBMS (BCA 2nd)', desc: 'Theory • Room 203', color: 'bg-blue-500' },
               { time: '12:00 PM', title: 'Python Programming', desc: 'Lab Session', color: 'bg-green-500' },
             ].map((event, idx) => (
               <div key={idx} className="relative pl-5 sm:pl-6">
@@ -128,7 +139,7 @@ export default function TrainerDashboard() {
           </div>
         </div>
 
-        {/* Dynamic Classes */}
+        {/* Classes Info */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6 w-full">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[15px] font-bold text-gray-800 flex items-center gap-2"><Users size={18} className="text-gray-400"/> Active Classes</h3>
@@ -149,7 +160,7 @@ export default function TrainerDashboard() {
           </div>
         </div>
 
-        {/* AI Assistant */}
+        {/* AI Actions */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6 bg-gradient-to-br from-white to-blue-50/30 w-full">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[15px] font-bold text-gray-800 flex items-center gap-2">

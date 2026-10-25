@@ -2,33 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, BookOpen, FileText, Bot, 
-  ClipboardList, CheckSquare, FileEdit, Award, 
-  Megaphone, LineChart, User, Settings, Search, Bell, Menu, Building2, X, LogOut
+  ClipboardList, User, Settings, Search, Bell, Menu, Building2, X, LogOut
 } from 'lucide-react';
+// Apna logo path check kar lena
 import DocumindLogo from '../assets/logo.png'; 
-
-// Firebase auth import (Ensure this path matches your project)
 import { auth } from '../firebase'; 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 export default function TrainerLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // 🚀 DYNAMIC STATES
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [trainerData, setTrainerData] = useState({ name: "Loading...", email: "" });
 
-  // 🚀 REAL-TIME USER FETCHING
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setTrainerData({
           name: user.displayName || "DocuMind Trainer",
-          email: user.email || "trainer@documind.com"
+          email: user.email || "trainer@documind.local"
         });
       } else {
-        navigate("/"); // Agar login nahi hai toh bahar fek do
+        navigate("/"); 
       }
     });
     return () => unsubscribe();
@@ -52,18 +47,16 @@ export default function TrainerLayout() {
   return (
     <div className="flex h-screen bg-[#F4F7FE] font-sans overflow-hidden">
       
-      {/* 📱 MOBILE OVERLAY */}
+      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* 🚀 RESPONSIVE SIDEBAR */}
+      {/* Sidebar */}
       <aside className={`fixed lg:static top-0 left-0 h-full w-[260px] bg-[#1E293B] text-slate-300 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
-        
-        {/* Logo Area */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-slate-700/50">
           <div className="flex items-center gap-3">
             <img src={DocumindLogo} alt="Logo" className="w-9 h-9 object-contain" />
@@ -77,15 +70,14 @@ export default function TrainerLayout() {
           </button>
         </div>
 
-        {/* Menu Items */}
-        <div className="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar space-y-1">
+        <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
           {menuItems.map((item, idx) => {
-            const isActive = location.pathname.includes(item.path);
+            const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
             return (
               <Link 
                 key={idx} 
                 to={item.path}
-                onClick={() => setIsSidebarOpen(false)} // Close sidebar on mobile click
+                onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? 'bg-[#3B82F6] text-white font-bold shadow-lg shadow-blue-500/20' : 'hover:bg-slate-800 hover:text-white font-medium text-[14px]'}`}
               >
                 <item.icon size={18} className={isActive ? "text-white" : "text-slate-400"} />
@@ -95,57 +87,33 @@ export default function TrainerLayout() {
           })}
         </div>
 
-        {/* Bottom Actions */}
         <div className="p-4 border-t border-slate-700/50 space-y-1">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-red-500/10 hover:text-red-400 font-medium text-[14px] transition-all duration-200">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-red-500/10 hover:text-red-400 font-medium text-[14px] transition-all">
             <LogOut size={18} /> Logout
           </button>
-          
-          <div className="mt-4 bg-slate-800/80 rounded-xl p-3 flex items-center gap-3 border border-slate-700">
-            <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
-              <Building2 size={20} className="text-slate-300" />
-            </div>
-            <div>
-              <p className="text-white text-[13px] font-bold">KIOT - CSD</p>
-              <p className="text-[11px] text-slate-400">Faculty Member</p>
-            </div>
-          </div>
         </div>
       </aside>
 
-      {/* 🚀 MAIN CONTENT AREA */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden w-full">
-        
-        {/* Dynamic Topbar */}
+        {/* Topbar */}
         <header className="h-[76px] bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-8 flex-shrink-0 z-10 w-full">
           <div className="flex items-center gap-4 flex-1">
-            {/* Mobile Menu Button */}
-            <button 
-              className="text-gray-500 hover:text-blue-600 lg:hidden bg-gray-50 p-2 rounded-lg"
-              onClick={() => setIsSidebarOpen(true)}
-            >
+            <button className="text-gray-500 hover:text-blue-600 lg:hidden bg-gray-50 p-2 rounded-lg" onClick={() => setIsSidebarOpen(true)}>
               <Menu size={24} />
             </button>
-            
             <div className="relative w-full max-w-md hidden md:block">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search classes, students, or documents..." 
-                className="w-full pl-10 pr-16 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-[13px] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
-              />
+              <input type="text" placeholder="Search classes, students..." className="w-full pl-10 pr-16 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-[13px] outline-none" />
             </div>
           </div>
-
           <div className="flex items-center gap-4 sm:gap-6">
-            <button className="relative text-gray-400 hover:text-blue-600 transition-colors bg-gray-50 p-2 rounded-full hidden sm:block">
+            <button className="relative text-gray-400 hover:text-blue-600 bg-gray-50 p-2 rounded-full hidden sm:block">
               <Bell size={20} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
             <div className="h-8 w-[1px] bg-gray-200 hidden sm:block"></div>
-            
-            {/* Dynamic User Profile */}
-            <div className="flex items-center gap-3 cursor-pointer">
+            <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-[13px] font-bold text-gray-800 leading-tight">{trainerData.name}</p>
                 <p className="text-[11px] text-gray-500 truncate max-w-[120px]">{trainerData.email}</p>
@@ -157,8 +125,8 @@ export default function TrainerLayout() {
           </div>
         </header>
 
-        {/* Dashboard Content Pages */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar relative w-full">
+        {/* Page Content Outlet */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative w-full">
           <Outlet />
         </main>
       </div>
