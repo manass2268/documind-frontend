@@ -45,6 +45,8 @@ import TrainerLayout from "./layouts/TrainerLayout";
 import TrainerDashboard from './pages/TrainerDashboard';
 
 
+
+import UploadStudents from './components/UploadStudents';
 const ContentStudio = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Content Studio</div>;
 const AiBehavior = () => <div className="p-6 text-2xl font-bold text-slate-800">AI Behavior Control</div>;
 const StudentList = () => <div className="p-6 text-2xl font-bold text-slate-800">Student Management</div>;
@@ -151,6 +153,7 @@ export default function App() {
           {/* 🚀 FULL SCREEN ANIMATED ROUTE (Landing -> Chat) */}
           <Route path="/" element={<HomeFlow />} />
           
+          <Route path="/upload-students" element={<UploadStudents />} />
           {/* 🚀 PUBLIC ROUTES (Humesha Header & Footer ke sath) */}
           <Route element={<PublicLayout />}>
              <Route path="/about" element={<About />} /> 
@@ -206,6 +209,7 @@ export default function App() {
           <Route path="*" element={<div className="flex items-center justify-center h-screen text-2xl font-bold text-slate-500">404 - Page Not Found</div>} />
           
         </Routes>
+        
       </div>
     </Router>
   );

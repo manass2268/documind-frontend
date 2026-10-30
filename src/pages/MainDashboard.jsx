@@ -27,9 +27,7 @@ export default function Dashboard() {
   const [recentDocs, setRecentDocs] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [stats, setStats] = useState({ docs: 0, notes: 0, assessments: 0 });
-  const [isDataLoading, setIsDataLoading] = useState(true);
-
-  useEffect(() => {
+  const [isDataLoading, setIsDataLoading] = useState(true);useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserEmail(user.email);
@@ -37,11 +35,17 @@ export default function Dashboard() {
         setUserId(rollNo);
 
         try {
-          const docRef = doc(db, "students", rollNo);
-          const docSnap = await getDoc(docRef);
+          
+          const q = query(collectionGroup(db, "enrolled_list"));
+          const querySnapshot = await getDocs(q);
+          
+          const studentDoc = querySnapshot.docs.find(
+            docSnap => docSnap.id === rollNo || docSnap.data().rollNumber === rollNo
+          );
 
-          if (docSnap.exists()) {
-            const fetchedName = docSnap.data().name;
+          if (studentDoc) {
+            const fetchedData = studentDoc.data();
+            const fetchedName = fetchedData.name || "Student";
             setUserName(fetchedName);
             setUserInitial(fetchedName.charAt(0).toUpperCase());
             fetchDashboardData(rollNo);
