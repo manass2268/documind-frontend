@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Loader2, KeyRound, User, BookOpen, Shield, ChevronDown } from "lucide-react";
-
+import { doc, getDoc, collection, query, where, getDocs, collectionGroup } from "firebase/firestore";
 import { db } from "../firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 export default function ForgotPassword() {
   const [role, setRole] = useState("learner");
-  const [identifier, setIdentifier] = useState(""); // Can be User ID or Email
+  const [identifier, setIdentifier] = useState(""); 
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://127.0.0.1:8000"
+    : "https://documind-api.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,20 +28,22 @@ export default function ForgotPassword() {
       let targetEmail = "";
       let targetUserId = "";
 
-      // ==========================================
-      // 🚀 SCENARIO 1: ROLE IS LEARNER (USER ID)
-      // ==========================================
       if (role === "learner") {
-        const studentRef = doc(db, "students", identifier.trim());
-        const studentSnap = await getDoc(studentRef);
+             const q = query(
+          collectionGroup(db, "users"),
+          where("role", "==", "learner"),
+          where("userId", "==", identifier.trim())
+        );
+        
+        const querySnapshot = await getDocs(q);
 
-        if (!studentSnap.exists()) {
+        if (querySnapshot.empty) {
           setError("User ID not found. Please check your User ID and try again.");
           setIsLoading(false);
           return;
         }
 
-        const studentData = studentSnap.data();
+        const studentData = querySnapshot.docs[0].data();
         
         if (studentData.isFirstLogin === true || !studentData.email) {
           setError("Account Setup Incomplete. You haven't linked a primary email yet. Please Login with your User ID and default password first.");
@@ -46,13 +51,9 @@ export default function ForgotPassword() {
           return;
         }
 
-        // Setup the details for the OTP API
         targetEmail = studentData.email;
-        targetUserId = identifier.trim();
+        targetUserId = querySnapshot.docs[0].id;
       } 
-      // ==========================================
-      // 🚀 SCENARIO 2: ROLE IS ADMIN/TRAINER (EMAIL)
-      // ==========================================
       else {
         const targetCollection = role === "admin" ? "admins" : "teachers";
         const q = query(collection(db, targetCollection), where("email", "==", identifier.trim()));
@@ -68,10 +69,7 @@ export default function ForgotPassword() {
         targetUserId = querySnapshot.docs[0].id;
       }
 
-      // ==========================================
-      // 🚀 SEND OTP TO THE DISCOVERED EMAIL
-      // ==========================================
-      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+      const response = await fetch(`${BACKEND_URL}/api/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: targetEmail })
@@ -80,7 +78,6 @@ export default function ForgotPassword() {
       const data = await response.json();
 
       if (response.ok) {
-        // Success! Redirect to Verify page
         navigate("/otp-verify", { 
           state: { 
             email: targetEmail,
@@ -94,7 +91,7 @@ export default function ForgotPassword() {
 
     } catch (err) {
       console.error("Forgot Password Error:", err);
-      setError("Network error. Cannot reach the server.");
+      setError("Network error. Cannot reach the server. Make sure API is running.");
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +108,6 @@ export default function ForgotPassword() {
 
       <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center z-10 relative">
         
-        {/* Left Column */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }} 
           animate={{ opacity: 1, x: 0 }} 
@@ -156,7 +152,6 @@ export default function ForgotPassword() {
           </div>
         </motion.div>
 
-        {/* Right Column */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 20 }} 
           animate={{ opacity: 1, scale: 1, y: 0 }} 
@@ -188,7 +183,6 @@ export default function ForgotPassword() {
 
             <form onSubmit={handleSubmit} className="w-full space-y-6 text-left mb-4">
               
-              {/* Role Selection */}
               <div>
                 <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">Select Your Role</label>
                 <div className="relative group">
@@ -212,10 +206,9 @@ export default function ForgotPassword() {
                 </div>
               </div>
 
-              {/* Identifier Input */}
               <div>
                 <label className="block text-[13px] font-bold text-[#1E293B] mb-1.5">
-                  {role === 'learner' ? "User ID (Roll Number)" : "Registered Email Address"} <span className="text-red-500">*</span>
+                  {role === 'learner' ? "User ID" : "Registered Email Address"} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative group">
                   <Mail size={18} className="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-[#0056D2] transition-colors" />
