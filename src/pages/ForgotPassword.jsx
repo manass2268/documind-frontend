@@ -15,7 +15,7 @@ export default function ForgotPassword() {
 
   const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000"
-    : "https://documind-api.onrender.com";
+    : "https://documind-backend-84cf.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,10 +29,11 @@ export default function ForgotPassword() {
       let targetUserId = "";
 
       if (role === "learner") {
-             const q = query(
-          collectionGroup(db, "users"),
+
+        const q = query(
+          collectionGroup(db, "enrolled_list"),
           where("role", "==", "learner"),
-          where("userId", "==", identifier.trim())
+          where("rollNumber", "==", identifier.trim())
         );
         
         const querySnapshot = await getDocs(q);
@@ -91,7 +92,7 @@ export default function ForgotPassword() {
 
     } catch (err) {
       console.error("Forgot Password Error:", err);
-      setError("Network error. Cannot reach the server. Make sure API is running.");
+      setError("Network error. Cannot reach the server.");
     } finally {
       setIsLoading(false);
     }
