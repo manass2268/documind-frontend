@@ -48,7 +48,7 @@ export default function OtpVerify() {
   const handleResendCode = async () => {
     setError("");
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email })
@@ -75,7 +75,7 @@ export default function OtpVerify() {
     
     try {
       // 1. Send Verification Request to FastAPI
-      const response = await fetch("http://127.0.0.1:8000/api/verify-otp", {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email, otp: otpValue })

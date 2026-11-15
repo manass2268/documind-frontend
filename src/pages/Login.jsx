@@ -8,7 +8,8 @@ import {
 import DocumindLogo from "../assets/logo.png";
 
 import { auth, googleProvider, db } from "../firebase"; 
-import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, updatePassword } from "firebase/auth";
+// 🔥 UPDATE 1: Added EmailAuthProvider & reauthenticateWithCredential
+import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, collectionGroup, query, where, getDocs } from "firebase/firestore"; 
 
 export default function Login() {
@@ -40,7 +41,6 @@ export default function Login() {
   
   const [loggedInUserId, setLoggedInUserId] = useState('');
 
-  // 🚀 FIXED: Disabled aggressive auto-redirect to prevent forcing into /dashboard
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       // Temporarily disabled so it doesn't interrupt the manual login flow
@@ -63,10 +63,9 @@ export default function Login() {
       let finalLoginId = formData.identifier.trim();
       
       // ==========================================
-      // 🎓 LEARNER LOGIN LOGIC (SUB-COLLECTION SEARCH)
+      // 🎓 LEARNER LOGIN LOGIC
       // ==========================================
       if (formData.role === "learner") {
-        // Query all enrolled_list sub-collections across all batches/courses
         const q = query(collectionGroup(db, "enrolled_list"));
         const querySnapshot = await getDocs(q);
         
@@ -81,25 +80,25 @@ export default function Login() {
         }
 
         const studentData = studentDoc.data();
-        
-        // Save the exact Firestore document path for future updates
         sessionStorage.setItem("studentPath", studentDoc.ref.path);
 
         if (studentData.isFirstLogin === true || studentData.isFirstLogin === undefined) {
+          const tempLoginId = `${finalLoginId}@student.documind.com`;
+          
+          // 🔥 UPDATE 2: Firebase login verify hone ke baad hi Modal khulega
+          await signInWithEmailAndPassword(auth, tempLoginId, formData.password);
+          
           setIsLoading(false);
           setLoggedInUserId(finalLoginId);
           setShowSetupModal(true);
           setSetupStep(1);
-          
-          const tempLoginId = `${finalLoginId}@student.documind.com`;
-          await signInWithEmailAndPassword(auth, tempLoginId, formData.password);
           return; 
         }
         finalLoginId = `${finalLoginId}@student.documind.com`;
       }
 
       // ==========================================
-      // 🚀 TRAINER LOGIN LOGIC
+      // 🚀 TRAINER & ADMIN LOGIN LOGIC
       // ==========================================
       if (formData.role === "trainer") {
         if (!finalLoginId.includes("@")) {
@@ -107,11 +106,9 @@ export default function Login() {
         }
       }
 
-      // 1. FIREBASE AUTHENTICATION
       const userCredential = await signInWithEmailAndPassword(auth, finalLoginId, formData.password);
       const firebaseUser = userCredential.user;
 
-      // 2. POSTGRESQL BACKEND VERIFICATION
       const response = await fetch("http://127.0.0.1:8000/api/auth/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -127,8 +124,6 @@ export default function Login() {
 
       if (response.ok && backendData.status === "success") {
         setIsLoading(false);
-        
-        // 🚀 BYPASS: Navigating strictly based on UI Dropdown selection
         if (formData.role === "trainer") {
           navigate("/trainer/dashboard");
         } else if (formData.role === "admin") {
@@ -199,7 +194,8 @@ export default function Login() {
     setSetupSuccess('');
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/send-otp", {
+      // 🔥 UPDATE 3: Fixed URL to 'send-otp' and removed OTP from body
+      const response = await fetch("http://127.0.0.1:8000/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: setupEmail })
@@ -228,7 +224,7 @@ export default function Login() {
     setSetupSuccess('');
     
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/verify-otp", {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: setupEmail, otp: otp })
@@ -274,9 +270,12 @@ export default function Login() {
         throw new Error("User session lost. Please reload the page and try again.");
       }
 
+    
+      const credential = EmailAuthProvider.credential(user.email, formData.password);
+      await reauthenticateWithCredential(user, credential);
+
       await updatePassword(user, newPassword);
 
-      // Retrieve the exact student sub-collection path saved during login lookup
       const studentPath = sessionStorage.getItem("studentPath");
       if (studentPath) {
         const studentRef = doc(db, studentPath);
@@ -456,7 +455,7 @@ export default function Login() {
       </motion.div>
 
       {/* ========================================================= */}
-      {/* 🚀 FIRST TIME SETUP MODAL (PRIMARY EMAIL & PASSWORD) 🚀 */}
+      {/* 🚀 FIRST TIME SETUP MODAL 🚀 */}
       {/* ========================================================= */}
       {showSetupModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
